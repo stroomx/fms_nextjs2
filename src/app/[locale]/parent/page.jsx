@@ -27,7 +27,7 @@ export default function ParentProfile() {
 
     const enrollIntoClass = () => {
         const selectedFranchise = document.getElementById('franchise-selector').value;
-        const url = selectedFranchise ? `/profile/${selectedFranchise}` : '/profile';
+        const url = selectedFranchise ? `/profile/${selectedFranchise}` : '/profile/6209';
         router.push(url);
     }
 
