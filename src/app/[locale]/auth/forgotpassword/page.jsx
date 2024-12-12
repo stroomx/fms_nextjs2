@@ -20,7 +20,7 @@ export default function Login() {
             console.log(data);
 
             alert({ type: "success", message: data?.message, timer: 3000 });
-            // router.push(`/login`);
+            router.push(`/login`);
 
         } catch (err) {
             console.log(err);
