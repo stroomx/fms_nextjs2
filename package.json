@@ -1,0 +1,32 @@
+{
+  "name": "new_fms",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@nextui-org/date-picker": "^2.3.7",
+    "@stripe/react-stripe-js": "^2.9.0",
+    "@stripe/stripe-js": "^5.0.0",
+    "i18next": "^23.15.2",
+    "i18next-resources-to-backend": "^1.2.1",
+    "js-cookie": "^3.0.5",
+    "next": "14.2.14",
+    "next-i18n-router": "^5.5.1",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-i18next": "^15.0.2",
+    "react-loading-skeleton": "^3.5.0",
+    "sass": "^1.80.6",
+    "sweetalert2": "^11.14.5"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16"
+  }
+}

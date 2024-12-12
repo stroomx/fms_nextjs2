@@ -1,0 +1,142 @@
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import 'bootstrap/dist/css/bootstrap.css';
+@import 'react-loading-skeleton/dist/skeleton.css';
+@import "./parent_ui.css";
+@import "./components.css";
+
+
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: "Barlow", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+p {
+  margin-bottom: 0 !important;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* background-color: rgba(0, 0, 0, 0.5); */
+  background-color: rgba(255, 255, 255, 1);
+  /* semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  /* ensures it sits above other content */
+}
+
+.spinner {
+  border: 8px solid #f3f3f3;
+  /* Light grey */
+  border-top: 8px solid #3498db;
+  /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+.accordion svg {
+  cursor: pointer;
+  width: 1.3rem;
+  height: auto;
+  fill: #DF3E68;
+}
+
+.input-checkbox svg {
+  fill: #abaaaa;
+}
+
+.input-checkbox input:checked+label svg {
+  fill: var(--primary-blue);
+}
+
+.custom-accordion-body {
+  background-color: #f9f9f9;
+  box-shadow: 0px 3px 6px #00000029;
+  margin: 0px 15px;
+  border-radius: 0 0 10px 10px;
+  padding: var(--bs-accordion-body-padding-y) var(--bs-accordion-body-padding-x);
+}
+
+.btn-payment-summary {
+  background-color: #008a05;
+  color: #fff;
+  border: 0;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 10px;
+  padding: 8px 15px;
+  box-shadow: 0px 5px 6px #00000029;
+  transition: all 0.4s ease-in-out;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+[data-bs-toggle="popover"] {
+  cursor: pointer;
+}
+
+.table-scrollable th {
+  position: sticky;
+  top: 0;
+  /* Don't forget this, required for the stickiness */
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
