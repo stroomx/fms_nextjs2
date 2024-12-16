@@ -5,8 +5,7 @@ import { useState } from "react";
 import alert from '@/app/components/SweetAlerts';
 import { useRouter } from "next/navigation";
 
-
-export default function Login() {
+export default function ForgotPassword() {
     const t = (t) => t;
 
     const router = useRouter();
@@ -29,32 +28,47 @@ export default function Login() {
 
     return (
         <>
-            <div className="background">
-                <div className="login">
-                    <div className="card rounded-0">
-                        <div className="card-header p-3">
-                            {t('Forgot Password')}
-                        </div>
-                        <div className="card-body">
-                            <label htmlFor="email">{t('Enter your email')}</label>
-                            <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                className="form-control rounded-0"
-                                placeholder="jhondoe@example.com"
-                                onChange={(e) => {
-                                    setEmail(e.target.value)
-                                }} />
-                        </div>
-                        <div className="card-footer">
-                            <button className="btn btn-primary rounded-0" onClick={resetPassword}>
-                                {t('Reset Password')}
-                            </button>
+            <section>
+                <div className="background">
+                    <img
+                        alt=""
+                        className="img-top"
+                        src="/assets/img/logo-fade.png"
+                    />
+                    <img
+                        alt=""
+                        className="img-bottom"
+                        src="/assets/img/logo-fade.png"
+                    />
+                    <div className="login">
+                        <div className="card rounded-0">
+                            <div className="card-body">
+                                <div className="container">
+                                    <div className="fs-4 text-center fw-bold my-1">
+                                        {t('Forgot Password?')}
+                                    </div>
+                                    <div className="text-center mb-3">
+                                        {t('Remember your password?')} <a href="/auth/login" className="text-primary">{t(' Login Here')}</a>
+                                    </div>
+                                    <label htmlFor="email">{t('Email Address')}</label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        id="email"
+                                        className="form-control rounded-0"
+                                        onChange={(e) => {
+                                            setEmail(e.target.value)
+                                        }} />
+                                    <button className="btn btn-primary rounded-0 w-100 mt-3 mb-2" onClick={resetPassword}>
+                                        {t('Reset Password')}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+
+                </div >
+            </section >
         </>
     );
 }
