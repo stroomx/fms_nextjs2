@@ -57,6 +57,8 @@ export default function ForgotPassword() {
 
             router.push('/login');
         } catch (err) {
+            alert({ type: "error", message: err?.response?.data?.message, timer: 3000 });
+
             console.log(err)
         }
     }
@@ -120,7 +122,8 @@ export default function ForgotPassword() {
                                         <button className="btn btn-primary rounded-0 w-100 mt-3" onClick={submitReset} disabled={password['password'] !== password['confirmPassword']}>
                                             {t('Reset Password')}
                                         </button>
-                                        {password['password'] !== password['confirmPassword'] && <small className="text-danger mb-2">{t('Password and confirm password do not match.')}</small>}
+                                        {password['password'] !== password['confirmPassword'] && <div className="text-danger text-center small mb-2">{t('Password and confirm password do not match.')}</div>}
+                                        <div className="text-center small">{t('Passwords must contain one lowercase and one uppercase letter, one number and one symbol and must be at least 8 characters.')}</div>
                                     </div>
                                     : <div className="container">
                                         <div className="fs-4 text-center fw-bold my-1">

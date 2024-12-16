@@ -414,7 +414,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                         return (
                                             (schedule.availablespots > 0) ? <ScheduleCard franchise_id={franchise_id} schedule={schedule} buttonAction={enroll} key={schedule.id} /> : ''
                                         );
-                                    }) : <div className="fs-4 text-white">{t('No Available Schedules')}</div>}
+                                    }) : <div className="fs-3 d-flex justify-content-center fw-bold">{t('No Available Schedules')}</div>}
                                 </div>
                             </div>
                         </div>
