@@ -199,7 +199,7 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
             ...internalSchedule,
             isClosed: status == 'open' ? true : false
         });
-        console.log(internalSchedule['isClosed'], status);  
+        console.log(internalSchedule['isClosed'], status);   
     }
 
     return (
