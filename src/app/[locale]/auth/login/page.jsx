@@ -129,7 +129,7 @@ export default function Login() {
                                         required
                                     />
                                     <Link href="/auth/forgotpassword">
-                                        {t('Forgot Password')} {' ? '}
+                                        {t('Forgot Password :3')} {' ? '}
                                     </Link>
                                 </div>
                                 <div className="buttons mt-3 mb-1">
