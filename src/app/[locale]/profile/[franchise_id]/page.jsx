@@ -311,7 +311,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                             </div>
                         </div>
                     </div>
-                    <div className="program-cards  sticky-top">
+                    <div className="program-cards">
                         <div className="container">
                             <div className="row">
                                 <div className="col-md-3 d-none d-lg-block card rounded-0 mb-2 h-100">
@@ -409,7 +409,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                         <button className="btn btn-danger fw-bold" onClick={clearFilters}>{t('Clear')}</button>
                                     </div>
                                 </div>
-                                <div className="col-12 col-lg-9 pe-0 overflow-y-auto max-vh-75" style={{ maxHeight: '550px' }}>
+                                <div className="col-12 col-lg-9 pe-0 overflow-y-auto">
                                     {filteredSchedules.length > 0 ? filteredSchedules?.map(function (schedule) {
                                         return (
                                             (schedule.availablespots > 0) ? <ScheduleCard franchise_id={franchise_id} schedule={schedule} buttonAction={enroll} key={schedule.id} /> : ''
