@@ -314,99 +314,101 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                     <div className="program-cards">
                         <div className="container">
                             <div className="row">
-                                <div className="col-md-3 d-none d-lg-block card rounded-0 mb-2">
-                                    <div className="text-primary fw-bold mb-2">{t('Programs')}</div>
-                                    <div className="checkbox-group">
-                                        {
-                                            programs?.map((ele, index) => (
-                                                <div className="form-check" key={index}>
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        value={ele.id}
-                                                        id={`programCheck-${index}`}
-                                                        checked={filterData['programs'].includes(ele.id)}
-                                                        onChange={(e) => handleFilterChange('programs', e.target.value, e.target.checked)}
-                                                    />
-                                                    <label className="form-check-label" htmlFor={`programCheck-${index}`}>
-                                                        {ele.name}
-                                                    </label>
-                                                </div>
-                                            ))
-                                        }
-                                    </div>
+                                <div className="col-md-3 d-none d-lg-block">
+                                    <div className="card rounded-0 mb-2">
+                                        <div className="text-primary fw-bold mb-2">{t('Programs')}</div>
+                                        <div className="checkbox-group">
+                                            {
+                                                programs?.map((ele, index) => (
+                                                    <div className="form-check" key={index}>
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="checkbox"
+                                                            value={ele.id}
+                                                            id={`programCheck-${index}`}
+                                                            checked={filterData['programs'].includes(ele.id)}
+                                                            onChange={(e) => handleFilterChange('programs', e.target.value, e.target.checked)}
+                                                        />
+                                                        <label className="form-check-label" htmlFor={`programCheck-${index}`}>
+                                                            {ele.name}
+                                                        </label>
+                                                    </div>
+                                                ))
+                                            }
+                                        </div>
 
-                                    <hr className="my-3 m-auto w-75 text-center" />
-                                    <div className="text-primary fw-bold mb-2">{t('Locations')}</div>
-                                    <div className="checkbox-group">
-                                        {
-                                            locations?.map((ele, index) => (
-                                                <div className="form-check" key={index}>
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        value={ele.id}
-                                                        id={`locationCheck-${index}`}
-                                                        checked={filterData['locations'].includes(ele.id)}
-                                                        onChange={(e) => handleFilterChange('locations', e.target.value, e.target.checked)}
-                                                    />
-                                                    <label className="form-check-label" htmlFor={`locationCheck-${index}`}>
-                                                        {ele.name}
-                                                    </label>
-                                                </div>
-                                            ))
-                                        }
-                                    </div>
+                                        <hr className="my-3 m-auto w-75 text-center" />
+                                        <div className="text-primary fw-bold mb-2">{t('Locations')}</div>
+                                        <div className="checkbox-group">
+                                            {
+                                                locations?.map((ele, index) => (
+                                                    <div className="form-check" key={index}>
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="checkbox"
+                                                            value={ele.id}
+                                                            id={`locationCheck-${index}`}
+                                                            checked={filterData['locations'].includes(ele.id)}
+                                                            onChange={(e) => handleFilterChange('locations', e.target.value, e.target.checked)}
+                                                        />
+                                                        <label className="form-check-label" htmlFor={`locationCheck-${index}`}>
+                                                            {ele.name}
+                                                        </label>
+                                                    </div>
+                                                ))
+                                            }
+                                        </div>
 
-                                    <hr className="my-3 m-auto w-75 text-center" />
-                                    <div className="text-primary fw-bold mb-2">{t('Date')}</div>
-                                    <div className="title2">
-                                        <div className="dates d-flex gap-2 align-items-start">
-                                            <div className="d-flex flex-column justify-content-start gap-1 align-items-start">
-                                                <label className="text-grey-200">{t('Start')}</label>
-                                                <input
-                                                    type="date"
-                                                    name="start"
-                                                    className="rounded-0 p-1"
-                                                    value={filterData['date']['start'] ?? ''}
-                                                    onChange={(e) => handleFilterChange('date', { name: 'start', value: e.target.value })}
-                                                />
-                                            </div>
-                                            <div className="d-flex flex-column justify-content-start gap-1 align-items-start">
-                                                <label className="text-grey-200">{t('End')}</label>
-                                                <input
-                                                    type="date"
-                                                    name="end"
-                                                    value={filterData['date']['end'] ?? ''}
-                                                    className="rounded-0 p-1"
-                                                    onChange={(e) => handleFilterChange('date', { name: 'end', value: e.target.value })}
-                                                />
+                                        <hr className="my-3 m-auto w-75 text-center" />
+                                        <div className="text-primary fw-bold mb-2">{t('Date')}</div>
+                                        <div className="title2">
+                                            <div className="dates d-flex gap-2 align-items-start">
+                                                <div className="d-flex flex-column justify-content-start gap-1 align-items-start">
+                                                    <label className="text-grey-200">{t('Start')}</label>
+                                                    <input
+                                                        type="date"
+                                                        name="start"
+                                                        className="rounded-0 p-1"
+                                                        value={filterData['date']['start'] ?? ''}
+                                                        onChange={(e) => handleFilterChange('date', { name: 'start', value: e.target.value })}
+                                                    />
+                                                </div>
+                                                <div className="d-flex flex-column justify-content-start gap-1 align-items-start">
+                                                    <label className="text-grey-200">{t('End')}</label>
+                                                    <input
+                                                        type="date"
+                                                        name="end"
+                                                        value={filterData['date']['end'] ?? ''}
+                                                        className="rounded-0 p-1"
+                                                        onChange={(e) => handleFilterChange('date', { name: 'end', value: e.target.value })}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <hr className="my-3 m-auto w-75 text-center" />
-                                    <div className="text-primary fw-bold mb-2">{t('Age')}</div>
+                                        <hr className="my-3 m-auto w-75 text-center" />
+                                        <div className="text-primary fw-bold mb-2">{t('Age')}</div>
 
-                                    <div className="d-flex justify-content-center align-items-center gap-2">
-                                        <div>{filterData.age.min}</div>
-                                        {(ageRange['min'] && !clear) && <MultiRangeSlider
-                                            min={ageRange['min']}
-                                            max={ageRange['max']}
-                                            changeFunction={silderChange}
-                                        />}
-                                        <div>{filterData.age.max}</div>
-                                    </div>
+                                        <div className="d-flex justify-content-center align-items-center gap-2">
+                                            <div>{filterData.age.min}</div>
+                                            {(ageRange['min'] && !clear) && <MultiRangeSlider
+                                                min={ageRange['min']}
+                                                max={ageRange['max']}
+                                                changeFunction={silderChange}
+                                            />}
+                                            <div>{filterData.age.max}</div>
+                                        </div>
 
-                                    <hr className="my-3" />
-                                    <div className="d-flex gap-2">
-                                        <button
-                                            className="btn btn-primary fw-bold w-100"
-                                            onClick={applyFilters}
-                                        >
-                                            {t('Apply Filters')}
-                                        </button>
-                                        <button className="btn btn-danger fw-bold" onClick={clearFilters}>{t('Clear')}</button>
+                                        <hr className="my-3" />
+                                        <div className="d-flex gap-2">
+                                            <button
+                                                className="btn btn-primary fw-bold w-100"
+                                                onClick={applyFilters}
+                                            >
+                                                {t('Apply Filters')}
+                                            </button>
+                                            <button className="btn btn-danger fw-bold" onClick={clearFilters}>{t('Clear')}</button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="col-12 col-lg-9 pe-0 overflow-y-auto max-vh-75" style={{ maxHeight: '550px' }}>
