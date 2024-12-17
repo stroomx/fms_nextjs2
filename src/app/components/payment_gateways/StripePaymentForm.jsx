@@ -61,17 +61,32 @@ const StripePaymentForm = ({ paymentData, mode = 'paymentintent', cancelAction =
     return (
         <div id="popup-stripe-form">
             {clientSecret && <Elements stripe={loadStripe(stripePublicKey)} options={{ clientSecret }}>
-                <PaymentForm mode={mode} students={paymentData['students']} cancelAction={cancelAction} />
+
+                <PaymentForm mode={mode} students={paymentData['students']} return_url_params={paymentData['returnURL']} cancelAction={cancelAction} />
             </Elements>}
         </div>
     );
 };
 
-const PaymentForm = ({ mode, students, cancelAction = () => { } }) => {
+const PaymentForm = ({ mode, students, return_url_params = [], cancelAction = () => { } }) => {
     const stripe = useStripe();
     const elements = useElements();
     const [isProcessing, setIsProcessing] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
+
+    console.log(return_url_params, 'r url p')
+
+    const getReturnUrl = () => {
+        let url = `${window.location.origin}/parent?`;
+
+        return_url_params.forEach(ele => {
+            url += `${ele['key']}=${ele['value']}&`;
+        });
+
+        console.log(url, 'return url');
+
+        return url;
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -93,7 +108,7 @@ const PaymentForm = ({ mode, students, cancelAction = () => { } }) => {
                 result = await stripe.confirmPayment({
                     elements,
                     confirmParams: {
-                        return_url: `${window.location.origin}/parent?id=${students.join(',')}&status=success`,
+                        return_url: return_url_params.length > 0 ? getReturnUrl() : `${window.location.origin}/parent?id=${students.join(',')}`,
                     },
                 });
             }

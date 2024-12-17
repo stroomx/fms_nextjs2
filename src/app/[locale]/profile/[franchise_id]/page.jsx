@@ -421,7 +421,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                     </div>
                 </div>
             </section >
-            <section>
+            {/* <section>
                 <div className="bg-images">
                     <div className="party">
                         <div className="text-center">
@@ -452,7 +452,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
         </div >
     );
 };

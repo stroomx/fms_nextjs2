@@ -26,7 +26,7 @@ export default function ParentProfile() {
     const [selectedFranchise, setSelectedFranchise] = useState('');
 
     const enrollIntoClass = () => {
-        const selectedFranchise = document.getElementById('franchise-selector').value;
+        const selectedFranchise = document.getElementById('franchise-selector')?.value;
         const url = selectedFranchise ? `/profile/${selectedFranchise}` : '/profile/6209';
         router.push(url);
     }
@@ -105,6 +105,7 @@ export default function ParentProfile() {
                     filterSchedules(unactive[0]?.franchiseId, unactive);
                     setFranchises(getFranchises(unactive));
                     setSelectedFranchise(unactive[0]?.franchiseId);
+                    handleEnrollment(unactive);
                 }
             } catch (err) {
                 console.log(err);
@@ -113,23 +114,46 @@ export default function ParentProfile() {
             }
         }
 
-        const handleEnrollment = () => {
+        const handleEnrollment = (schedules) => {
             const studentIds = searchParams.get('id')?.split(',');
-            const status = searchParams.get('status');
+            const status = searchParams.get('redirect_status');
+            const paymentType = searchParams.get('enrollment');
 
-            if (!studentIds)
-                return;
+            // if (!studentIds)
+            //     return;
 
-            if (status == 'success')
-                alert({ type: "success", message: t(`${studentIds?.length} student(s) successfully enrolled.`) })
-            else
-                alert({ message: t(`${studentIds?.length} student(s) enrollment failed.`) })
-
-            replace(`${pathname}`);
-
+            switch (paymentType) {
+                case 'enrollment':
+                    if (status == 'failed')
+                        alert({ message: t(`${studentIds?.length} student(s) enrollment failed.`) })
+                    else
+                        alert({ type: "success", message: t(`${studentIds?.length} student(s) successfully enrolled.`) })
+                    break;
+                default:
+                    console.log('pp')
+                    const enrollmentId = searchParams.get('eid');
+                    const amount = searchParams.get('amount');
+                    handlePayment(enrollmentId, amount, status, schedules);
+            }
         }
 
-        handleEnrollment();
+        const handlePayment = (enrollmentId, amount, status, schedules = []) => {
+            // Find the schedule in schedules
+            // Change the filter to the specific franchise
+            // Open the modal for the schedule
+            // Show success or failure message
+
+            const schedule = schedules.filter((ele) => ele.scheduleenrollid == enrollmentId)[0];
+            console.log(enrollmentId)
+            console.log(schedule, 'scheu')
+            setSelectedFranchise(schedule['franchiseId']);
+            const button = document.getElementById(`modal-button-${schedule?.scheduleId}`);
+            button.click();
+            console.log(schedule, 'scheu')
+
+            alert({ type: status == 'failed' ? "error" : "success", message: t(`Payment of ${amount} ${status == 'failed' ? "has failed." : "successfully made."}.`) });
+        }
+
         fetchData();
     }, []);
 
@@ -199,7 +223,7 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
             ...internalSchedule,
             isClosed: status == 'open' ? true : false
         });
-        console.log(internalSchedule['isClosed'], status);   
+        console.log(internalSchedule['isClosed'], status);
     }
 
     return (
@@ -295,7 +319,7 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                             <div className="print flexed text-blue" style={{ cursor: 'pointer' }}>
                                 {loading ? '' : <p className="font-semibold fs-6">{t('Invoice')}</p>}
                             </div>
-                            <button className="btn-payment-summary" data-bs-toggle="modal" onMouseOver={hoverAction} onClick={() => { toggle('open') }}
+                            <button id={`modal-button-${schedule.id}`} className="btn-payment-summary" data-bs-toggle="modal" onMouseOver={hoverAction} onClick={() => { toggle('open') }}
                                 data-bs-target={`#payment-modal-${index}`}>{t('Payments')}{schedule.isActive}
                             </button>
                         </div>
@@ -550,7 +574,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                     className="input-style1 rounded-0"
                                     name="amount"
                                     id="amount"
-                                    value={formData['amount']}
+                                    value={formData['amount'] ?? 0}
                                     onChange={handleChange}
                                     min={1}
                                     max={schedule?.cost - schedule?.paidAmount}
@@ -563,88 +587,14 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
             </div>
         </div>
         <div className="col-lg-8">
-            {/* {action == 'makepayment' && <div className="p-0 border rounded-0">
-                <div className="tab-content" id="v-pills-tabContent">
-                    <div className="tab-pane fade show active" id={`v-pills-payment-${index}`} role="tabpanel" aria-labelledby={`v-pills-payment-tab-${index}`}>
-                        <div className="p-3">
-                            <div className="mb-3">
-                                <h6 className="font-bold">{t('Payment Options')}</h6>
-                            </div>
-                            <div className="d-flex flex-column">
-                                {true ? <div className="form-check form-check-inline">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        name="paymentoption"
-                                        id="online"
-                                        value="online"
-                                        onChange={handleChange}
-                                    />
-                                    <label className="form-check-label" htmlFor="online">{t('Online Payment')}</label>
-                                </div> : ''}
-
-                                {true ? <div className="form-check form-check-inline">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        name="paymentoption"
-                                        id="cash"
-                                        value="cash"
-                                        onChange={handleChange}
-                                    />
-                                    <label className="form-check-label" htmlFor="cash">{t('Cash / Cheque')}</label>
-                                </div> : ''}
-
-                                {schedule.schedulerecurringpayments !== 0 ? <div className="form-check form-check-inline">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        name="paymentoption"
-                                        id="recurringPayments"
-                                        value="recurringPayments"
-                                        onChange={handleChange}
-                                    />
-                                    <label className="form-check-label" htmlFor="recurringPayments"> {`${schedule.schedulerecurringpaymentsnum} ${t(schedule.schedulerecurringpaymentsfrequency)} ${t('Payments')} @ ${money(schedule.schedulerecurringpaymentsamount)}`}</label>
-                                </div> : ''}
-                            </div>
-                            <div className="check-group mt-2">
-                                {(schedule.creditAvailable > 0 && (formData?.paymentoption !== 'recurringPayments' || !schedule.schedulerecurringpaymentsautocharge)) ? (
-                                    <div className="form-check">
-                                        <input
-                                            className="form-check-input"
-                                            name="useCredit"
-                                            type="checkbox"
-                                            id="useCredit"
-                                            checked={formData?.useCredit || false}
-                                            onChange={handleChange}  // Handle the change
-                                        />
-                                        <label className="form-check-label" htmlFor="useCredit">
-                                            {`${t('Use Credit')} (${schedule.creditAvailable})`}
-                                        </label>
-                                    </div>
-                                ) : ''}
-                            </div>
-
-                            
-
-                            {showPayment() ? <>
-                                <div className="line"></div>
-                                <MerchantGateWay merchant_id={schedule?.franchiseId} paymentData={{ ...formData, students: [schedule.studentId] }} cancelAction={cancelPayment} />
-                            </> : ''}
-
-                        </div>
-                    </div>
-                    <div className="tab-pane fade" id={`v-pills-profile-${index}`} role="tabpanel" aria-labelledby={`v-pills-profile-tab-${index}`}>
-
-                    </div>
-                    <div className="tab-pane fade" id={`v-pills-messages-${index}`} role="tabpanel" aria-labelledby={`v-pills-messages-tab-${index}`}>
-
-                    </div>
-                </div>
-            </div>} */}
             {showPayment() ? <>
                 <div className="fs-4 mb-2 mt-0 align-items-start">{t('Amount To Be Paid is')} {money(formData?.amount)}</div>
-                <MerchantGateWay merchant_id={schedule?.franchiseId} paymentData={{ ...formData, students: [schedule.studentId] }} cancelAction={cancelPayment} />
+                <MerchantGateWay merchant_id={schedule?.franchiseId} paymentData={{
+                    ...formData, students: [schedule.studentId], returnURL: [
+                        { key: 'eid', value: schedule.scheduleenrollid },
+                        { key: 'amount', value: formData?.amount },
+                    ]
+                }} cancelAction={cancelPayment} />
             </> : ''}
             {!showPayment() && <>
                 <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
@@ -743,32 +693,32 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                             {recurringPayments?.map(((recurringpayment, index) => (
                                 !recurringpayment?.paymentrecurterminateddate && <div className="card rounded-0 d-flex gap-2 w-75" key={index}>
                                     <div className="d-flex align-items-center justify-content-between gap-3">
-                                        <span className="font-bold ">Start Date</span>
+                                        <span className="font-bold ">{t('Start Date')}</span>
                                         <span className="fs-5 ">{date(recurringpayment?.paymentrecurstartdate, false)}</span>
                                     </div>
                                     <div className="d-flex align-items-center justify-content-between gap-3">
-                                        <span className="font-bold ">Frequency</span>
+                                        <span className="font-bold ">{t('Frequency')}</span>
                                         <span className="fs-5 ">{recurringpayment?.paymentrecurfrequency.toUpperCase()}</span>
                                     </div>
                                     <div className="d-flex align-items-center justify-content-between gap-3">
-                                        <span className="font-bold ">Total Cost</span>
+                                        <span className="font-bold ">{t('Total Cost')}</span>
                                         <span className="fs-5 ">{money(recurringpayment?.paymentrecurtotal)}</span>
                                     </div>
                                     <div className="d-flex align-items-center justify-content-between gap-3">
-                                        <span className="font-bold ">Paid</span>
+                                        <span className="font-bold ">{t('Paid')}</span>
                                         <span className="fs-5 ">{money(recurringpayment?.paymentrecurtotal - recurringpayment?.paymentrecurbalance)}</span>
                                     </div>
                                     <div className="d-flex align-items-center justify-content-between gap-3">
-                                        <span className="font-bold ">Remaining</span>
+                                        <span className="font-bold ">{t('Remaining')}</span>
                                         <span className="fs-5 ">{money(recurringpayment?.paymentrecurbalance)}</span>
                                     </div>
                                     <div className="d-flex align-items-center justify-content-between gap-3">
-                                        <span className="font-bold ">Next Payment</span>
+                                        <span className="font-bold ">{t('Next Payment')}</span>
                                         <span className="fs-5 ">{date(recurringpayment.nextPaymentDateUTC, false)}</span>
                                     </div>
                                     {recurringpayment?.paymentrecurterminateddate &&
                                         <small className="text-end text-danger font-bold">
-                                            Terminated on: {date(recurringpayment?.paymentrecurterminateddate, false)}
+                                            {t('Terminated on:')} {date(recurringpayment?.paymentrecurterminateddate, false)}
                                         </small>}
                                 </div>
                             )))}
