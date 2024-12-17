@@ -311,10 +311,10 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                             </div>
                         </div>
                     </div>
-                    <div className="program-cards">
+                    <div className="program-cards  sticky-top">
                         <div className="container">
                             <div className="row">
-                                <div className="col-md-3 d-none d-lg-block card rounded-0 mb-2 h-100 sticky-top">
+                                <div className="col-md-3 d-none d-lg-block card rounded-0 mb-2 h-100">
                                     <div className="text-primary fw-bold mb-2">{t('Programs')}</div>
                                     <div className="checkbox-group">
                                         {
