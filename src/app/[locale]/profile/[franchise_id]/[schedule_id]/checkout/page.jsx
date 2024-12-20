@@ -276,8 +276,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                     <img
                                         alt="..."
                                         className="card-img"
-                                        //TODO src={schedule.image ? schedule.image : "/assets/img/program-1.png"}
-                                        src={"https://s3-us-west-2.amazonaws.com/bricks4kidz-files/files/64/19/WeLearnWeBuildWePlay.jpg"}
+                                        src={schedule.image ? schedule.image : "/assets/img/program-1.png"}
                                     />
                                     <div>
                                         <h6 className="font-bold mb-2">{schedule.name || 'N/A'}</h6>

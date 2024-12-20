@@ -7,7 +7,7 @@ import LoginModal from '../../auth/login/modal';
 export default function ScheduleCard({ franchise_id, schedule, modal = false, buttonAction = () => { }, }) {
     const { t } = useTranslation();
 
-    console.log(schedule)
+    console.log(schedule, 'page1')
 
     const isLoggedIn = AuthService.isAuthenticated();
 
@@ -19,8 +19,8 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                         <img
                             alt="..."
                             className="img-fluid rounded-start"
-                            // src={schedule.image ? schedule.image : "/assets/img/program-1.png"}
-                            src={"https://s3-us-west-2.amazonaws.com/bricks4kidz-files/files/64/19/WeLearnWeBuildWePlay.jpg"}
+                            //TODO Update from CDN
+                            src={schedule.image ? schedule.image : "https://bricks4kidz.us/wp-content/themes/brickly/assets/images/img-wide.svg"}
                         />
                     </div>
                     <div className="col-12 d-md-none pb-2">

@@ -81,15 +81,16 @@ export default function ParentProfile() {
 
     useEffect(() => {
         const getFranchises = (schedules = []) => {
-            const franchises = new Set();
+            const franchises = {};
 
             schedules.forEach(obj => {
                 if (obj.hasOwnProperty('franchiseId')) {
-                    franchises.add(obj['franchiseId']);
+                    franchises[obj?.franchise] = { id: obj?.franchiseId, name: obj?.franchise };
                 }
             });
 
-            return [...franchises];
+            console.log(franchises);
+            return [...Object.values(franchises)];
         }
 
 
@@ -101,7 +102,7 @@ export default function ParentProfile() {
                         ele['isActive'] = false;
                         return ele;
                     })
-
+                    console.log(unactive)
                     setSchedules(unactive);
                     filterSchedules(unactive[0]?.franchiseId, unactive);
                     setFranchises(getFranchises(unactive));
@@ -174,7 +175,7 @@ export default function ParentProfile() {
                             <p className="text-grey fs-6 font-bold">{t('Locations')}</p>
                             <select id="franchise-selector" defaultValue={franchises[0] ?? null} onChange={selectFranchise}>
                                 {franchises.map((franchise) =>
-                                    <option value={franchise} key={franchise}>{franchise}</option>
+                                    <option value={franchise['id']} key={franchise['id']}>{franchise['name']}</option>
                                 )}
                             </select>
                         </div>
@@ -238,8 +239,8 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                             className="align-self-center img-fluid"
                             height={'100%'}
                             width={'100%'}
-                            // src="/assets/img/program-1.png"
-                            src={"https://s3-us-west-2.amazonaws.com/bricks4kidz-files/files/64/19/WeLearnWeBuildWePlay.jpg"}
+                            //TODO Update from CDN
+                            src={schedule.image ? schedule.image : "https://bricks4kidz.us/wp-content/themes/brickly/assets/images/img-wide.svg"}
                             alt="Schedule Image"
                         />
                     )}
@@ -378,7 +379,8 @@ const ParentScheduleCardGrid = ({ schedule, index, loading, hoverAction = () => 
                             {!isImageLoaded && <Skeleton height={200} width={'100%'} />}
                             <img
                                 className="align-self-center img-fluid"
-                                src={"https://s3-us-west-2.amazonaws.com/bricks4kidz-files/files/64/19/WeLearnWeBuildWePlay.jpg"}
+                                //TODO Update from CDN
+                                src={schedule.image ? schedule.image : "https://bricks4kidz.us/wp-content/themes/brickly/assets/images/img-wide.svg"}
                                 alt="Schedule Image"
                                 style={{ display: isImageLoaded ? "block" : "none" }}
                                 onLoad={handleImageLoad}
@@ -403,7 +405,11 @@ const ParentScheduleCardGrid = ({ schedule, index, loading, hoverAction = () => 
                 <div className="card-footer">
                     <div className="d-flex justify-content-between align-items-center">
                         <div className="print flexed text-blue" style={{ cursor: 'pointer' }}>
-                            {loading ? '' : <p className="font-semibold fs-6">{t('Invoice')}</p>}
+                            {loading ? '' :
+                                <PrintContent icon='mdi-printerr' text={t('Invoice')} index={index}>
+                                    <Invoice enrollment={schedule} />
+                                </PrintContent>
+                            }
                         </div>
                         <button className="btn-payment-summary" data-bs-toggle="modal" onMouseOver={hoverAction}
                             data-bs-target={`#payment-modal-${index}`} onClick={() => { toggle('open') }}>{t('Payments')}
@@ -848,10 +854,15 @@ const Invoice = ({ enrollment }) => {
                     {invoice?.studentUrl && <p className="mb-0"><b>{t('Registration ID')}{': '}</b>{invoice?.studentUrl}</p>}
                 </div>
                 <div className="d-flex flex-column gap-1">
-                    <b>{t('Invoiced To')}:</b>
-                    <p className="mb-0"><b>{t('Parent')}{': '}</b>{invoice?.familyName}</p>
+                    <b>{t('Bill to')}:</b>
+                    <p className="mb-0"><b>{t('Name')}{': '}</b>{invoice?.familyName}</p>
                     <p className="mb-0"><b>{t('Email')}{': '}</b>{invoice?.familyEmail}</p>
                     <p className="mb-0"><b>{t('Registration ID')}{': '}</b>{invoice?.familyUrl}</p>
+                    <p className="mb-0"><b>{t('Address')}{': '}</b>
+                    {invoice?.familyStreet && <p className="mb-0">{invoice?.familyStreet}</p>}
+                    {invoice?.familyCity && invoice.familyState && <p className="mb-0">{`${invoice?.familyCity}, ${invoice?.familyState}, ${invoice?.familyZip}`}</p>}
+                    {invoice?.familyCountry && <p className="mb-0">{invoice?.familyCountry}</p>}
+                    </p>
                 </div>
             </div>
             <div className="table-responsive mt-2">
