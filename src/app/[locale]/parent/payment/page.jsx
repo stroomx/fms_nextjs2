@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 
 import datef from '@/app/localization/date';
 import money from '@/app/localization/currency';
+import PrintContent from '@/app/components/PrintContent';
 
 import Skeleton from 'react-loading-skeleton';
 
@@ -114,7 +115,9 @@ export default function ParentPayment() {
                                             {transaction.paymentstatus?.toUpperCase() || "SUCCESS"}
                                         </td>
                                         <td className='text-center'>
-                                            <i className='mdi mdi-download cursor-pointer text-danger'></i>
+                                            <PrintContent icon='mdi-download' classes='text-danger' index={index}>
+                                                <PaymentReciept payment={transaction} />
+                                            </PrintContent>
                                         </td>
                                     </tr>
                                 )))}
@@ -127,4 +130,10 @@ export default function ParentPayment() {
             </div>
         </>
     );
+}
+
+const PaymentReciept = ({ payment }) => {
+    return <>
+        <p className="fs-1 text-danger">Printing Payment #{payment?.paymentid}</p>
+    </>
 }

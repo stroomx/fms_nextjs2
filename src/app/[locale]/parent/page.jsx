@@ -10,6 +10,7 @@ import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import Skeleton from 'react-loading-skeleton';
 import TextWithToggle from "@/app/components/TextWithToggle";
 import MerchantGateWay from "@/app/components/payment_gateways/MerchantGateWay";
+import PrintContent from "@/app/components/PrintContent";
 
 
 export default function ParentProfile() {
@@ -186,17 +187,17 @@ export default function ParentProfile() {
                     <button className="btn btn-outline-secondary py-1" title={t('Toggle Grid View')} onClick={() => setToggleGridView(!toggleGridView)}>
                         <i className="mdi mdi-grid fs-4 px-1"></i></button>
                     <button className="btn btn-1" onClick={enrollIntoClass}>
-                        <img src="assets/img/add-button.svg" alt="" />
+                        <i className="mdi mdi-plus"></i>
                         {t('Enroll In New Class')}
                     </button>
-                    <div className="input-wrap">
+                    {/* <div className="input-wrap">
                         <i className="fa-solid fa-magnifying-glass text-grey-200" />
                         <input
                             type="Search"
                             className="input-style1"
                             placeholder="Search Programs"
                         />
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>
@@ -317,7 +318,11 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                         )}
                         <div className="d-flex justify-content-between align-items-center mt-2 ">
                             <div className="print flexed text-blue" style={{ cursor: 'pointer' }}>
-                                {loading ? '' : <p className="font-semibold fs-6">{t('Invoice')}</p>}
+                                {loading ? '' :
+                                    <PrintContent icon='mdi-printer' text={t('Invoice')} index={index}>
+                                        <Invoice enrollment={schedule} />
+                                    </PrintContent>
+                                }
                             </div>
                             <button id={`modal-button-${schedule.id}`} className="btn-payment-summary" data-bs-toggle="modal" onMouseOver={hoverAction} onClick={() => { toggle('open') }}
                                 data-bs-target={`#payment-modal-${index}`}>{t('Payments')}{schedule.isActive}
@@ -519,7 +524,6 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
     }, [active]);
 
     return <div className="row">
-
         <div className="col-lg-4">
             <div className="card bg-primary text-white rounded-0 h-100">
                 <div className="card-body p-0 d-flex flex-column">
@@ -686,46 +690,48 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                         </div>
                     </div>
                     <div className="tab-pane small-scroll-region fade" id={`pills-recurring-payments-${index}`} role="tabpanel" aria-labelledby="pills-recurring-payments-tab">
-                        <div className="mb-3">
-                            <h6 className="font-bold text-grey">{t('Active Recurring Payment')}</h6>
-                        </div>
-                        <div className="d-flex gap-3 justify-content-center">
+                        <div className="container">
+                            <h6 className="font-bold text-grey my-3">{t('Active Recurring Payment')}</h6>
                             {recurringPayments?.map(((recurringpayment, index) => (
-                                !recurringpayment?.paymentrecurterminateddate && <div className="card rounded-0 d-flex gap-2 w-75" key={index}>
-                                    <div className="d-flex align-items-center justify-content-between gap-3">
-                                        <span className="font-bold ">{t('Start Date')}</span>
-                                        <span className="fs-5 ">{date(recurringpayment?.paymentrecurstartdate, false)}</span>
+                                !recurringpayment?.paymentrecurterminateddate && <div className="row shadow-sm" key={index}>
+                                    <div className="col-md-6 py-4 px-3">
+                                        <div className="d-flex align-items-center justify-content-between gap-3">
+                                            <span className="font-bold ">{t('Start Date')}</span>
+                                            <span className="fs-5 ">{date(recurringpayment?.paymentrecurstartdate, false)}</span>
+                                        </div>
+                                        <div className="d-flex align-items-center justify-content-between gap-3">
+                                            <span className="font-bold ">{t('Frequency')}</span>
+                                            <span className="fs-5 ">{recurringpayment?.paymentrecurfrequency.toUpperCase()}</span>
+                                        </div>
+                                        <div className="d-flex align-items-center justify-content-between gap-3">
+                                            <span className="font-bold ">{t('Total Cost')}</span>
+                                            <span className="fs-5 ">{money(recurringpayment?.paymentrecurtotal)}</span>
+                                        </div>
                                     </div>
-                                    <div className="d-flex align-items-center justify-content-between gap-3">
-                                        <span className="font-bold ">{t('Frequency')}</span>
-                                        <span className="fs-5 ">{recurringpayment?.paymentrecurfrequency.toUpperCase()}</span>
+                                    <div className="col-md-6 py-4 px-3">
+                                        <div className="d-flex align-items-center justify-content-between gap-3">
+                                            <span className="font-bold ">{t('Paid')}</span>
+                                            <span className="fs-5 ">{money(recurringpayment?.paymentrecurtotal - recurringpayment?.paymentrecurbalance)}</span>
+                                        </div>
+                                        <div className="d-flex align-items-center justify-content-between gap-3">
+                                            <span className="font-bold ">{t('Remaining')}</span>
+                                            <span className="fs-5 ">{money(recurringpayment?.paymentrecurbalance)}</span>
+                                        </div>
+                                        <div className="d-flex align-items-center justify-content-between gap-3">
+                                            <span className="font-bold ">{t('Next Payment')}</span>
+                                            <span className="fs-5 ">{date(recurringpayment.nextPaymentDateUTC, false)}</span>
+                                        </div>
                                     </div>
-                                    <div className="d-flex align-items-center justify-content-between gap-3">
-                                        <span className="font-bold ">{t('Total Cost')}</span>
-                                        <span className="fs-5 ">{money(recurringpayment?.paymentrecurtotal)}</span>
-                                    </div>
-                                    <div className="d-flex align-items-center justify-content-between gap-3">
-                                        <span className="font-bold ">{t('Paid')}</span>
-                                        <span className="fs-5 ">{money(recurringpayment?.paymentrecurtotal - recurringpayment?.paymentrecurbalance)}</span>
-                                    </div>
-                                    <div className="d-flex align-items-center justify-content-between gap-3">
-                                        <span className="font-bold ">{t('Remaining')}</span>
-                                        <span className="fs-5 ">{money(recurringpayment?.paymentrecurbalance)}</span>
-                                    </div>
-                                    <div className="d-flex align-items-center justify-content-between gap-3">
-                                        <span className="font-bold ">{t('Next Payment')}</span>
-                                        <span className="fs-5 ">{date(recurringpayment.nextPaymentDateUTC, false)}</span>
-                                    </div>
+
                                     {recurringpayment?.paymentrecurterminateddate &&
                                         <small className="text-end text-danger font-bold">
                                             {t('Terminated on:')} {date(recurringpayment?.paymentrecurterminateddate, false)}
                                         </small>}
                                 </div>
                             )))}
+
                         </div>
-                        <div className="mb-3">
-                            <h6 className="font-bold text-grey">{t('Terminated Recurring Payments')}</h6>
-                        </div>
+                        <h6 className="font-bold text-grey my-3">{t('Terminated Recurring Payments')}</h6>
                         <div className="table-responsive">
                             <table className="table table-hover table-bordered mb-0">
                                 <thead>
@@ -776,4 +782,119 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
         </div>
     </div>
 
+}
+
+const Invoice = ({ enrollment }) => {
+    const t = (t) => t
+    // {
+    //     "name": "Air, Land & Sea at ABC School",
+    //     "franchise": "Alison Vickers",
+    //     "franchiseId": "6209",
+    //     "id": "6211",
+    //     "description": "Step aboard to build some exciting ways to get from here to there. Take to the sky in our Bricks 4 KidzÂ® helicopter model or air show model; race across the beach in an ingenious land sail; zoom through the water on a jet ski. Kids will learn what makes each machine unique and how it moves, exploring concepts such as buoyancy, propulsion, lift and g-forces! What other ways will you invent to travel through air, land and sea? Whether youâ€™re a high-speed thrill-seeker or just curious about how things work, this unit offers something for everyone.",
+    //     "cost": "13.00",
+    //     "paidAmount": 203,
+    //     "enrollmentDate": "2024-10-30 10:58:15.87",
+    //     "studentName": "Ajmal Alavi",
+    //     "studentId": "1778066",
+    //     "scheduleenrollid": "166312",
+    //     "familyName": "FMS UI 2 Testing Parent",
+    //     "familyId": "1778065",
+    //     "schedulerecurringpayments": null,
+    //     "schedulerecurringpaymentsfrequency": null,
+    //     "schedulerecurringpaymentsamount": null,
+    //     "schedulerecurringpaymentsnum": null,
+    //     "isActive": false
+    // }
+
+    const [invoice, setInvoice] = useState({});
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const { data } = await axiosInstance.get(`/api/invoice.php?eid=${enrollment?.scheduleenrollid}&fid=${enrollment?.franchiseId}&stid=${enrollment?.studentId}&sid=${enrollment?.id}`);
+                setInvoice(data);
+                console.log(data);
+
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        fetchData();
+    }, []);
+    return <>
+        <div className="d-flex flex-column gap-2">
+            <div className="d-flex justify-content-between align-items-start">
+                <div className="d-flex flex-column gap-1">
+                    <b>{t('Invoice By')}:</b>
+                    <p className="mb-0">{invoice?.franchise}</p>
+                    <p className="mb-0">{invoice?.franchiseEmail}</p>
+                    <p className="mb-0">{invoice?.franchisePhone}</p>
+                    <p className="mb-0">{invoice?.franchiseStreet}</p>
+                    <p className="mb-0">{`${invoice?.franchiseCity}, ${invoice?.franchiseState}, ${invoice?.franchiseZip}`}</p>
+                    <p className="mb-0">{invoice?.franchiseCountry}</p>
+                </div>
+                <div className="fs-1">
+                    <img src="https://fms3.bricks4kidznow.com/images/headerlogo.png" />
+                </div>
+            </div>
+            <hr />
+            <div className="d-flex justify-content-between align-items-start">
+                <div className="d-flex flex-column gap-1">
+                    <p className="mb-0"><b>{t('Invoice Number')}{': '}</b>{enrollment?.scheduleenrollid}</p>
+                    {/* <b>{t('Student')}:</b> */}
+                    <p className="mb-0"><b>{t('Student')}{': '}</b>{invoice?.studentName}</p>
+                    {invoice?.studentUrl && <p className="mb-0"><b>{t('Registration ID')}{': '}</b>{invoice?.studentUrl}</p>}
+                </div>
+                <div className="d-flex flex-column gap-1">
+                    <b>{t('Invoiced To')}:</b>
+                    <p className="mb-0"><b>{t('Parent')}{': '}</b>{invoice?.familyName}</p>
+                    <p className="mb-0"><b>{t('Email')}{': '}</b>{invoice?.familyEmail}</p>
+                    <p className="mb-0"><b>{t('Registration ID')}{': '}</b>{invoice?.familyUrl}</p>
+                </div>
+            </div>
+            <div className="table-responsive mt-2">
+                <table className="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col" className="text-center">{t('Date')}</th>
+                            <th scope="col">{t('Description')}</th>
+                            <th scope="col" className="text-center">{t('Cost')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td className="text-center text-nowrap">{date('2024-12-22', false)}</td>
+                            <td>{`Enrolled ${invoice?.studentName} into ${enrollment?.name}`}</td>
+                            <td className="text-center">{money(invoice?.costdata?.proratedcost > 0 ? invoice?.costdata?.proratedcost : invoice?.costdata?.totalcost)}</td>
+                        </tr>
+                        <tr>
+                            <td colSpan={2} className="text-end" ><b>{t('Base Cost')}:</b></td>
+                            <td className="text-center">{money(invoice?.costdata?.basecost)}</td>
+                        </tr>
+                        {invoice?.addons?.map((addon, index) => (
+                            < tr key={index} >
+                                <td colSpan={2} className="text-end"><b>{addon?.name}</b></td>
+                                <td className="text-center">{money(addon?.cost)}</td>
+                            </tr>
+                        ))}
+                        {invoice?.tax && <tr>
+                            <td colSpan={2} className="text-end" ><b>{t(invoice?.taxlable)}:</b></td>
+                            <td className="text-center">{money(invoice?.costdata?.taxfee)}</td>
+                        </tr>}
+                        <tr>
+                            <td colSpan={2} className="text-end"><b>{t('Total Cost')}:</b></td>
+                            <td className="text-center">{money(invoice?.costdata?.totalcostadjusted)}</td>
+                        </tr>
+                        {invoice?.costdata?.totalcostadjusted - invoice?.paidAmount > 0 && <tr>
+                            <td colSpan={2} className="text-end"><b>{t('Balance')}:</b></td>
+                            <td className="text-center">{money(invoice?.costdata?.totalcostadjusted - invoice?.paidAmount)}</td>
+                        </tr>}
+                    </tbody>
+                </table>
+            </div>
+        </div >
+        {(invoice?.costdata?.totalcostadjusted - invoice?.paidAmount) <= 0 && <p className="fs-3">{t('Invoice Fully Paid')}</p>}
+    </>
 }

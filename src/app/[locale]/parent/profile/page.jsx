@@ -214,7 +214,7 @@ const StudentInfo = ({ students, loading = true }) => {
     };
 
     const updateStudent = (index) => {
-        
+
     }
 
     useEffect(() => {
@@ -523,7 +523,8 @@ const ActionButtons = () => {
             setLoading(true);
             const response = await axiosInstance.post('/api/deleteprofile.php', obj);
             console.log(response);
-            const close = document.getElementById('closeModal');
+            const close = document.getElementById('closeModalDelete');
+            console.log(close)
             close.click();
         } catch (err) {
             console.error('Error deleting profile:', err);
@@ -566,7 +567,7 @@ const ActionButtons = () => {
     };
 
     return <>
-        <div className="action-btns">
+        <div className="action-btns justify-content-center gap-5">
             <button className="btn btn-delete" data-bs-toggle="modal"
                 data-bs-target="#delete-profile">
                 <i className="mdi mdi-delete-outline"></i> {t('Remove My Profile')}
@@ -574,20 +575,20 @@ const ActionButtons = () => {
             <button className="btn btn-profile" onClick={downloadProfile}>
                 <i className="mdi mdi-download"></i> {t('Download Profile')}
             </button>
-            <button
+            {/* <button
                 className="btn btn-password"
                 data-bs-toggle="modal"
                 data-bs-target="#change-pass"
             >
                 <i className="mdi mdi-lock-outline"></i> {t('Change Password')}
-            </button>
+            </button> */}
         </div>
         <div className="modal fade" id="change-pass" aria-hidden="true">
             <div className="modal-dialog modal-dialog-centered modal-lg">
                 <div className="modal-content ">
                     <div className="modal-header d-flex justify-content-between border-0">
-                        <p className="font-bold text-blue fs-5" id="modalLabel">{t('Remove My Profile')}</p>
-                        <img id="closeModal" src="/assets/img/cancel-btn.svg" data-bs-dismiss="modal" aria-label="Close" />
+                        <p className="font-bold text-blue fs-5" id="modalLabel">{t('Change My Password')}</p>
+                        <img id="closeModalChangePass" src="/assets/img/cancel-btn.svg" data-bs-dismiss="modal" aria-label="Close" />
                     </div>
                     <div className="modal-body">
                         <div className='fs-5 mb-3'>{t('Please enter your email below to confirm the removal of your profile.')}</div>
@@ -619,7 +620,7 @@ const ActionButtons = () => {
                 <div className="modal-content ">
                     <div className="modal-header d-flex justify-content-between border-0">
                         <p className="font-bold text-blue fs-5" id="modalLabel">{t('Remove My Profile')}</p>
-                        <img id="closeModal" src="/assets/img/cancel-btn.svg" data-bs-dismiss="modal" aria-label="Close" />
+                        <img id="closeModalDelete" src="/assets/img/cancel-btn.svg" data-bs-dismiss="modal" aria-label="Close" />
                     </div>
                     <div className="modal-body">
                         <div className='fs-5 mb-3'>{t('Please enter your email below to confirm the removal of your profile.')}</div>

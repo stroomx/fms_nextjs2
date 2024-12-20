@@ -23,7 +23,6 @@ const StripePaymentForm = ({ paymentData, mode = 'paymentintent', cancelAction =
                             : `/api/_paymentintent.php`;
 
                     const { data } = await axiosInstance.post(url, paymentData);
-                    console.log(data);
 
                     if (data.status !== 'success') {
                         setError(data.error);
@@ -74,7 +73,6 @@ const PaymentForm = ({ mode, students, return_url_params = [], cancelAction = ()
     const [isProcessing, setIsProcessing] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
 
-    console.log(return_url_params, 'r url p')
 
     const getReturnUrl = () => {
         let url = `${window.location.origin}/parent?`;
@@ -83,7 +81,6 @@ const PaymentForm = ({ mode, students, return_url_params = [], cancelAction = ()
             url += `${ele['key']}=${ele['value']}&`;
         });
 
-        console.log(url, 'return url');
 
         return url;
     }
@@ -97,7 +94,6 @@ const PaymentForm = ({ mode, students, return_url_params = [], cancelAction = ()
 
         try {
             let result;
-            console.log(students);
 
             if (mode === 'setupintent') {
                 result = await stripe.confirmSetup({

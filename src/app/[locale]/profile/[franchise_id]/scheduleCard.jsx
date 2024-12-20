@@ -7,6 +7,8 @@ import LoginModal from '../../auth/login/modal';
 export default function ScheduleCard({ franchise_id, schedule, modal = false, buttonAction = () => { }, }) {
     const { t } = useTranslation();
 
+    console.log(schedule)
+
     const isLoggedIn = AuthService.isAuthenticated();
 
     return (
@@ -21,15 +23,17 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                             src={"https://s3-us-west-2.amazonaws.com/bricks4kidz-files/files/64/19/WeLearnWeBuildWePlay.jpg"}
                         />
                     </div>
-                    <div className="col-12 d-md-none">
-                        <p className="font-bold fs-5 pb-2">
+                    <div className="col-12 d-md-none pb-2">
+                        <p className="font-bold fs-5">
                             {schedule.name || 'N/A'}
                         </p>
+                        <span className='text-danger'>{schedule.program}</span>
                     </div>
                     <div className="col-12 col-md-6 px-md-3">
-                        <p className="font-bold fs-5 pb-1 d-none d-md-block">
+                        <p className="font-bold fs-5 d-none d-md-block">
                             {schedule.name || 'N/A'}
                         </p>
+                        <span className='text-danger pb-1 d-none d-md-block'>{schedule.program}</span>
                         <div className="d-flex flex-wrap justify-content-lg-start align-items-lg-center gap-1 flex-column flex-lg-row justify-content-center align-items-start">
                             <div className="d-flex gap-1 align-items-center font-semibold me-lg-2">
                                 <i className="mdi mdi-calendar-today fs-5"></i> {schedule.daterange || 'N/A'}
@@ -56,7 +60,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                         <div className="d-flex justify-content-between flex-wrap">
                             <div className="d-flex align-items-center gap-1">
                                 <i className='mdi mdi-face-man fs-5'></i>
-                                <p className="font-semibold text-orange">
+                                <p className="font-semibold text-danger">
                                     {`${schedule.minage || 0} - ${schedule.maxage || 'N/A'} years`}
                                 </p>
                             </div>
@@ -84,7 +88,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                         <p className="text-blue font-bold text-end fs-2">
                             {schedule.cost || 0}
                         </p>
-                        <p className="font-semibold text-orange">
+                        <p className="font-semibold text-danger">
                             {(schedule.availablespots || 0) + ' ' + t('Available Spots')}
                         </p>
                         {!modal &&

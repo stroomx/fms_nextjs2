@@ -8,7 +8,6 @@ export default function MerchantGateWay({ merchant_id, paymentData, cancelAction
     const fetchData = async () => {
         try {
             const { data } = await axiosInstance.get(`/api/merchant.php?id=${merchant_id}`);
-            console.log(data);
             setgateway(data);
         } catch (err) {
             console.log(err);
@@ -23,7 +22,6 @@ export default function MerchantGateWay({ merchant_id, paymentData, cancelAction
 
         switch (gateway?.merchant) {
             case 'stripe':
-                console.log('stripe!');
                 return <StripePaymentForm paymentData={paymentData} cancelAction={cancelAction} />;
             case 'izyico':
                 return <>{t('Izyico')}</>;

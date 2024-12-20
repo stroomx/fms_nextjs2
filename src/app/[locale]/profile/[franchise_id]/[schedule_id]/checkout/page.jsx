@@ -39,7 +39,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
         recurringPayment: false
     });
 
-    const [coupon, setCoupon] = useState({});
+    const [coupon, setCoupon] = useState(null);
     const [loading, setLoading] = useState(true);
     const [schedule, setSchedule] = useState({});
     const [students, setStudents] = useState([]);
@@ -53,17 +53,52 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
         try {
             const { data } = await axiosInstance.get(`api/validateCoupon.php?id=${couponCode}&sid=${schedule_id}`);
             setCoupon(data?.coupon);
+            setCouponCode('');
+            document.getElementById('coupon').value = '';
+            const paymentMethod = formData['paymentoption'];
+            setFormData({
+                ...formData,
+                paymentoption: ''
+            });
+            setTimeout(() => {
+                setFormData({
+                    ...formData,
+                    paymentoption: paymentMethod
+                });
+            }, 1);
+            alert({ type: "success", message: data?.message });
         } catch (err) {
             const { response } = err;
-            console.log(response);
+            alert({ type: "error", message: response?.data?.message });
         }
     };
+
+    const clearCoupon = () => {
+        setCoupon(null);
+        const paymentMethod = formData['paymentoption'];
+        setFormData({
+            ...formData,
+            paymentoption: ''
+        });
+        setTimeout(() => {
+            setFormData({
+                ...formData,
+                paymentoption: paymentMethod
+            });
+        }, 1);
+        alert({ type: "success", message: t('Coupon has been removed.') })
+    }
+
+    const backToFranchise = () => {
+        router.push(`/profile/${franchise_id}`);
+    }
 
     const enroll = async () => {
         try {
             const obj = {
                 ...formData,
-                students: studentIds
+                students: studentIds,
+                paymentoption: totalPayable == 0 ? 'cash' : formData['paymentoption']
             };
             const { data } = await axiosInstance.post(`api/checkout.php`, obj);
             alert({ type: "success", message: data?.message });
@@ -83,7 +118,6 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
     };
 
     const selectStudents = (students, studentList = []) => {
-        console.log(studentList);
         const params = new URLSearchParams(searchParams);
         params.set('id', Object.keys(students).join(','));
         studentIds = Object.keys(students);
@@ -102,6 +136,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
 
     const calculatePayment = (cost = schedule.cost?.totalcost) => {
         let newTotalCost = cost * studentIds.length;
+        let newPaymentCardSettings = { ...paymentCardSettings }
         if (!newTotalCost) {
             return;
         }
@@ -109,36 +144,64 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
         if (formData?.minimumDeposit) {
             // Set the payment to minimum cost.
             // Show the remaining amount to be paid
-            setPaymentCardSettings({ ...paymentCardSettings, useMinimum: true, minimuCost: schedule?.scheduleminimumdeposit });
+            //TODO Adjust for minimum to be paid even with coupons
+            newPaymentCardSettings = { ...newPaymentCardSettings, useMinimum: true, minimuCost: schedule?.scheduleminimumdeposit };
         } else {
-            setPaymentCardSettings({ ...paymentCardSettings, useMinimum: false });
+            newPaymentCardSettings = { ...newPaymentCardSettings, useMinimum: false };
         }
 
-        if (coupon && formData?.paymentoption !== 'recurringPayments') {
+        if ((coupon && coupon != null) && formData?.paymentoption !== 'recurringPayments') {
             // Adjust price for coupon where paymentoption is not recurring payments.
-            const discount = 0;
-            setPaymentCardSettings({ ...paymentCardSettings, useCoupon: true, couponDiscount: discount });
+            const discount = calculateCouponDiscount(newTotalCost);
+            newPaymentCardSettings = { ...newPaymentCardSettings, useCoupon: true, couponDiscount: discount };
             newTotalCost -= discount;
         } else {
-            setPaymentCardSettings({ ...paymentCardSettings, useCoupon: false, couponDiscount: 0 });
+            newPaymentCardSettings = { ...newPaymentCardSettings, useCoupon: false, couponDiscount: 0 };
         }
 
         if (formData?.useCredit && (formData?.paymentoption !== 'recurringPayments' || !schedule.schedulerecurringpaymentsautocharge)) {
-            // adjust for credit
+            // Adjust for credit
+            //TODO Make sure that the credit and the total amount remaining logic is sound
             const credittouse = schedule.creditAvailable;
-            setPaymentCardSettings({ ...paymentCardSettings, useCredit: true, credit: credittouse });
+            newPaymentCardSettings = { ...newPaymentCardSettings, useCredit: true, credit: credittouse };
             newTotalCost -= credittouse;
         } else {
-            setPaymentCardSettings({ ...paymentCardSettings, useCredit: false, credit: 0 });
+            newPaymentCardSettings = { ...newPaymentCardSettings, useCredit: false, credit: 0 };
         }
 
         if (formData?.paymentoption == 'recurringPayments') {
             newTotalCost = schedule?.schedulerecurringpaymentsamount * studentIds.length;
-            setPaymentCardSettings({ ...paymentCardSettings, recurringPayment: true, useMinimum: false });
-
+            newPaymentCardSettings = { ...newPaymentCardSettings, recurringPayment: true, useMinimum: false };
         }
 
+        setPaymentCardSettings(newPaymentCardSettings);
         setTotalCost(newTotalCost);
+    }
+
+    const calculateCouponDiscount = (price) => {
+        //apply discounts to paymentdue from coupone
+        let costAfterCoupon = price;
+
+        if (coupon['couponfree'])
+            costAfterCoupon = 0;
+        else if (coupon['couponpercentoff'])
+            costAfterCoupon *= (1.0 - coupon['couponpercentoff']); //TODO Set FloatVal for percent
+        else if (coupon['couponamountoff']) {
+            if (coupon['couponamountoff'] > costAfterCoupon)
+                costAfterCoupon = 0;
+            else
+                costAfterCoupon = costAfterCoupon - coupon['couponamountoff'];
+        }
+        if (costAfterCoupon < 0)
+            costAfterCoupon = 0;
+
+        if (price != costAfterCoupon) {
+            const discount = price - costAfterCoupon;
+            return discount;
+        } else {
+            return 0;
+        }
+
     }
 
     const toggleStudentSelection = () => {
@@ -162,7 +225,6 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
             calculatePayment(data?.schedule?.cost?.totalCost);
         } catch (err) {
             const { response } = err;
-            console.log(response);
             router.push(`/profile/${franchise_id}`);
         } finally {
             setLoading(false);
@@ -179,7 +241,6 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
         if (!formData?.paymentoption)
             return;
 
-        console.log(formData?.paymentoption);
         switch (formData?.paymentoption) {
             case "minimumDeposit":
                 total = schedule?.scheduleminimumdeposit * studentIds.length;
@@ -204,6 +265,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
         <section>
             <div className="padding-top mb-5">
                 <div className="container mt-4">
+                    <div className="text-primary fw-bold small cursor-pointer mb-1" onClick={backToFranchise}> <i className="mdi mdi-arrow-left fw-bold"></i> {t('Back to franchise profile')}</div>
                     <div className="row book-party">
                         <div className="col-lg-7">
                             <div className="mb-3">
@@ -281,50 +343,53 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                 <h6 className="font-bold text-grey">{t('Payment Options')}</h6>
                             </div>
                             <div className="radio-group">
-
-                                {true ? <div className="form-check form-check-inline">
+                                {schedule.scheduleallowonlinepayment != 0 ? <div className="form-check form-check-inline">
                                     <input
                                         className="form-check-input"
                                         type="radio"
                                         name="paymentoption"
                                         id="online"
                                         value="online"
+                                        checked={formData?.paymentoption == "online"}
                                         onChange={handleChange}
                                     />
                                     <label className="form-check-label" htmlFor="online">{t('Pay In Full')}</label>
                                 </div> : ''}
 
-                                {schedule.scheduleuseminimumdeposit ? <div className="form-check form-check-inline">
+                                {schedule.scheduleuseminimumdeposit != 0 ? <div className="form-check form-check-inline">
                                     <input
                                         className="form-check-input"
                                         type="radio"
                                         name="paymentoption"
                                         id="minimumDeposit"
                                         value="minimumDeposit"
+                                        checked={formData?.paymentoption == "minimumDeposit"}
                                         onChange={handleChange}
                                     />
                                     <label className="form-check-label" htmlFor="minimumDeposit">{`${t('Pay')} ${money(schedule.scheduleminimumdeposit * studentIds.length)} Now`}</label>
                                 </div> : ''}
 
-                                {true ? <div className="form-check form-check-inline">
+                                {false ? <div className="form-check form-check-inline">
                                     <input
                                         className="form-check-input"
                                         type="radio"
                                         name="paymentoption"
                                         id="cash"
                                         value="cash"
+                                        checked={formData?.paymentoption == "cash"}
                                         onChange={handleChange}
                                     />
                                     <label className="form-check-label" htmlFor="cash">{t('Cash / Cheque')}</label>
                                 </div> : ''}
 
-                                {schedule.schedulerecurringpayments !== 0 ? <div className="form-check form-check-inline">
+                                {(schedule.scheduleallowonlinepayment != 0 && schedule.schedulerecurringpayments != 0) ? <div className="form-check form-check-inline">
                                     <input
                                         className="form-check-input"
                                         type="radio"
                                         name="paymentoption"
                                         id="recurringPayments"
                                         value="recurringPayments"
+                                        checked={formData?.paymentoption == "recurringPayments"}
                                         onChange={handleChange}
                                     />
                                     <label className="form-check-label" htmlFor="recurringPayments"> {`${schedule.schedulerecurringpaymentsnum} ${t(schedule.schedulerecurringpaymentsfrequency)} ${t('Payments')} @ ${money(schedule.schedulerecurringpaymentsamount * studentIds.length)}`}</label>
@@ -371,8 +436,8 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                         <div className="col-lg-5">
                             <div className="coupon mb-4">
                                 {formData?.paymentoption !== 'recurringPayments' ? <>
-                                    <input type="text" className="input-style1" placeholder="Have coupon code ? Enter here" onChange={(e) => setCouponCode(e.target.value)} />
-                                    <button className="apply-btn" onClick={validateCoupon}>{t('Apply')}</button>
+                                    <input type="text" id="coupon" maxLength={16} className="input-style1" placeholder="Have coupon code ? Enter here" onChange={(e) => setCouponCode(e.target.value)} />
+                                    <button className="apply-btn" disabled={couponCode == ''} onClick={validateCoupon}>{t('Apply')}</button>
                                 </> : ''}
                             </div>
                             <div className="card cart-card">
@@ -407,8 +472,12 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                 })}
                                 {(paymentCardSettings.useCoupon) ? <div className="middle-section pt-3 pb-3">
                                     <div className="d-flex justify-content-between align-items-center">
-                                        <div >
-                                            <p className="text-grey-200  font-semibold">{t('Coupon Applied')}</p>
+                                        <div>
+                                            <p className="text-grey-200  font-semibold">{`${coupon?.couponname}`}</p>
+                                            <div className="d-flex align-items-end gap-1">
+                                                <p className="text-grey-200  font-semibold">{t('Coupon Applied')}</p>
+                                                <p className="small text-danger cursor-pointer" onClick={clearCoupon}>{t('remove')}</p>
+                                            </div>
                                         </div>
                                         <div>
                                             <p className="text-grey-200  font-semibold"> <span className=" text-green font-bold">- {money(paymentCardSettings.couponDiscount)}</span></p>
@@ -438,8 +507,8 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                             </div>
                             <div className="d-flex gap-2 flex-column">
                                 {formData?.paymentoption !== 'cash' ? <p className="fs-4 font-semi-bold text-black">{`${t('Due Now: ')} ${money(totalPayable) || 0}`}</p> : ''}
-                                {(formData['paymentoption'] && formData['paymentoption'] != 'cash') ? <MerchantGateWay merchant_id={franchise_id} paymentData={{ ...formData, students: studentIds }} /> : ''}
-                                {(formData['paymentoption'] == 'cash') ? <button className="btn btn-outline-success btn-lg w-100" onClick={enroll}>{t('Enroll Now')}</button> : ""}
+                                {(formData['paymentoption'] && formData['paymentoption'] != 'cash') ? <MerchantGateWay key={formData['paymentoption']} merchant_id={franchise_id} paymentData={{ ...formData, students: studentIds, coupon: coupon?.couponcode }} cancelAction={() => setFormData({ ...formData, paymentoption: '' })} /> : ''}
+                                {(formData['paymentoption'] == 'cash' || schedule.cost?.totalcost == 0) ? <button className="btn btn-outline-success btn-lg w-100" onClick={enroll}>{t('Enroll Now')}</button> : ""}
                             </div>
                         </div>
                     </div>
@@ -452,6 +521,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                     <div className="modal-header border-0 d-flex justify-content-between align-items-center pb-0">
                         <p className="font-bold text-blue fs-5" id="modalLabel">{t('Select students to enroll.')}</p>
                         <i className={`mdi mdi-close-circle text-red fs-5 cursor-pointer ${studentIds?.length > 0 ? '' : ' d-none'}`} id="selectStudentClose" data-bs-dismiss="modal" aria-label="Close"></i>
+                        <i className={`mdi mdi-close-circle text-red fs-5 cursor-pointer ${studentIds?.length > 0 ? ' d-none' : ''}`} data-bs-dismiss="modal" aria-label="Close" onClick={backToFranchise}></i>
                     </div>
                     <div className="modal-body">
                         <StudentSelection key={selectingStudents ? 'SS' : 'NSS'} passedStudents={studentIds} studentDetails={studentDetails} schedule_id={schedule_id} buttonAction={selectStudents} />
