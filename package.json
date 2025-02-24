@@ -12,6 +12,7 @@
     "@nextui-org/date-picker": "^2.3.7",
     "@stripe/react-stripe-js": "^2.9.0",
     "@stripe/stripe-js": "^5.0.0",
+    "bootstrap": "^5.3.3",
     "i18next": "^23.15.2",
     "i18next-resources-to-backend": "^1.2.1",
     "js-cookie": "^3.0.5",
