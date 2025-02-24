@@ -1,8 +1,9 @@
 import axiosInstance from "@/axios";
 import { useEffect, useState } from "react"
 import StripePaymentForm from "./StripePaymentForm";
+import AuthorizePaymentForm from "./AuthorizePaymentForm";
 
-export default function MerchantGateWay({ merchant_id, paymentData, cancelAction = () => { } }) {
+export default function MerchantGateWay({ merchant_id, paymentData, cancelAction = () => { }, submitAction = () => { } }) {
 
     const [gateway, setgateway] = useState('');
     const fetchData = async () => {
@@ -27,9 +28,10 @@ export default function MerchantGateWay({ merchant_id, paymentData, cancelAction
                 return <>{t('Izyico')}</>;
             case 'paypal':
                 return <>{t('Paypal!')}</>;
-            case 'authorize':
-                return <>{t('Authorize!')}</>;
+            case 'authorizenet':
+                return <AuthorizePaymentForm paymentData={paymentData} authData={{ apiLoginID: gateway?.apiKey, clientKey: gateway?.publicKey }} saveNonce={submitAction} />;
             default:
+                console.log(gateway?.merchant)
                 return <>{t('Merchant not setup, please contact your system admin.')}</>;
         }
     }
@@ -39,11 +41,6 @@ export default function MerchantGateWay({ merchant_id, paymentData, cancelAction
     }, []);
 
     return <>
-        {/* {!gateway && <div className="d-flex justify-content-center">
-            <div className="spinner-border" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </div>
-        </div>} */}
         <div>{showMerchant()}</div>
     </>
 }

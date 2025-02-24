@@ -19,6 +19,8 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
     const handleChange = (index, field, value) => {
         const updatedData = [...formData];
         updatedData[index][field] = value;
+        updatedData[index]['edited'] = true;
+
         setFormData(updatedData);
     };
 
@@ -39,6 +41,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
             studentspecialinstruction: 'None',
             selected: false,
             enrolled: false,
+            edited: true,
         }]);
         setStudents([...students, {
             studentid: 0,
@@ -55,7 +58,8 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
             studentphotorelease: 1,
             studentspecialinstruction: 'None',
             selected: false,
-            enrolled: false
+            enrolled: false,
+            edited: true,
         }]);
     };
 
@@ -68,17 +72,24 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
     }
 
     const onSubmit = async () => {
-        console.log(formData);
+        let studentsToSubmit = [];
 
         formData.forEach((ele) => {
             ele.studentname = `${ele.studentfirstname} ${ele.studentlastname}`;
+            if (ele.edited == true)
+                studentsToSubmit.push(ele);
         });
 
         try {
-            const result = await axiosInstance.post("api/students.php", { 'students': formData });
-            console.log(result);
+            if (studentsToSubmit <= 0)
+                return;
+
+            const { data } = await axiosInstance.post("api/students.php", { 'students': studentsToSubmit });
+            
             fetchData();
-            // buttonAction();
+            alert({ type: "success", message: data });
+            
+            setUpdate(false);
         } catch (err) {
             console.log(err);
         }
@@ -142,11 +153,29 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
         }
     }
 
+    const getBorder = (index) => {
+        const total = students?.length - 1;
+        let borderClass = '';
+
+        switch (index) {
+            case 0:
+                borderClass = 'border border-bottom-0 rounded-top ';
+                break;
+            case total:
+                borderClass = 'border rounded-bottom ';
+                break;
+            default:
+                borderClass = 'border border-bottom-0 ';
+        }
+
+        return borderClass;
+    }
+
     return <>
         <div className="accordion" id="studentsAccordion" onChange={showUpdateButton}>
             {students?.map((student, index) =>
-                <div className="accordion-item" key={student.studentid}>
-                    <div className="accordion-header align-items-center d-flex">
+                <div className="accordion-item border-0" key={student.studentid}>
+                    <div className={`accordion-header align-items-center d-flex ${getBorder(index)}`}>
                         <div className="input-checkbox ms-3 position-absolute" style={{ "zIndex": 4, "width": "1rem" }}>
                             <input id={`checkbox${index}`} className="d-none" type="checkbox" value={1} onChange={(e) => handleChange(index, 'selected', e.target.checked ? 1 : 0)} checked={(student.selected && !student.enrolled) ? true : false} disabled={student.enrolled} />
                             {/* <label htmlFor={`checkbox${index}`}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg></label> */}

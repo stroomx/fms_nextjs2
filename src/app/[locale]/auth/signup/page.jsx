@@ -5,6 +5,7 @@ import axiosInstance from '@/axios';
 import axios from 'axios';
 import alert from '@/app/components/SweetAlerts';
 import AuthService from '@/auth.service';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -33,6 +34,8 @@ export default function SignUp() {
         studentparentpickup: '',
         studentspecialinstruction: 'None',
     });
+
+    const router = useRouter();
 
     const [step, setStep] = useState(1); // To track the current step in the form
     const [loading, setLoading] = useState(false);

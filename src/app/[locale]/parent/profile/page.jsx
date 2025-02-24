@@ -407,9 +407,9 @@ const StudentInfo = ({ students, loading = true }) => {
                                                     </div>
                                                 </form>
                                             </div>
-                                            <div class="modal-footer text-center">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary">Save changes</button>
+                                            <div className="modal-footer text-center">
+                                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" className="btn btn-primary">Save changes</button>
                                             </div>
                                         </div>
                                     </div>

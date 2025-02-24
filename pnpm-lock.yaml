@@ -35,6 +35,9 @@ importers:
       react:
         specifier: ^18
         version: 18.3.1
+      react-acceptjs:
+        specifier: ^0.5.0
+        version: 0.5.0(react@18.3.1)
       react-dom:
         specifier: ^18
         version: 18.3.1(react@18.3.1)
@@ -1041,6 +1044,12 @@ packages:
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  react-acceptjs@0.5.0:
+    resolution: {integrity: sha512-QWh0JBCrQ5Cy82UXCAhMG2lcbflnvAqAx/NCzDyye/d0XZkwZTvZpZsynuoMZ/MQCX1OM9LN9VjlDXLVAJTE6Q==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: 16.8.0 - 18
 
   react-dom@18.3.1:
     resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
@@ -2356,6 +2365,10 @@ snapshots:
       react-is: 16.13.1
 
   queue-microtask@1.2.3: {}
+
+  react-acceptjs@0.5.0(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   react-dom@18.3.1(react@18.3.1):
     dependencies:

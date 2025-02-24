@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import StudentSelection from "../../studentSelect";
 import money from "@/app/localization/currency";
 import MerchantGateWay from "@/app/components/payment_gateways/MerchantGateWay";
+import Policy from "@/app/components/Policy";
 
 
 export default function ScheduleCheckout({ params: { franchise_id, schedule_id } }) {
@@ -48,6 +49,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
     const [totalPayable, setTotalPayable] = useState(0);
     const [studentDetails, setStudentDetails] = useState([]);
     const [selectingStudents, setSelectingStudents] = useState(true);
+    const [activateEnrollButton, setActivateEnrollButton] = useState(false);
 
     const validateCoupon = async () => {
         try {
@@ -101,13 +103,25 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                 paymentoption: totalPayable == 0 ? 'cash' : formData['paymentoption']
             };
             const { data } = await axiosInstance.post(`api/checkout.php`, obj);
+            console.log(data);
             alert({ type: "success", message: data?.message });
             router.push(`/profile/${franchise_id}`);
         } catch (err) {
-            const { response } = err;
-            alert({ type: "error", message: response?.data?.message });
+            alert({ type: "error", message: err?.response?.message });
         }
     }
+
+    const tokenEnroll = (token) => {
+        console.log(token);
+        setFormData({ ...formData, token: token });
+    }
+
+    useEffect(() => {
+        if (!formData?.token)
+            return;
+        enroll();
+    }, [formData]);
+
 
     const handleChange = (e) => {
         const { name, type, value, checked } = e.target;
@@ -116,6 +130,10 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
 
         setFormData({ ...formData, [name]: newValue });
     };
+
+    const handlePolicies = (count) => {
+        setFormData({ ...formData, policies: count });
+    }
 
     const selectStudents = (students, studentList = []) => {
         const params = new URLSearchParams(searchParams);
@@ -206,6 +224,17 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
 
     const toggleStudentSelection = () => {
         setSelectingStudents(true);
+    }
+
+    const showPaymentGateway = () => {
+        if (!formData['paymentoption'])
+            return false;
+        if (formData['paymentoption'] == 'cash')
+            return false;
+        if (schedule?.policies && formData['policies'] !== schedule?.policies?.length)
+            return false;
+
+        return true;
     }
 
     const fetchData = async () => {
@@ -417,20 +446,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                             <div className="mb-1">
                                 <h6 className="font-bold text-grey">{t('Our Policies')}</h6>
                             </div>
-                            <div className="check-group">
-                                <div className="form-check">
-                                    <input className="form-check-input" type="checkbox" defaultValue id="flexCheckDefault" />
-                                    <label className="form-check-label" htmlFor="flexCheckDefault">
-                                        {t('I accept Refund')} <a href="#" className="text-13 text-blue">{t('Policy')}</a>
-                                    </label>
-                                </div>
-                                <div className="form-check">
-                                    <input className="form-check-input" type="checkbox" defaultValue id="flexCheckChecked" />
-                                    <label className="form-check-label" htmlFor="flexCheckChecked">
-                                        {t('I accept Cancellation')} <a href="#" className="text-13 text-blue">{t('Policy')}</a>
-                                    </label>
-                                </div>
-                            </div>
+                            <Policy policies={schedule?.policies} action={handlePolicies}></Policy>
                         </div>
                         <div className="col-lg-5">
                             <div className="coupon mb-4">
@@ -505,9 +521,9 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                 </div>
                             </div>
                             <div className="d-flex gap-2 flex-column">
-                                {formData?.paymentoption !== 'cash' ? <p className="fs-4 font-semi-bold text-black">{`${t('Due Now: ')} ${money(totalPayable) || 0}`}</p> : ''}
-                                {(formData['paymentoption'] && formData['paymentoption'] != 'cash') ? <MerchantGateWay key={formData['paymentoption']} merchant_id={franchise_id} paymentData={{ ...formData, students: studentIds, coupon: coupon?.couponcode }} cancelAction={() => setFormData({ ...formData, paymentoption: '' })} /> : ''}
-                                {(formData['paymentoption'] == 'cash' || schedule.cost?.totalcost == 0) ? <button className="btn btn-outline-success btn-lg w-100" onClick={enroll}>{t('Enroll Now')}</button> : ""}
+                                {showPaymentGateway() ? <p className="fs-4 font-semi-bold text-black">{`${t('Due Now: ')} ${money(totalPayable) || 0}`}</p> : ''}
+                                {showPaymentGateway() ? <MerchantGateWay key={formData['paymentoption']} merchant_id={franchise_id} paymentData={{ ...formData, students: studentIds, coupon: coupon?.couponcode }} cancelAction={() => setFormData({ ...formData, paymentoption: '' })} submitAction={(token) => { tokenEnroll(token) }} /> : ''}
+                                {(formData['paymentoption'] == 'cash' || schedule.cost?.totalcost == 0 || activateEnrollButton) ? <button className="btn btn-outline-success btn-lg w-100" onClick={enroll}>{t('Enroll Now')}</button> : ""}
                             </div>
                         </div>
                     </div>

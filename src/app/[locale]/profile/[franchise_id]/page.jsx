@@ -226,21 +226,23 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                         <div className="text-md-start text-center fs-5">{franchise?.phone}</div>
                                     </div>
                                     <div className="col-md col-sm-12 d-flex justify-content-center flex-column align-items-md-end align-items-center">
-                                        <div className="row details d-block py-4">
-                                            <button className='btn btn-sm btn-outline-primary w-25 me-3' style={{ minWidth: 'fit-content' }}>
-                                                <img
-                                                    className='me-2'
-                                                    alt=""
-                                                    src="/assets/img/call-icon.svg"
-                                                />
+                                        <div className="d-flex gap-1 details pt-4 pb-1">
+                                            <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1'>
+                                                <i className="mdi mdi-email-outline"></i>
                                                 {t('Email Us')}
                                             </button>
-                                            <a href={franchise?.website ? `https://${franchise['website']}` : "#"} target="_blank" className='btn btn-sm btn-outline-primary w-25' style={{ minWidth: 'fit-content' }}>
-                                                <img
-                                                    className='me-2'
-                                                    alt=""
-                                                    src="/assets/img/call-icon.svg"
-                                                />
+                                            <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1'>
+                                                <i className="mdi mdi-cake"></i>
+                                                {t('Birthday Party Request')}
+                                            </button>
+                                        </div>
+                                        <div className="d-flex gap-1 details pb-4">
+                                            <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1'>
+                                                <i className="mdi mdi-human-male-board"></i>
+                                                {t('Teacher Application')}
+                                            </button>
+                                            <a href={franchise?.website ? `https://${franchise['website']}` : "#"} target="_blank" className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1'>
+                                                <i className="mdi mdi-web"></i>
                                                 {t('Visit Our Website')}
                                             </a>
                                         </div>

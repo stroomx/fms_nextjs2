@@ -89,7 +89,7 @@ export default function ParentProfile() {
                 }
             });
 
-            console.log(franchises);
+            // console.log(franchises);
             return [...Object.values(franchises)];
         }
 
@@ -102,7 +102,7 @@ export default function ParentProfile() {
                         ele['isActive'] = false;
                         return ele;
                     })
-                    console.log(unactive)
+                    // console.log(unactive)
                     setSchedules(unactive);
                     filterSchedules(unactive[0]?.franchiseId, unactive);
                     setFranchises(getFranchises(unactive));
@@ -121,8 +121,7 @@ export default function ParentProfile() {
             const status = searchParams.get('redirect_status');
             const paymentType = searchParams.get('enrollment');
 
-            // if (!studentIds)
-            //     return;
+            replace(pathname); // Removes the params from the URL
 
             switch (paymentType) {
                 case 'enrollment':
@@ -132,10 +131,10 @@ export default function ParentProfile() {
                         alert({ type: "success", message: t(`${studentIds?.length} student(s) successfully enrolled.`) })
                     break;
                 default:
-                    console.log('pp')
                     const enrollmentId = searchParams.get('eid');
                     const amount = searchParams.get('amount');
-                    handlePayment(enrollmentId, amount, status, schedules);
+                    if (amount && enrollmentId)
+                        handlePayment(enrollmentId, amount, status, schedules);
             }
         }
 
@@ -143,16 +142,18 @@ export default function ParentProfile() {
             // Find the schedule in schedules
             // Change the filter to the specific franchise
             // Open the modal for the schedule
+            // Set the active state for the schedule
             // Show success or failure message
 
             const schedule = schedules.filter((ele) => ele.scheduleenrollid == enrollmentId)[0];
-            console.log(enrollmentId)
-            console.log(schedule, 'scheu')
             setSelectedFranchise(schedule['franchiseId']);
-            const button = document.getElementById(`modal-button-${schedule?.scheduleId}`);
-            button.click();
-            console.log(schedule, 'scheu')
 
+            const button = document.getElementById(`modal-button-${schedule?.scheduleenrollid}`);
+            button.click();
+
+            // This can be handled as a switch that takes the status as a variable and then redirects to the checkout page again if the payment has failed.
+            // Create a .php file to take the payment intent id along with the franchise id and send back the metadata for the population of the checkout page.
+            // This can also be redirected to a middle man page, which takes the call back and determines where to redirect and what status to trigger.
             alert({ type: status == 'failed' ? "error" : "success", message: t(`Payment of ${amount} ${status == 'failed' ? "has failed." : "successfully made."}.`) });
         }
 
@@ -186,7 +187,7 @@ export default function ParentProfile() {
             <div className="col-lg-6">
                 <div className="heading end">
                     <button className="btn btn-outline-secondary py-1" title={t('Toggle Grid View')} onClick={() => setToggleGridView(!toggleGridView)}>
-                        <i className="mdi mdi-grid fs-4 px-1"></i></button>
+                        <i className={`mdi ${toggleGridView ? "mdi-grid" : "mdi-list-box-outline"} fs-4 px-1`}></i></button>
                     <button className="btn btn-1" onClick={enrollIntoClass}>
                         <i className="mdi mdi-plus"></i>
                         {t('Enroll In New Class')}
@@ -325,7 +326,7 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                                     </PrintContent>
                                 }
                             </div>
-                            <button id={`modal-button-${schedule.id}`} className="btn-payment-summary" data-bs-toggle="modal" onMouseOver={hoverAction} onClick={() => { toggle('open') }}
+                            <button id={`modal-button-${schedule.scheduleenrollid}`} className="btn-payment-summary" data-bs-toggle="modal" onMouseOver={hoverAction} onClick={() => { toggle('open'); hoverAction() }}
                                 data-bs-target={`#payment-modal-${index}`}>{t('Payments')}{schedule.isActive}
                             </button>
                         </div>
@@ -412,7 +413,7 @@ const ParentScheduleCardGrid = ({ schedule, index, loading, hoverAction = () => 
                             }
                         </div>
                         <button className="btn-payment-summary" data-bs-toggle="modal" onMouseOver={hoverAction}
-                            data-bs-target={`#payment-modal-${index}`} onClick={() => { toggle('open') }}>{t('Payments')}
+                            data-bs-target={`#payment-modal-${index}`} onClick={() => { toggle('open'); hoverAction() }}>{t('Payments')}
                         </button>
                     </div>
                 </div>
@@ -470,10 +471,35 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
         setFormData({ ...formData, [name]: newValue });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         console.log(formData);
+        try {
+            const obj = {
+                ...formData,
+                // students: studentIds,
+                paymentoption: 'online' //TODO Allow for other paymentoptions (Will come in factor when doing franchise admin side.)
+            };
+            const { data } = await axiosInstance.post(`api/newPayment.php`, obj);
+            alert({ type: "success", message: data?.message });
+            cancelPayment(); // Used to switch off the payment screen and go back to regular screen.
+            fetchData(); // Used to refetch the data from the backend and show the new payment on screen.
+        } catch (err) {
+            const { response } = err;
+            console.log(err);
+            alert({ type: "error", message: response?.data?.message });
+        }
     }
+
+    const tokenEnroll = (token) => {
+        console.log(token);
+        setFormData({ ...formData, token: token });
+    }
+
+    useEffect(() => {
+        if (!formData?.token)
+            return;
+        enroll();
+    }, [formData]);
 
     const cancelPayment = () => {
         setMerchantPaymentActive(false);
@@ -503,6 +529,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
             setNotes(data?.notes);
             setPayments(data?.payments);
             setRecurringPayments(data?.recurringpayments);
+
 
             // setDetails();
         } catch (err) {
@@ -604,7 +631,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                         { key: 'eid', value: schedule.scheduleenrollid },
                         { key: 'amount', value: formData?.amount },
                     ]
-                }} cancelAction={cancelPayment} />
+                }} cancelAction={cancelPayment} submitAction={(token) => { tokenEnroll(token) }} />
             </> : ''}
             {!showPayment() && <>
                 <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
@@ -792,27 +819,6 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
 
 const Invoice = ({ enrollment }) => {
     const t = (t) => t
-    // {
-    //     "name": "Air, Land & Sea at ABC School",
-    //     "franchise": "Alison Vickers",
-    //     "franchiseId": "6209",
-    //     "id": "6211",
-    //     "description": "Step aboard to build some exciting ways to get from here to there. Take to the sky in our Bricks 4 KidzÂ® helicopter model or air show model; race across the beach in an ingenious land sail; zoom through the water on a jet ski. Kids will learn what makes each machine unique and how it moves, exploring concepts such as buoyancy, propulsion, lift and g-forces! What other ways will you invent to travel through air, land and sea? Whether youâ€™re a high-speed thrill-seeker or just curious about how things work, this unit offers something for everyone.",
-    //     "cost": "13.00",
-    //     "paidAmount": 203,
-    //     "enrollmentDate": "2024-10-30 10:58:15.87",
-    //     "studentName": "Ajmal Alavi",
-    //     "studentId": "1778066",
-    //     "scheduleenrollid": "166312",
-    //     "familyName": "FMS UI 2 Testing Parent",
-    //     "familyId": "1778065",
-    //     "schedulerecurringpayments": null,
-    //     "schedulerecurringpaymentsfrequency": null,
-    //     "schedulerecurringpaymentsamount": null,
-    //     "schedulerecurringpaymentsnum": null,
-    //     "isActive": false
-    // }
-
     const [invoice, setInvoice] = useState({});
 
     useEffect(() => {
@@ -820,15 +826,14 @@ const Invoice = ({ enrollment }) => {
             try {
                 const { data } = await axiosInstance.get(`/api/invoice.php?eid=${enrollment?.scheduleenrollid}&fid=${enrollment?.franchiseId}&stid=${enrollment?.studentId}&sid=${enrollment?.id}`);
                 setInvoice(data);
-                console.log(data);
-
             } catch (err) {
                 console.log(err);
             }
         }
 
-        fetchData();
+        // fetchData(); // Commented until it's fixed. Need to prevent auto load on page load need to wait for on hover event
     }, []);
+
     return <>
         <div className="d-flex flex-column gap-2">
             <div className="d-flex justify-content-between align-items-start">
@@ -842,6 +847,7 @@ const Invoice = ({ enrollment }) => {
                     <p className="mb-0">{invoice?.franchiseCountry}</p>
                 </div>
                 <div className="fs-1">
+                    //TODO Adjust the image path
                     <img src="https://fms3.bricks4kidznow.com/images/headerlogo.png" />
                 </div>
             </div>
@@ -858,11 +864,11 @@ const Invoice = ({ enrollment }) => {
                     <p className="mb-0"><b>{t('Name')}{': '}</b>{invoice?.familyName}</p>
                     <p className="mb-0"><b>{t('Email')}{': '}</b>{invoice?.familyEmail}</p>
                     <p className="mb-0"><b>{t('Registration ID')}{': '}</b>{invoice?.familyUrl}</p>
-                    <p className="mb-0"><b>{t('Address')}{': '}</b>
-                    {invoice?.familyStreet && <p className="mb-0">{invoice?.familyStreet}</p>}
-                    {invoice?.familyCity && invoice.familyState && <p className="mb-0">{`${invoice?.familyCity}, ${invoice?.familyState}, ${invoice?.familyZip}`}</p>}
-                    {invoice?.familyCountry && <p className="mb-0">{invoice?.familyCountry}</p>}
-                    </p>
+                    <div className="mb-0"><b>{t('Address')}{': '}</b>
+                        {invoice?.familyStreet && <p className="mb-0">{invoice?.familyStreet}</p>}
+                        {invoice?.familyCity && invoice.familyState && <p className="mb-0">{`${invoice?.familyCity}, ${invoice?.familyState}, ${invoice?.familyZip}`}</p>}
+                        {invoice?.familyCountry && <p className="mb-0">{invoice?.familyCountry}</p>}
+                    </div>
                 </div>
             </div>
             <div className="table-responsive mt-2">
