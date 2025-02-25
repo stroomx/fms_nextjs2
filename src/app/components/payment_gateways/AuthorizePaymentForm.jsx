@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-// import { HostedForm } from 'react-acceptjs';
+import { HostedForm } from 'react-acceptjs';
 
 
 export default function AuthorizePaymentForm({ authData, environment = 'SANDBOX', paymentData = {}, saveNonce = () => { } }) {

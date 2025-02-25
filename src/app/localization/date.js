@@ -1,9 +1,6 @@
-export default function formatDate(dateStr, showTime = true, locale = 'en-US') {
-    // Replace the space with 'T' to make it a valid ISO 8601 format (YYYY-MM-DDTHH:mm:ss)
-    const isoDateStr = dateStr.replace(' ', 'T');
-
+export default function formatDate(dateStr, showTime = true, locale = navigator.language) {
     // Parse the ISO formatted date string into a Date object
-    const date = new Date(isoDateStr);
+    const date = new Date(dateStr + "Z");
 
     // Check if the date is valid
     if (isNaN(date)) {
@@ -18,7 +15,8 @@ export default function formatDate(dateStr, showTime = true, locale = 'en-US') {
         hour: showTime ? 'numeric' : undefined,
         minute: showTime ? 'numeric' : undefined,
         second: showTime ? 'numeric' : undefined,
-        hour12: false // Use 24-hour clock by default
+        hour12: false, // Use 24-hour clock by default
+        timeZone: undefined // (User settgins first) if not set ( Franchise for the Schedule Timezone Second )
     };
 
     // Format the date according to the specified locale

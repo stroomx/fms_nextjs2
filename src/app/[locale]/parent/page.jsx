@@ -80,6 +80,7 @@ export default function ParentProfile() {
     }
 
     useEffect(() => {
+        console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
         const getFranchises = (schedules = []) => {
             const franchises = {};
 
@@ -107,7 +108,10 @@ export default function ParentProfile() {
                     filterSchedules(unactive[0]?.franchiseId, unactive);
                     setFranchises(getFranchises(unactive));
                     setSelectedFranchise(unactive[0]?.franchiseId);
-                    handleEnrollment(unactive);
+                    setLoading(false);
+                    setTimeout(() => {
+                        handleEnrollment(unactive);
+                    }, 1000);
                 }
             } catch (err) {
                 console.log(err);
@@ -145,10 +149,17 @@ export default function ParentProfile() {
             // Set the active state for the schedule
             // Show success or failure message
 
+            console.log(enrollmentId, 'EID');
             const schedule = schedules.filter((ele) => ele.scheduleenrollid == enrollmentId)[0];
+            console.log(schedule);
             setSelectedFranchise(schedule['franchiseId']);
 
+            // while (loading) {
+            //     setTimeout(() => { }, 5000)
+            // }
+
             const button = document.getElementById(`modal-button-${schedule?.scheduleenrollid}`);
+            console.log(button);
             button.click();
 
             // This can be handled as a switch that takes the status as a variable and then redirects to the checkout page again if the payment has failed.
@@ -436,7 +447,6 @@ const ParentScheduleCardGrid = ({ schedule, index, loading, hoverAction = () => 
     )
 }
 
-
 const PaymentDetails = ({ schedule, index, active = false }) => {
     const t = (text) => text;
 
@@ -498,7 +508,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
     useEffect(() => {
         if (!formData?.token)
             return;
-        enroll();
+        handleSubmit();
     }, [formData]);
 
     const cancelPayment = () => {
@@ -666,9 +676,9 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                         <td className="text-center">
                                             {t('Description')}
                                         </td>
-                                        <td className="text-center">
+                                        {/* <td className="text-center">
                                             {t('Transaction#')}
-                                        </td>
+                                        </td> */}
                                         {/* <td>
                                     {t('Status')}
                                 </td> */}
@@ -682,7 +692,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                             <td className="text-center">{payment?.paymenttype}</td>
                                             <td className="text-center">{money(payment?.paymentapplyamount)}</td>
                                             <td className="text-center"><TextWithToggle description={payment?.paymentapplydescription} maxLength={15} showtext={false} /></td>
-                                            <td className="text-center"><TextWithToggle description={payment?.paymenttransactionno} maxLength={10} showtext={false} /></td>
+                                            {/* <td className="text-center"><TextWithToggle description={payment?.paymenttransactionno} maxLength={10} showtext={false} /></td> */}
                                             {/* <td>{payment?.paymentstatus}</td> */}
                                         </tr>
                                     ))}
