@@ -403,12 +403,12 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                     <hr className="my-3" />
                                     <div className="d-flex gap-2">
                                         <button
-                                            className="btn btn-primary fw-bold w-100"
+                                            className="btn btn-primary fw-bold w-100 rounded-0"
                                             onClick={applyFilters}
                                         >
                                             {t('Apply Filters')}
                                         </button>
-                                        <button className="btn btn-danger fw-bold" onClick={clearFilters}>{t('Clear')}</button>
+                                        <button className="btn btn-danger fw-bold rounded-0" onClick={clearFilters}>{t('Clear')}</button>
                                     </div>
                                 </div>
                                 <div className="col-12 col-lg-9 pe-0 overflow-y-auto">

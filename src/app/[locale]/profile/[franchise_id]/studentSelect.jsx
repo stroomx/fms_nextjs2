@@ -243,6 +243,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                                         >
                                             <option value="Male">Male</option>
                                             <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
                                         </select>
                                     </div>
                                 </div>
@@ -323,7 +324,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
 
                                 <div className="row">
                                     <div className="col-12">
-                                        <label className="mt-3" htmlFor="studentspecialinstruction">Dismissal Instruction</label>
+                                        <label className="mt-3" htmlFor="studentspecialinstruction">Special Instruction</label>
                                         <textarea
                                             value={formData[index]?.studentspecialinstruction}
                                             onChange={(e) => handleChange(index, 'studentspecialinstruction', e.target.value)}
@@ -352,7 +353,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
             </span>
             <div className="d-flex justify-content-start gap-2 mt-2">
                 <button className="btn-style1" onClick={onCheckout}>{t('Select Students')}</button>
-                {update ? <button className="btn-style4" onClick={() => { onSubmit(students) }}>{t('Update Students')}</button> : ''}
+                {update ? <button className="btn-style4 rounded-0" onClick={() => { onSubmit(students) }}>{t('Update Students')}</button> : ''}
             </div>
         </div>
 

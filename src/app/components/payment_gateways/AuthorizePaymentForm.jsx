@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Script from 'next/script';
 import { HostedForm } from 'react-acceptjs';
 
 
@@ -30,6 +31,7 @@ export default function AuthorizePaymentForm({ authData, environment = 'SANDBOX'
             formButtonText={t('Make Payment')}
             formHeaderText={t('Input Card Details')}
         />
+        <Script src={"https://jstest.authorize.net/v3/AcceptUI.js" + '?' + (new Date()).getTime()} />
         {card && <p className="text-success">{t('Card Successfully Added')}</p>}
     </>;
 

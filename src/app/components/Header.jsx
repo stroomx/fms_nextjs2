@@ -60,15 +60,12 @@ export default function Header({ locale }) {
                                             data-bs-toggle="dropdown"
                                             type="button"
                                         >
-                                            <img
-                                                alt=""
-                                                src="/assets/img/user-outline.svg"
-                                            />
+                                            <i className="mdi mdi-account fs-5"></i>
                                             <p className="font-semibold">
                                                 {AuthService.getUser()['name']}
                                             </p>
                                         </button>
-                                        <ul className="dropdown-menu dropdown-menu-end">
+                                        <ul className="dropdown-menu dropdown-menu-end rounded-0">
                                             <li>
                                                 <button
                                                     className="dropdown-item text-blue d-flex align-items-center justify-content-start"
@@ -121,19 +118,22 @@ export default function Header({ locale }) {
                                         </ul>
                                     </div>
                                 </div>
-                            ) : (
-                                <Link href="/auth/login" passHref>
-                                    <div className="sign-in">
-                                        <img
-                                            alt="Login Icon"
-                                            src="/assets/img/login.svg"
-                                        />
-                                        <span className="font-semibold text-blue">
-                                            {t('Sign In')}
-                                        </span>
-                                    </div>
-                                </Link>
-                            )}
+                            ) :
+                                // (
+                                //     <Link href="/auth/login" passHref>
+                                //         <div className="sign-in">
+                                //             <img
+                                //                 alt="Login Icon"
+                                //                 src="/assets/img/login.svg"
+                                //             />
+                                //             <span className="font-semibold text-blue">
+                                //                 {t('Sign In')}
+                                //             </span>
+                                //         </div>
+                                //     </Link>
+                                // )
+                                ""
+                            }
                         </div>
                     </div>
                 </div>

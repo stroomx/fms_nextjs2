@@ -21,9 +21,6 @@ export default function Login() {
         if (AuthService.isAuthenticated()) {
             // If authenticated, redirect to /parent page
             router.push('/parent');
-            console.log('User is authenticated');
-        } else {
-            console.log('User is not authenticated');
         }
     }, []);
 
@@ -46,7 +43,8 @@ export default function Login() {
 
             router.push(`/parent`);
         } catch (error) {
-            console.log(error);
+            const { response } = error;
+            alert({ type: "error", message: t(response?.data?.error), timer: 3000 });
         }
     };
 
@@ -102,7 +100,7 @@ export default function Login() {
                                     {t('Email Address')}
                                 </label>
                                 <input
-                                    className="input-style1"
+                                    className="input-style1 rounded-0"
                                     id="username"
                                     name="username"
                                     placeholder={t('Email Address')}
@@ -119,7 +117,7 @@ export default function Login() {
                                 </label>
                                 <div className="input-wrap">
                                     <input
-                                        className="input-style1 forgot"
+                                        className="input-style1 rounded-0 forgot"
                                         id="password"
                                         name="password"
                                         placeholder={t('Password')}

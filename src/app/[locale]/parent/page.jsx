@@ -197,9 +197,9 @@ export default function ParentProfile() {
             </div>
             <div className="col-lg-6">
                 <div className="heading end">
-                    <button className="btn btn-outline-secondary py-1" title={t('Toggle Grid View')} onClick={() => setToggleGridView(!toggleGridView)}>
+                    <button className="btn btn-outline-secondary py-1 rounded-0" title={t('Toggle Grid View')} onClick={() => setToggleGridView(!toggleGridView)}>
                         <i className={`mdi ${toggleGridView ? "mdi-grid" : "mdi-list-box-outline"} fs-4 px-1`}></i></button>
-                    <button className="btn btn-1" onClick={enrollIntoClass}>
+                    <button className="btn btn-1 rounded-0" onClick={enrollIntoClass}>
                         <i className="mdi mdi-plus"></i>
                         {t('Enroll In New Class')}
                     </button>
@@ -241,7 +241,7 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
     }
 
     return (
-        <div className="card">
+        <div className="card rounded-0">
             <div className="row">
                 <div className="col-md-3">
                     {loading ? (
@@ -266,7 +266,7 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                     </div>
                 </div>
                 <div className="col-md-4">
-                    <div className="card" style={{ backgroundColor: '#D8FBFE', marginBottom: 'unset' }}>
+                    <div className="card rounded-0" style={{ backgroundColor: '#D8FBFE', marginBottom: 'unset' }}>
                         <div className="informations mb-3">
                             <p className="text-grey fs-5 font-semibold">
                                 {loading ? <Skeleton width={120} /> : `${schedule.studentName || "Ahmed Red"}`}
@@ -337,7 +337,7 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                                     </PrintContent>
                                 }
                             </div>
-                            <button id={`modal-button-${schedule.scheduleenrollid}`} className="btn-payment-summary" data-bs-toggle="modal" onMouseOver={hoverAction} onClick={() => { toggle('open'); hoverAction() }}
+                            <button id={`modal-button-${schedule.scheduleenrollid}`} className="btn-payment-summary rounded-0" data-bs-toggle="modal" onMouseOver={hoverAction} onClick={() => { toggle('open'); hoverAction() }}
                                 data-bs-target={`#payment-modal-${index}`}>{t('Payments')}{schedule.isActive}
                             </button>
                         </div>
@@ -382,7 +382,7 @@ const ParentScheduleCardGrid = ({ schedule, index, loading, hoverAction = () => 
 
     return (
         <div className="col">
-            <div className="card d-flex flex-column">
+            <div className="card d-flex flex-column rounded-0">
                 <div className="mb-1 flex-shrink-0">
                     {loading ? (
                         <Skeleton height={200} width={'100%'} />
@@ -423,7 +423,7 @@ const ParentScheduleCardGrid = ({ schedule, index, loading, hoverAction = () => 
                                 </PrintContent>
                             }
                         </div>
-                        <button className="btn-payment-summary" data-bs-toggle="modal" onMouseOver={hoverAction}
+                        <button className="btn-payment-summary rounded-0" data-bs-toggle="modal" onMouseOver={hoverAction}
                             data-bs-target={`#payment-modal-${index}`} onClick={() => { toggle('open'); hoverAction() }}>{t('Payments')}
                         </button>
                     </div>

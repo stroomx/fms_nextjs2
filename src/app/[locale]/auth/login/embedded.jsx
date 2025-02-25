@@ -32,7 +32,8 @@ export default function EmbeddedLogin({ loginAction = () => { router.push(naviga
 
             loginAction();
         } catch (error) {
-            console.log(error);
+            const { response } = error;
+            alert({ type: "error", message: t(response?.data?.error), timer: 3000 });
         }
     };
 

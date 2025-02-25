@@ -18,7 +18,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                     <div className="col-12 col-md-3">
                         <img
                             alt="..."
-                            className="img-fluid rounded-start"
+                            className="img-fluid rounded-0"
                             //TODO Update from CDN
                             src={schedule.image ? schedule.image : "https://bricks4kidz.us/wp-content/themes/brickly/assets/images/img-wide.svg"}
                         />

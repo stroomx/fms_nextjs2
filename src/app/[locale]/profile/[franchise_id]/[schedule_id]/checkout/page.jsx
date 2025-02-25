@@ -451,11 +451,11 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                         <div className="col-lg-5">
                             <div className="coupon mb-4">
                                 {formData?.paymentoption !== 'recurringPayments' ? <>
-                                    <input type="text" id="coupon" maxLength={16} className="input-style1" placeholder="Have coupon code ? Enter here" onChange={(e) => setCouponCode(e.target.value)} />
-                                    <button className="apply-btn" disabled={couponCode == ''} onClick={validateCoupon}>{t('Apply')}</button>
+                                    <input type="text" id="coupon" maxLength={16} className="input-style1 rounded-0" placeholder="Have coupon code ? Enter here" onChange={(e) => setCouponCode(e.target.value)} />
+                                    <button className="btn btn-outline-primary fs-5 rounded-0" disabled={couponCode == ''} onClick={validateCoupon}>{t('Apply')}</button>
                                 </> : ''}
                             </div>
-                            <div className="card cart-card">
+                            <div className="card cart-card rounded-0">
                                 <div className="middle-section pt-1 pb-3">
                                     <h6 className="text-grey font-bold mb-3">{t('Payment Summary')}</h6>
                                     <div className="row">

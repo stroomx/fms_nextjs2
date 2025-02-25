@@ -23,6 +23,7 @@ export default async function RootLayout({ params: { locale }, children }) {
     <html lang="en">
       <head>
         <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css'></link>
+        
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <TranslationsProvider

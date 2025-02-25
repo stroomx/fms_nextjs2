@@ -59,7 +59,7 @@ export default function ParentPayment() {
     return (
         <>
             <div className="home-section mt-4">
-                <div className="pay-details justify-content-between gap-3 align-items-center mb-3">
+                <div className="pay-details justify-content-between gap-3 align-items-center mb-3 rounded-0">
                     <div className="d-flex gap-3">
                         <p className="text-grey-200 font-semibold text-14">
                             {t('Balance')}: <span className="text-red font-bold">{money(data?.balance)}</span>
@@ -68,7 +68,7 @@ export default function ParentPayment() {
                             {t('Credit')}: <span className="text-green font-bold">{money(data?.credit)}</span>
                         </p>
                     </div>
-                    <div className="title2 d-flex justify-content-end align-items-center gap-3 ">
+                    {/* <div className="title2 d-flex justify-content-end align-items-center gap-3 ">
                         <div className="dates">
                             <div className='d-flex justify-content-start gap-2 align-items-center'>
                                 <label className="text-grey-200">{t('Start')}</label>
@@ -79,11 +79,11 @@ export default function ParentPayment() {
                                 <input type="date" />
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                 </div>
 
-                <div className="table-responsive table-2 pb-5">
+                <div className="table-responsive table-2 pb-5 rounded-0">
                     <table className="table table-hover">
                         <thead>
                             <tr>

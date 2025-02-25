@@ -88,7 +88,7 @@ const ParentProfile = () => {
                                         type="text"
                                         id="first-name"
                                         name="firstName"
-                                        className="input-style1"
+                                        className="input-style1 rounded-0"
                                         placeholder="John"
                                         value={formData.firstName}
                                         onChange={handleChange}
@@ -104,7 +104,7 @@ const ParentProfile = () => {
                                         type="text"
                                         id="last-name"
                                         name="lastName"
-                                        className="input-style1"
+                                        className="input-style1 rounded-0"
                                         placeholder="Doe"
                                         value={formData.lastName}
                                         onChange={handleChange}
@@ -122,7 +122,7 @@ const ParentProfile = () => {
                                         type="email"
                                         id="email"
                                         name="email"
-                                        className="input-style1"
+                                        className="input-style1 rounded-0"
                                         placeholder="doejohn125484@gmail.com"
                                         value={formData.email}
                                         onChange={handleChange}
@@ -138,7 +138,7 @@ const ParentProfile = () => {
                                         type="registrationid"
                                         id="registrationid"
                                         name="registrationid"
-                                        className="input-style1"
+                                        className="input-style1 rounded-0"
                                         placeholder="Registration Id"
                                         value={formData.registrationid ?? ''}
                                         onChange={handleChange}
@@ -152,7 +152,7 @@ const ParentProfile = () => {
                                 <select
                                     id="timezone"
                                     name="timezone"
-                                    className="input-style1"
+                                    className="input-style1 rounded-0"
                                     value={formData.timezone}
                                     onChange={handleChange}
                                     disabled={formStatus}
@@ -568,11 +568,11 @@ const ActionButtons = () => {
 
     return <>
         <div className="action-btns justify-content-center gap-5">
-            <button className="btn btn-delete" data-bs-toggle="modal"
+            <button className="btn btn-delete rounded-0" data-bs-toggle="modal"
                 data-bs-target="#delete-profile">
                 <i className="mdi mdi-delete-outline"></i> {t('Remove My Profile')}
             </button>
-            <button className="btn btn-profile" onClick={downloadProfile}>
+            <button className="btn btn-profile rounded-0" onClick={downloadProfile}>
                 <i className="mdi mdi-download"></i> {t('Download Profile')}
             </button>
             {/* <button
@@ -598,7 +598,7 @@ const ActionButtons = () => {
                                     type="email"
                                     id="useremail"
                                     name="useremail"
-                                    className="input-style1"
+                                    className="input-style1 rounded-0"
                                     placeholder="Email"
                                     defaultValue=''
                                     required
@@ -630,7 +630,7 @@ const ActionButtons = () => {
                                     type="email"
                                     id="useremail"
                                     name="useremail"
-                                    className="input-style1"
+                                    className="input-style1 rounded-0"
                                     placeholder="Email"
                                     defaultValue=''
                                     required

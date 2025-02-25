@@ -8,7 +8,7 @@ export default function TabLayout({ children }) {
         { href: "/parent", label: "Home" },
         { href: "/parent/profile", label: "Parent Profile" },
         { href: "/parent/address", label: "Address" },
-        { href: "/parent/payment", label: "Payment" },
+        { href: "/parent/payment", label: "Payment History" },
     ];
 
     const pathname = usePathname();

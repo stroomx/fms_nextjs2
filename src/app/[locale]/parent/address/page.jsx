@@ -83,7 +83,7 @@ export default function ParentAddress() {
                                         type="text"
                                         name="addressstreet"
                                         id="addressstreet"
-                                        className="input-style1"
+                                        className="input-style1 rounded-0"
                                         value={formData.addressstreet}
                                         onChange={handleChange}
                                         disabled={formStatus}
@@ -101,7 +101,7 @@ export default function ParentAddress() {
                                         type="text"
                                         name="addresscity"
                                         id="addresscity"
-                                        className="input-style1"
+                                        className="input-style1 rounded-0"
                                         value={formData.addresscity}
                                         onChange={handleChange}
                                         disabled={formStatus}
@@ -117,7 +117,7 @@ export default function ParentAddress() {
                                         type="text"
                                         name="addresszip"
                                         id="addresszip"
-                                        className="input-style1"
+                                        className="input-style1 rounded-0"
                                         value={formData.addresszip}
                                         onChange={handleChange}
                                         disabled={formStatus}
@@ -135,7 +135,7 @@ export default function ParentAddress() {
                                         type="text"
                                         name="addresscountryid"
                                         id="addresscountryid"
-                                        className="input-style1"
+                                        className="input-style1 rounded-0"
                                         value={formData.addresscountryid}
                                         onChange={handleChange}
                                         disabled={formStatus}
@@ -151,7 +151,7 @@ export default function ParentAddress() {
                                         type="text"
                                         name="addressstate"
                                         id="addressstate"
-                                        className="input-style1"
+                                        className="input-style1 rounded-0"
                                         value={formData.addressstate}
                                         onChange={handleChange}
                                         disabled={formStatus}

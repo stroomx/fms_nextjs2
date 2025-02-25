@@ -16,7 +16,7 @@ export default function formatDate(dateStr, showTime = true, locale = navigator.
         minute: showTime ? 'numeric' : undefined,
         second: showTime ? 'numeric' : undefined,
         hour12: false, // Use 24-hour clock by default
-        timeZone: undefined // (User settgins first) if not set ( Franchise for the Schedule Timezone Second )
+        timeZone: undefined // (User settgins first) if not set ( Franchise for the Schedule Timezone Second ) // Keep as franchise
     };
 
     // Format the date according to the specified locale
