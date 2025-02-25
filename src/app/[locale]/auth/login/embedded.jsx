@@ -9,7 +9,7 @@ import Link from "next/link";
 import AuthService from "@/auth.service";
 import alert from "@/app/components/SweetAlerts";
 
-export default function EmbeddedLogin({ loginAction = () => { router.push(navigateTo); } }) {
+export default function EmbeddedLogin({ franchise_id, loginAction = () => { router.push(navigateTo); } }) {
 
     const router = useRouter();
 
@@ -102,7 +102,7 @@ export default function EmbeddedLogin({ loginAction = () => { router.push(naviga
                 </button>
             </div>
             <div className=" text-center">
-                <a href="/auth/signup" className="text-brown font-semibold">{t('New user? Create an account')}</a>
+                <a href={`/auth/signup?fid=${franchise_id}`} className="text-brown font-semibold">{t('New user? Create an account')}</a>
             </div>
         </form>
     </>;

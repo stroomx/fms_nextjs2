@@ -22,7 +22,7 @@ export default function LoginModal({ franchise_id, schedule_id }) {
                         <img id={`closeModal-${schedule_id}`} src="/assets/img/cancel-btn.svg" data-bs-dismiss="modal" aria-label="Close" />
                     </div>
                     <div className="modal-body">
-                        <EmbeddedLogin loginAction={onLogin} />
+                        <EmbeddedLogin loginAction={onLogin} franchise_id={franchise_id} />
                     </div>
                 </div>
             </div>
