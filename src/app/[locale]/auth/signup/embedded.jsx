@@ -15,6 +15,10 @@ export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction =
         firstname: '',
     });
 
+    const policy = {
+        policytitle: "FMS Privacy Policy"
+    };
+
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
@@ -167,6 +171,31 @@ export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction =
                             />
                         </div>
                     </div>
+                    <div className="check-group mt-2">
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" id={`policy`} required />
+                            <label className="form-check-label">
+                                {t('I accept')} <span
+                                    className="text-blue cursor-pointer"
+                                    id={`policy-content-toggle`}
+                                    // data-bs-toggle="modal"
+                                    // data-bs-target={`#policy-content`}
+                                >{policy?.policytitle}</span>
+                            </label>
+                        </div>
+                        <div className="modal fade" id={`policy-content`} aria-hidden="true" >
+                            <div className="modal-dialog modal-dialog-centered modal-lg">
+                                <div className="modal-content ">
+                                    <div className="modal-header border-0 d-flex justify-content-between align-items-center ">
+                                        <p className="font-bold text-blue fs-5" id="modalLabel">{policy?.policytitle}</p>
+                                        <i className="mdi mdi-close" data-bs-dismiss="modal" aria-label="Close"></i>
+                                    </div>
+                                    <div className="modal-body pt-0" dangerouslySetInnerHTML={{ __html: policy?.policy }}>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="my-4 d-flex justify-content-start gap-2 align-items-center">
@@ -177,7 +206,7 @@ export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction =
                         {t('Cancel')}
                     </button>
                 </div>
-            </form>
+            </form >
         </>
     );
 }
