@@ -9,7 +9,7 @@ import Link from "next/link";
 import AuthService from "@/auth.service";
 import alert from "@/app/components/SweetAlerts";
 
-export default function EmbeddedLogin({ franchise_id, loginAction = () => { router.push(navigateTo); } }) {
+export default function EmbeddedLogin({ loginAction = () => { }, signupAction = () => { } }) {
 
     const router = useRouter();
 
@@ -52,15 +52,15 @@ export default function EmbeddedLogin({ franchise_id, loginAction = () => { rout
     const { t } = useTranslation();
 
     return <>
-        <h3 className="text-blue font-bold mb-2">{t('Sign in')}</h3>
-        <p>{t('Please sign in to enroll your child')}</p>
+        {/* <h3 className="text-blue font-bold mb-2">{t('Sign in')}</h3> */}
+        <p className="mb-2">{t('Please sign in to enroll your child')}</p>
 
         <form onSubmit={handleSubmit}>
             <label htmlFor="">
                 {t('Email Address')}
             </label>
             <input
-                className="input-style1"
+                className="input-style1 rounded-0"
                 name="username"
                 placeholder={t('Email Address')}
                 type="email"
@@ -76,7 +76,7 @@ export default function EmbeddedLogin({ franchise_id, loginAction = () => { rout
             </label>
             <div className="input-wrap">
                 <input
-                    className="input-style1 forgot"
+                    className="input-style1 rounded-0 forgot"
                     name="password"
                     placeholder={t('Password')}
                     type="password"
@@ -102,7 +102,7 @@ export default function EmbeddedLogin({ franchise_id, loginAction = () => { rout
                 </button>
             </div>
             <div className=" text-center">
-                <a href={`/auth/signup?fid=${franchise_id}`} className="text-brown font-semibold">{t('New user? Create an account')}</a>
+                <span onClick={signupAction} className="text-brown font-semibold cursor-pointer">{t('New user? Create an account')}</span>
             </div>
         </form>
     </>;

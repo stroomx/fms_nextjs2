@@ -5,7 +5,7 @@ import axiosInstance from '@/axios';
 import axios from 'axios';
 import alert from '@/app/components/SweetAlerts';
 import AuthService from '@/auth.service';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 
 
@@ -36,6 +36,7 @@ export default function SignUp() {
     });
 
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     const [step, setStep] = useState(1); // To track the current step in the form
     const [loading, setLoading] = useState(false);
@@ -80,7 +81,14 @@ export default function SignUp() {
             AuthService.login(userDetails['data'], data['token']);
             alert({ type: "success", message: t(data['message']), timer: 3000 });
 
-            router.push(`/parent`);
+            const franchise = searchParams.get('fid');
+            const schedule = searchParams.get('sid');
+
+            if (franchise && schedule) {
+                router.push(`/profile/${franchise}/${schedule}/checkout`);
+            } else {
+                router.push(`/parent`);
+            }
         } catch (err) {
             console.error('Error submitting form:', err);
         } finally {
@@ -88,14 +96,18 @@ export default function SignUp() {
         }
     };
 
-    const nextStep = (e) => {
+    const nextStep = (e, targettedStep = 0) => {
         const form = document.getElementById('form');
 
         if (form.checkValidity() === false) {
             form.reportValidity();
         } else {
             e.preventDefault();
-            setStep(step + 1); // Move to the next step
+            if (targettedStep > 0) {
+                setStep(targettedStep);
+            } else {
+                setStep(step + 1); // Move to the next step
+            }
         }
     };
 
@@ -109,13 +121,13 @@ export default function SignUp() {
                 <div className="sign-up">
                     <h5 className="text-blue font-bold mt-3">{t('Create an account')}</h5>
                     <div className="menu-tab">
-                        <div className={`arrow-pointer cursor-pointer ${step == 1 ? '' : 'd-none d-sm-flex'} ${step >= 1 ? 'active' : ''}`} style={{ minWidth: 'fit-content' }} onClick={() => { setStep(1) }}>
+                        <div className={`arrow-pointer cursor-pointer ${step == 1 ? '' : 'd-none d-sm-flex'} ${step >= 1 ? 'active' : ''}`} style={{ minWidth: 'fit-content' }} onClick={(e) => { nextStep(e, 1) }}>
                             <p>{t('Account Profile')}</p>
                         </div>
-                        <div className={`arrow-pointer1 cursor-pointer ${step == 2 ? '' : 'd-none d-sm-flex'} ${step >= 2 ? 'active' : ''}`} style={{ minWidth: 'fit-content' }} onClick={() => { setStep(2) }}>
+                        <div className={`arrow-pointer1 cursor-pointer ${step == 2 ? '' : 'd-none d-sm-flex'} ${step >= 2 ? 'active' : ''}`} style={{ minWidth: 'fit-content' }} onClick={(e) => { nextStep(e, 2) }}>
                             <p>{t('Address')}</p>
                         </div>
-                        <div className={`arrow-pointer1 cursor-pointer ${step == 3 ? '' : 'd-none d-sm-flex'} ${step >= 3 ? 'active' : ''}`} style={{ minWidth: 'fit-content' }} onClick={() => { setStep(3) }}>
+                        <div className={`arrow-pointer1 cursor-pointer ${step == 3 ? '' : 'd-none d-sm-flex'} ${step >= 3 ? 'active' : ''}`} style={{ minWidth: 'fit-content' }} onClick={(e) => { nextStep(e, 3) }}>
                             <p>{t('Student info')}</p>
                         </div>
                     </div>

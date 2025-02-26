@@ -225,6 +225,9 @@ export default function ParentProfile() {
             ))}
         </div>}
 
+        {(!loading && filteredSchedules?.length == 0) && <div className="text-center fs-3">
+            {t('No Enrollments Found.')}
+        </div>}
     </div>
 }
 
@@ -642,8 +645,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                         { key: 'amount', value: formData?.amount },
                     ]
                 }} cancelAction={cancelPayment} submitAction={(token) => { tokenEnroll(token) }} />
-            </> : ''}
-            {!showPayment() && <>
+            </> : <>
                 <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
                     <li className="nav-item" role="presentation">
                         <button className="nav-link rounded-0 active" id={`pills-history-tab-${index}`} data-bs-toggle="pill" data-bs-target={`#pills-history-${index}`} type="button" role="tab" aria-controls={`pills-history-${index}`} aria-selected="true">{t('Payment History')}</button>

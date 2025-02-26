@@ -85,10 +85,10 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                 return;
 
             const { data } = await axiosInstance.post("api/students.php", { 'students': studentsToSubmit });
-            
+
             fetchData();
             alert({ type: "success", message: data });
-            
+
             setUpdate(false);
         } catch (err) {
             console.log(err);
@@ -154,6 +154,9 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
     }
 
     const getBorder = (index) => {
+        if (students?.length == 1)
+            return 'border rounded';
+
         const total = students?.length - 1;
         let borderClass = '';
 

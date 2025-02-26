@@ -454,7 +454,7 @@ const FranchisePolicies = ({ policies = [], loading = true }) => {
                             </td>
                             <td className='text-center'>
                                 <i
-                                    className="fa-solid fa-clipboard-list text-blue cursor-pointer"
+                                    className="mdi mdi-clipboard-outline text-blue cursor-pointer"
                                     data-bs-toggle="modal"
                                     data-bs-target="#franchise-policy"
                                 />
