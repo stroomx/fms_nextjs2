@@ -14,7 +14,7 @@ export default function AuthorizePaymentForm({ authData, environment = 'SANDBOX'
         // Await the response and then redirect to the main page.
         // Look at what can be done to move the amount calculation to the backend, to prevent changing of the amount to be charged.
 
-        console.log('Received response:', response); // This will include the Payment Nonce
+        // console.log('Received response:', response); // This will include the Payment Nonce
         saveNonce(response['opaqueData']['dataValue']);
         setCard(response?.messages?.message[0]?.text ? true : false);
     };
@@ -31,7 +31,11 @@ export default function AuthorizePaymentForm({ authData, environment = 'SANDBOX'
             formButtonText={t('Make Payment')}
             formHeaderText={t('Input Card Details')}
         />
-        <Script src={"https://jstest.authorize.net/v3/AcceptUI.js" + '?' + (new Date()).getTime()} />
+        {
+            environment == 'SANDBOX' ?
+                <Script src={"https://jstest.authorize.net/v3/AcceptUI.js" + '?' + (new Date()).getTime()} />
+                : <Script src={"https://js.authorize.net/v3/AcceptUI.js" + '?' + (new Date()).getTime()} />
+        }
         {card && <p className="text-success">{t('Card Successfully Added')}</p>}
     </>;
 

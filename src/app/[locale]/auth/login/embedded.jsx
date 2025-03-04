@@ -9,9 +9,7 @@ import Link from "next/link";
 import AuthService from "@/auth.service";
 import alert from "@/app/components/SweetAlerts";
 
-export default function EmbeddedLogin({ loginAction = () => { }, signupAction = () => { } }) {
-
-    const router = useRouter();
+export default function EmbeddedLogin({ loginAction = () => { }, signupAction = () => { }, closeAction = () => { } }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -89,7 +87,7 @@ export default function EmbeddedLogin({ loginAction = () => { }, signupAction = 
                 <div className="form-check">
 
                 </div>
-                <Link href="/auth/forgotpassword" className="text-brown font-semibold">
+                <Link href="/auth/forgotpassword" onClick={closeAction} className="text-brown font-semibold">
                     {t('Forgot Password')} {' ? '}
                 </Link>
             </div>

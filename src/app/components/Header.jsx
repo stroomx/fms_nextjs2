@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from "next/link";
 import LanguageChanger from './LanguageChanger';
 import initTranslations from '@/app/i18n';
 import AuthService from '@/auth.service';
@@ -33,8 +32,10 @@ export default function Header({ locale }) {
     }, [locale]);  // Re-run the effect if locale changes
 
     useEffect(() => {
-        setIsAuthenticated(AuthService.isAuthenticated());
-    }, [])
+        setInterval(() => {
+            setIsAuthenticated(AuthService.isAuthenticated())
+        }, 100);
+    }, []);
 
     return (
         <header>

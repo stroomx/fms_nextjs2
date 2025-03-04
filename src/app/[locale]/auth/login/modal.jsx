@@ -13,7 +13,7 @@ export default function LoginModal({ franchise_id, schedule_id }) {
     const [signupToggle, setSignupToggle] = useState(false);
 
     const onLogin = () => {
-        document.getElementById(`closeModal-${schedule_id}`).click();
+        closeModal();
         router.push(`/profile/${franchise_id}/${schedule_id}/checkout`);
     }
 
@@ -23,6 +23,10 @@ export default function LoginModal({ franchise_id, schedule_id }) {
 
     const onCancelSignup = () => {
         setSignupToggle(false);
+    }
+
+    const closeModal = () => {
+        document.getElementById(`closeModal-${schedule_id}`).click();
     }
 
     return (
@@ -38,7 +42,7 @@ export default function LoginModal({ franchise_id, schedule_id }) {
                         {
                             signupToggle ?
                                 <EmbeddedSignUp loginAction={onLogin} cancelAction={onCancelSignup} /> :
-                                <EmbeddedLogin loginAction={onLogin} signupAction={onSignup} />
+                                <EmbeddedLogin loginAction={onLogin} signupAction={onSignup} closeAction={closeModal} />
                         }
                     </div>
                 </div>

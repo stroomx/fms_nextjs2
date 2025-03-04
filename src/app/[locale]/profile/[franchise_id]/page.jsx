@@ -161,6 +161,8 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
         });
     };
 
+    useEffect(() => { applyFilters() }, [filterData]);
+
     const applyFilters = () => {
         console.log(filterData, 'filterdata');
         console.log(schedules);
@@ -227,10 +229,11 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                     </div>
                                     <div className="col-md col-sm-12 d-flex justify-content-center flex-column align-items-md-end align-items-center">
                                         <div className="d-flex gap-1 details pt-4 pb-1">
-                                            <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1'>
+                                            <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1' data-bs-toggle="modal" data-bs-target={`#email-us`}>
                                                 <i className="mdi mdi-email-outline"></i>
                                                 {t('Email Us')}
                                             </button>
+                                            <></>
                                             <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1'>
                                                 <i className="mdi mdi-cake"></i>
                                                 {t('Birthday Party Request')}
@@ -262,6 +265,55 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                 <div className="row mt-4">
                                     {franchise?.description}
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="modal fade" id="email-us" aria-hidden="true">
+                    <div className="modal-dialog modal-dialog-centered modal-lg">
+                        <div className="modal-content">
+                            <div className="modal-header border-0 d-flex justify-content-between align-items-center pb-0">
+                                <h3 className="text-blue font-bold" id="modalLabel">{t('Email Us')}</h3>
+                                <i id="email-us-close" className="mdi mdi-close-circle text-primary fs-4 cursor-pointer" data-bs-dismiss="modal" aria-label="Close"></i>
+                            </div>
+                            <div className="modal-body pt-0">
+                                <div className='col-12'>
+                                    <label htmlFor="from">
+                                        {t('Name')}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        id="name"
+                                        className="form-control rounded-0"
+                                        required={true}
+                                    />
+                                </div>
+                                <div className='col-12 mt-2'>
+                                    <label htmlFor="subject">
+                                        {t('Subject')}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="subject"
+                                        id="subject"
+                                        className="form-control rounded-0"
+                                        required={true}
+                                    />
+                                </div>
+                                <div className='col-12 mt-2'>
+                                    <label htmlFor="body">
+                                        {t('Email Body')}
+                                    </label>
+                                    <textarea
+                                        type="text"
+                                        name="body"
+                                        id="body"
+                                        className="form-control rounded-0"
+                                        required={true}
+                                    ></textarea>
+                                </div>
+                                <button className="btn btn-primary w-100 rounded-0 mt-3">{t('Send Mail')}</button>
                             </div>
                         </div>
                     </div>

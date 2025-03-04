@@ -2,6 +2,7 @@
 
 import axiosInstance from '@/axios';
 import React, { useEffect, useState } from 'react';
+import alert from '@/app/components/SweetAlerts';
 
 import Skeleton from 'react-loading-skeleton';
 
@@ -193,7 +194,7 @@ const ParentProfile = () => {
                             }
                         </form>
                     </div>
-                    <StudentInfo students={students} loading={loading} />
+                    <StudentInfo students={students} loading={loading} update={fetchData} />
                     <FranchisePolicies policies={policies} loading={loading} />
                     {agreements.length > 0 ? <FranchiseAgreements agreements={agreements} loading={loading} /> : ''}
                     <ActionButtons />
@@ -203,7 +204,7 @@ const ParentProfile = () => {
     );
 };
 
-const StudentInfo = ({ students, loading = true }) => {
+const StudentInfo = ({ students, loading = true, update = () => { } }) => {
     const t = (e) => e;
     const [formData, setFormData] = useState([]);
 
@@ -213,8 +214,28 @@ const StudentInfo = ({ students, loading = true }) => {
         setFormData(updatedData);
     };
 
-    const updateStudent = (index) => {
+    const updateStudent = async (index) => {
+        try {
+            const form = document.getElementById(`student-${index}`);
 
+            if (form.checkValidity() === false) {
+                form.reportValidity();
+                return;
+            }
+
+            const student = {
+                ...formData[index],
+                studentname: `${formData[index]?.studentfirstname} ${formData[index]?.studentlastname}`
+            }
+
+            const { data } = await axiosInstance.post("api/students.php", { 'students': [student] });
+            alert({ type: "success", message: data });
+            update();
+            const button = document.getElementById(`hide-button-${index}`);
+            button.click();
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     useEffect(() => {
@@ -261,54 +282,59 @@ const StudentInfo = ({ students, loading = true }) => {
                                                 <p className="font-bold text-blue fs-4" id="modalLabel">{student.studentname}</p>
                                                 <img id="closeModal" src="/assets/img/cancel-btn.svg" data-bs-dismiss="modal" aria-label="Close" />
                                             </div>
-                                            <div className="modal-body">
-                                                <form method="post">
+                                            <div className="modal-body text-start">
+                                                <form id={`student-${index}`}>
                                                     <div className="row">
                                                         <div className="col-6">
-                                                            <label className="mt-0" htmlFor="studentfirstname">{t('Student First Name')}</label>
+                                                            <label className="mt-0 required" htmlFor="studentfirstname">{t('Student First Name')}</label>
                                                             <input
                                                                 type="text"
                                                                 value={formData[index]?.studentfirstname ?? ''}
                                                                 onChange={(e) => handleChange(index, 'studentfirstname', e.target.value)}
-                                                                className="form-control"
+                                                                className="form-control rounded-0"
                                                                 placeholder="First"
+                                                                required
                                                             />
                                                         </div>
                                                         <div className="col-6">
-                                                            <label className="mt-0" htmlFor="studentlastname">{t('Student Last Name')}</label>
+                                                            <label className="mt-0 required" htmlFor="studentlastname">{t('Student Last Name')}</label>
                                                             <input
                                                                 type="text"
                                                                 value={formData[index]?.studentlastname ?? ''}
                                                                 onChange={(e) => handleChange(index, 'studentlastname', e.target.value)}
-                                                                className="form-control"
+                                                                className="form-control rounded-0"
                                                                 placeholder="Last"
+                                                                required
                                                             />
                                                         </div>
                                                     </div>
 
                                                     <div className="row">
                                                         <div className="col-6">
-                                                            <label className="mt-3" htmlFor="studentbirthdate">{t('Date of Birth')}</label>
+                                                            <label className="mt-3 required" htmlFor="studentbirthdate">{t('Date of Birth')}</label>
                                                             <input
                                                                 type="date"
                                                                 name="studentbirthdate"
                                                                 id="studentbirthdate"
                                                                 autoComplete="off"
-                                                                className="form-control"
+                                                                className="form-control rounded-0"
                                                                 onChange={(e) => handleChange(index, 'studentbirthdate', e.target.value)}
                                                                 value={formData[index]?.studentbirthdate ?? ''}
+                                                                required
                                                             />
                                                         </div>
                                                         <div className="col-6">
-                                                            <label className="mt-3" htmlFor="studentgender">{t('Gender')}</label>
+                                                            <label className="mt-3 required" htmlFor="studentgender">{t('Gender')}</label>
                                                             <select
                                                                 name="studentgender"
                                                                 className="form-select"
                                                                 value={formData[index]?.studentgender ?? ''}
                                                                 onChange={(e) => handleChange(index, 'studentgender', e.target.value)}
+                                                                required
                                                             >
                                                                 <option value="Male">{t('Male')}</option>
                                                                 <option value="Female">{t('Female')}</option>
+                                                                <option value="Other">{t('Other')}</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -322,7 +348,7 @@ const StudentInfo = ({ students, loading = true }) => {
                                                                         type="text"
                                                                         name="studentschool"
                                                                         id="studentschool"
-                                                                        className="form-control"
+                                                                        className="form-control rounded-0"
                                                                         placeholder="School name"
                                                                         onChange={(e) => handleChange(index, 'studentschool', e.target.value)}
                                                                         value={formData[index]?.studentschool ?? ''}
@@ -334,7 +360,7 @@ const StudentInfo = ({ students, loading = true }) => {
                                                                         type="text"
                                                                         name="studentgrade"
                                                                         id="studentgrade"
-                                                                        className="form-control"
+                                                                        className="form-control rounded-0"
                                                                         placeholder="Grade"
                                                                         onChange={(e) => handleChange(index, 'studentgrade', e.target.value)}
                                                                         value={formData[index]?.studentgrade ?? ''}
@@ -348,7 +374,7 @@ const StudentInfo = ({ students, loading = true }) => {
                                                                 type="text"
                                                                 name="studentteacher"
                                                                 id="studentteacher"
-                                                                className="form-control"
+                                                                className="form-control rounded-0"
                                                                 placeholder="Teacher name"
                                                                 onChange={(e) => handleChange(index, 'studentteacher', e.target.value)}
                                                                 value={formData[index]?.studentteacher ?? ''}
@@ -358,13 +384,14 @@ const StudentInfo = ({ students, loading = true }) => {
 
                                                     <div className="row">
                                                         <div className="col-6">
-                                                            <label className="mt-3" htmlFor="studentparentpickup">{t('Student Pickup')}</label>
+                                                            <label className="mt-3 required" htmlFor="studentparentpickup">{t('Student Pickup')}</label>
                                                             <select
                                                                 name="studentparentpickup"
                                                                 id="studentparentpickup"
-                                                                className="form-select"
+                                                                className="form-select rounded-0"
                                                                 value={formData[index]?.studentparentpickup ?? ''}
                                                                 onChange={(e) => handleChange(index, 'studentparentpickup', e.target.value)}
+                                                                required
                                                             >
                                                                 <option value="">{t('Select')}</option>
                                                                 <option value="Parent Pickup">{t('Parent Pickup')}</option>
@@ -374,15 +401,16 @@ const StudentInfo = ({ students, loading = true }) => {
                                                             </select>
                                                         </div>
                                                         <div className="col-6">
-                                                            <label className="mt-3" htmlFor="studentpickupauth">{t('Person Authorized to Pick Up')}</label>
+                                                            <label className="mt-3 required" htmlFor="studentpickupauth">{t('Person Authorized to Pick Up')}</label>
                                                             <input
                                                                 type="text"
                                                                 name="studentpickupauth"
                                                                 id="studentpickupauth"
-                                                                className="form-control"
+                                                                className="form-control rounded-0"
                                                                 placeholder="Full name of authorized person"
                                                                 value={formData[index]?.studentpickupauth ?? ''}
                                                                 onChange={(e) => handleChange(index, 'studentpickupauth', e.target.value)}
+                                                                required
                                                             />
                                                         </div>
                                                     </div>
@@ -393,7 +421,7 @@ const StudentInfo = ({ students, loading = true }) => {
                                                             <textarea
                                                                 value={formData[index]?.studentspecialinstruction ?? ''}
                                                                 onChange={(e) => handleChange(index, 'studentspecialinstruction', e.target.value)}
-                                                                className="form-control"
+                                                                className="form-control rounded-0"
                                                                 rows="4"
                                                             />
                                                         </div>
@@ -407,9 +435,9 @@ const StudentInfo = ({ students, loading = true }) => {
                                                     </div>
                                                 </form>
                                             </div>
-                                            <div className="modal-footer text-center">
-                                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" className="btn btn-primary">Save changes</button>
+                                            <div className="modal-footer justify-content-start">
+                                                <button type="button" className="btn btn-primary rounded-0" onClick={() => { updateStudent(index) }}>{t('Save changes')}</button>
+                                                <button type="button" id={`hide-button-${index}`} className="btn btn-secondary rounded-0" data-bs-dismiss="modal">{t('Close')}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -456,8 +484,20 @@ const FranchisePolicies = ({ policies = [], loading = true }) => {
                                 <i
                                     className="mdi mdi-clipboard-outline text-blue cursor-pointer"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#franchise-policy"
+                                    data-bs-target={`#franchise-policy-${index}`}
                                 />
+                                <div className="modal fade" id={`franchise-policy-${index}`} aria-hidden="true" >
+                                    <div className="modal-dialog modal-dialog-centered modal-lg">
+                                        <div className="modal-content ">
+                                            <div className="modal-header border-0 d-flex justify-content-between align-items-center ">
+                                                <p className="font-bold text-blue fs-5" id="modalLabel">{policy?.franchisename + ' ' + t('Franchise Policy')}</p>
+                                                <i className="mdi mdi-close-circle fs-4 text-primary cursor-pointer" id={`student-close-${index}`} data-bs-dismiss="modal" aria-label="Close"></i>
+                                            </div>
+                                            <div className="modal-body pt-0" dangerouslySetInnerHTML={{ __html: policy?.policy }}>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     ))) : (<tr><td colSpan={6}><Skeleton count={3} /></td></tr>)}

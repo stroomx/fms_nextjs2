@@ -76,7 +76,7 @@ export default function Login() {
                     src="/assets/img/logo-fade.png"
                 />
                 <div className="login">
-                    <div className="card">
+                    <div className="card rounded-bottom-0">
                         <div className="card-img">
                             <img
                                 alt="..."

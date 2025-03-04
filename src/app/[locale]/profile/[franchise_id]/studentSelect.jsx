@@ -61,6 +61,11 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
             enrolled: false,
             edited: true,
         }]);
+
+        setTimeout(() => {
+            const button = document.getElementById(`student-button-${students?.length}`);
+            button.click();
+        }, 1);
     };
 
     const deleteStudent = (index) => {
@@ -131,8 +136,13 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                 enrolled: student?.enrolled ? student?.enrolled : false,
                 selected: passedStudents.includes(student?.studentid) ? true : false
             }));
-            setFormData(adjustedValues);
-            setStudents(adjustedValues);
+
+            if (adjustedValues?.length == 0)
+                addStudent();
+            else {
+                setFormData(adjustedValues);
+                setStudents(adjustedValues);
+            }
         } catch (err) {
             console.log(err);
         }
@@ -184,7 +194,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                             {/* <label htmlFor={`checkbox${index}`}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg></label> */}
                             <label className={student.selected ? 'mb-0 text-blue' : 'mb-0'} htmlFor={`checkbox${index}`}><i className={(student.selected || student.enrolled) ? 'fs-5 mdi mdi-check-circle' : 'fs-5 mdi mdi-circle-outline'}></i></label>
                         </div>
-                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${index}`} aria-expanded="false" aria-controls={`collapse${index}`}>
+                        <button className="accordion-button collapsed" type="button" id={`student-button-${index}`} data-bs-toggle="collapse" data-bs-target={`#collapse${index}`} aria-expanded="false" aria-controls={`collapse${index}`}>
                             <div className="ms-4 w-100 d-flex gap-2">
                                 <p className="fs-6 font-semibold">{student?.studentname}</p>
                                 {student.studentbirthdate && <><span className="text-grey">|</span>
@@ -197,56 +207,60 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                             </div>
                         </button>
                     </div>
-                    <div id={`collapse${index}`} className="accordion-collapse collapse" data-bs-parent="#studentsAccordion">
+                    <div id={`collapse${index}`} className="accordion-collapse collapse mb-3" data-bs-parent="#studentsAccordion">
                         <div className="custom-accordion-body small-select">
                             <form method="post">
                                 <div className="row">
                                     <div className="col-6">
-                                        <label className="mt-0" htmlFor="studentfirstname">Student First Name</label>
+                                        <label className="mt-0 required" htmlFor="studentfirstname">{t('Student First Name')}</label>
                                         <input
                                             type="text"
                                             value={formData[index]?.studentfirstname}
                                             onChange={(e) => handleChange(index, 'studentfirstname', e.target.value)}
-                                            className="form-control"
+                                            className="form-control rounded-0"
                                             placeholder="First"
+                                            required
                                         />
                                     </div>
                                     <div className="col-6">
-                                        <label className="mt-0" htmlFor="studentlastname">Student Last Name</label>
+                                        <label className="mt-0 required" htmlFor="studentlastname">{t('Student Last Name')}</label>
                                         <input
                                             type="text"
                                             value={formData[index]?.studentlastname}
                                             onChange={(e) => handleChange(index, 'studentlastname', e.target.value)}
-                                            className="form-control"
+                                            className="form-control rounded-0"
                                             placeholder="Last"
+                                            required
                                         />
                                     </div>
                                 </div>
 
                                 <div className="row">
                                     <div className="col-6">
-                                        <label className="mt-3" htmlFor="studentbirthdate">Date of Birth</label>
+                                        <label className="mt-3 required" htmlFor="studentbirthdate">{t('Date of Birth')}</label>
                                         <input
                                             type="date"
                                             name="studentbirthdate"
                                             id="studentbirthdate"
                                             autoComplete="off"
-                                            className="form-control"
+                                            className="form-control rounded-0"
                                             onChange={(e) => handleChange(index, 'studentbirthdate', e.target.value)}
                                             value={formData[index]?.studentbirthdate}
+                                            required
                                         />
                                     </div>
                                     <div className="col-6">
-                                        <label className="mt-3" htmlFor="studentgender">Gender</label>
+                                        <label className="mt-3 required" htmlFor="studentgender">{t('Gender')}</label>
                                         <select
                                             name="studentgender"
-                                            className="form-select"
+                                            className="form-select rounded-0"
                                             value={formData[index]?.studentgender}
                                             onChange={(e) => handleChange(index, 'studentgender', e.target.value)}
+                                            required
                                         >
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                            <option value="Other">Other</option>
+                                            <option value="Male">{t('Male')}</option>
+                                            <option value="Female">{t('Female')}</option>
+                                            <option value="Other">{t('Other')}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -255,24 +269,24 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                                     <div className="col-6">
                                         <div className="row">
                                             <div className="col-6">
-                                                <label className="mt-3" htmlFor="studentschool">School They Attend</label>
+                                                <label className="mt-3" htmlFor="studentschool">{t('School They Attend')}</label>
                                                 <input
                                                     type="text"
                                                     name="studentschool"
                                                     id="studentschool"
-                                                    className="form-control"
+                                                    className="form-control rounded-0"
                                                     placeholder="School name"
                                                     onChange={(e) => handleChange(index, 'studentschool', e.target.value)}
                                                     value={formData[index]?.studentschool}
                                                 />
                                             </div>
                                             <div className="col-6">
-                                                <label className="mt-3" htmlFor="studentgrade">Grade</label>
+                                                <label className="mt-3" htmlFor="studentgrade">{t('Grade')}</label>
                                                 <input
                                                     type="text"
                                                     name="studentgrade"
                                                     id="studentgrade"
-                                                    className="form-control"
+                                                    className="form-control rounded-0"
                                                     placeholder="Grade"
                                                     onChange={(e) => handleChange(index, 'studentgrade', e.target.value)}
                                                     value={formData[index]?.studentgrade}
@@ -281,12 +295,12 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                                         </div>
                                     </div>
                                     <div className="col-6">
-                                        <label className="mt-3" htmlFor="studentteacher">Teacher</label>
+                                        <label className="mt-3" htmlFor="studentteacher">{t('Teacher')}</label>
                                         <input
                                             type="text"
                                             name="studentteacher"
                                             id="studentteacher"
-                                            className="form-control"
+                                            className="form-control rounded-0"
                                             placeholder="Teacher name"
                                             onChange={(e) => handleChange(index, 'studentteacher', e.target.value)}
                                             value={formData[index]?.studentteacher}
@@ -296,42 +310,44 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
 
                                 <div className="row">
                                     <div className="col-6">
-                                        <label className="mt-3" htmlFor="studentparentpickup">Student Pickup</label>
+                                        <label className="mt-3 required" htmlFor="studentparentpickup">{t('Student Pickup')}</label>
                                         <select
                                             name="studentparentpickup"
                                             id="studentparentpickup"
                                             className="form-select"
                                             value={formData[index]?.studentparentpickup}
                                             onChange={(e) => handleChange(index, 'studentparentpickup', e.target.value)}
+                                            required
                                         >
-                                            <option value="">Select</option>
-                                            <option value="Parent Pickup">Parent Pickup</option>
-                                            <option value="After School Care">After School Care</option>
-                                            <option value="Walk/Ride Bike">Walk/Ride Bike</option>
-                                            <option value="School Bus">School Bus</option>
+                                            <option value="">{t('Select')}</option>
+                                            <option value="Parent Pickup">{t('Parent Pickup')}</option>
+                                            <option value="After School Care">{t('After School Care')}</option>
+                                            <option value="Walk/Ride Bike">{t('Walk/Ride Bike')}</option>
+                                            <option value="School Bus">{t('School Bus')}</option>
                                         </select>
                                     </div>
                                     <div className="col-6">
-                                        <label className="mt-3" htmlFor="studentpickupauth">Person Authorized to Pick Up</label>
+                                        <label className="mt-3 required" htmlFor="studentpickupauth">{t('Person Authorized to Pick Up')}</label>
                                         <input
                                             type="text"
                                             name="studentpickupauth"
                                             id="studentpickupauth"
-                                            className="form-control"
+                                            className="form-control rounded-0"
                                             placeholder="Full name of authorized person"
                                             value={formData[index]?.studentpickupauth}
                                             onChange={(e) => handleChange(index, 'studentpickupauth', e.target.value)}
+                                            required
                                         />
                                     </div>
                                 </div>
 
                                 <div className="row">
                                     <div className="col-12">
-                                        <label className="mt-3" htmlFor="studentspecialinstruction">Special Instruction</label>
+                                        <label className="mt-3" htmlFor="studentspecialinstruction">{t('Special Instruction')}</label>
                                         <textarea
                                             value={formData[index]?.studentspecialinstruction}
                                             onChange={(e) => handleChange(index, 'studentspecialinstruction', e.target.value)}
-                                            className="form-control"
+                                            className="form-control rounded-0"
                                             rows="4"
                                         />
                                     </div>
@@ -352,11 +368,16 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
         <div className="buttons mt-3">
             <span className="text-brown font-semibold cursor-pointer" onClick={addStudent}>
                 <i className="mdi mdi-plus-circle pe-1"></i>
-                <span>{t('Add Another Student')}</span>
+                <span>{t(`Add ${students?.length > 0 ? 'Another' : 'a'} Student`)}</span>
             </span>
             <div className="d-flex justify-content-start gap-2 mt-2">
-                <button className="btn-style1" onClick={onCheckout}>{t('Select Students')}</button>
-                {update ? <button className="btn-style4 rounded-0" onClick={() => { onSubmit(students) }}>{t('Update Students')}</button> : ''}
+
+                {update ?
+                    <>
+                        <button className="btn btn-primary rounded-0" onClick={() => { onSubmit(students) }}>{t('Save Students')}</button>
+                        <button className="btn btn-danger rounded-0" onClick={() => { setUpdate(false) }}>{t('Cancel')}</button>
+                    </>
+                    : <button className="btn btn-primary rounded-0" onClick={onCheckout}>{t('Select Students')}</button>}
             </div>
         </div>
 

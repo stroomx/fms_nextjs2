@@ -1,24 +1,83 @@
-// pages/payment.js
-import StripePaymentForm from '@/app/components/payment_gateways/StripePaymentForm';
+'use client';
 
-const PaymentPage = () => {
-    // Example props; replace these with actual data from your backend
-    const stripePublicKey = 'your-public-key-here'; // Public Stripe key
-    const franchiseId = '6211'; // Merchant ID
-    const miscData = { amount: 1000 }; // Amount or other data needed for the request
-    const mode = 'paymentintent'; // Can be 'paymentintent' or 'setupintent'
+import { useRouter } from "next/navigation";
+import money from "@/app/localization/currency";
+import date from "@/app/localization/date";
+import time from "@/app/localization/time";
+import { useEffect, useState } from "react";
+
+
+const PaymentConfirmationPage = () => {
+
+    const router = useRouter();
+
+    const [daata, setData] = useState({});
+
+    const t = (text) => text;
+
+    const data = {
+        scheduleDateFrom: '2024-12-12',
+        scheduleDateTo: '2024-12-12',
+        scheduleDays: ['Saturday', 'Wednesday', 'Monday'],
+        scheduleTimeFrom: "16:00",
+        scheduleTimeTo: "18:00"
+    };
+
+    const fetchData = () => {
+
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (
-        <div>
-            <h1>Stripe Payment</h1>
-            <StripePaymentForm
-                stripePublicKey={stripePublicKey}
-                franchiseId={franchiseId}
-                miscData={miscData}
-                mode={mode}
-            />
+        
+        <div className="payment-page text-center">
+            <div className="container">
+                <div className="page-wrapper">
+                    <i className="mdi mdi-check-circle mb-3 fs-1"></i>
+                    <h3 className=" mb-3">{t('Enrollment Successful')}</h3>
+                    <h4 className="mb-4">{data?.franchiseName}</h4>
+                    <p className="mb-1">{date(data?.scheduleDateFrom, false) + ' - ' + date(data?.scheduleDateTo, false)}</p>
+                    <p className="mb-1">{time(data?.scheduleTimeFrom) + " " + t('to') + " " + time(data?.scheduleTimeTo)}</p>
+                    <div className="days flexed justify-content-center">
+                        {data.scheduleDays?.length === 7
+                            ? <p className="font-semibold text-13">{t('All Week')}</p>
+                            : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
+                                data.scheduleDays?.includes(day) ? (<span
+                                    key={day}
+                                >
+                                    {day.slice(0, 2).toUpperCase()}
+                                </span>) : (<p
+                                    key={day}
+                                >
+                                    {day.slice(0, 2).toUpperCase()}
+                                </p>)
+                            ))}
+                    </div>
+                    <p className="mb-1">{t('Total paid')} : <span>{money(data?.paidAmount)}</span></p>
+                    <p className="dotted">{t('Reference ID')} : <span> #{data?.enrollmentid}</span> </p>
+                    <div className="d-flex justify-content-center align-items-center gap-2 mt-5 mb-3">
+                        <button className="btn btn-outline-primary rounded-0 flex-fill">
+                            <span className="mdi mdi-calendar"></span>
+                            &nbsp;{t('Add to Calendar')}
+                        </button>
+                        <button className="btn btn-outline-primary rounded-0 flex-fill">
+                            <span class="mdi mdi-grid"></span>
+                            &nbsp;{t('Enroll in another Class')}
+                        </button>
+                        {/* <button type="button" class="btn btn-secondary"><span class="mdi mdi-grid"></span>&nbsp;Search</button> */}
+                    </div>
+
+                    <button className="btn btn-primary rounded-0 w-100" onClick={() => { router.push('/parent') }}>
+                        <span className="mdi mdi-home-variant-outline"></span>
+                        {t('Take me to Home')}
+                    </button>
+                </div>
+            </div>
         </div>
     );
 };
 
-export default PaymentPage;
+export default PaymentConfirmationPage;
