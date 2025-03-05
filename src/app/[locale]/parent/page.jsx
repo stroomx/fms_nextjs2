@@ -582,10 +582,10 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                             <p className="fs-5">{t('Parent')}</p>
                             <p>{schedule.familyName}</p>
                         </div>
-                        <div className="d-flex justify-content-between">
+                        {/* <div className="d-flex justify-content-between">
                             <p className="fs-5">{t('Extra?')}</p>
                             <p>Something Goes Here</p>
-                        </div>
+                        </div> */}
                     </div>
                     <hr className="my-4" />
                     <div className="d-flex justify-content-between align-items-center mb-2">
