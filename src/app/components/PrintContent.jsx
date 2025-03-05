@@ -26,8 +26,11 @@ export default function PrintContent({ children, icon = 'mdi-print', classes = '
         `);
 
         printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
+        
+        setTimeout(() => {
+            printWindow.focus();
+            printWindow.print();
+        }, 500);
     };
 
     return (

@@ -421,7 +421,7 @@ const ParentScheduleCardGrid = ({ schedule, index, loading, hoverAction = () => 
                     <div className="d-flex justify-content-between align-items-center">
                         <div className="print flexed text-blue" style={{ cursor: 'pointer' }}>
                             {loading ? '' :
-                                <PrintContent icon='mdi-printerr' text={t('Invoice')} index={index}>
+                                <PrintContent icon='mdi-printer' text={t('Invoice')} index={index}>
                                     <Invoice enrollment={schedule} />
                                 </PrintContent>
                             }
@@ -457,13 +457,6 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
     const [payments, setPayments] = useState([]);
     const [recurringPayments, setRecurringPayments] = useState([]);
     const [merchantPaymentActive, setMerchantPaymentActive] = useState(false);
-
-    const [details, setDetails] = useState({
-        parent: {},
-        student: {},
-        schedule: {},
-        recurringPayment: {},
-    });
 
     const [formData, setFormData] = useState({
         schedule: schedule?.id, // Schedule ID
@@ -539,7 +532,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
         try {
             const { data } = await axiosInstance.get(`/api/paymentdetails.php?scheduleenrollid=${schedule.scheduleenrollid}`);
             console.log(data);
-            setNotes(data?.notes);
+            setNotes(data?.notes?.reverse());
             setPayments(data?.payments);
             setRecurringPayments(data?.recurringpayments);
 
@@ -843,12 +836,16 @@ const Invoice = ({ enrollment }) => {
             }
         }
 
-        // fetchData(); // Commented until it's fixed. Need to prevent auto load on page load need to wait for on hover event
+        fetchData(); //TODO Need to prevent auto load on page load need to wait for on hover event
     }, []);
 
     return <>
         <div className="d-flex flex-column gap-2">
             <div className="d-flex justify-content-between align-items-start">
+                <div className="fs-1">
+                    {/* //TODO Adjust the image path */}
+                    <img src="https://fms3.bricks4kidznow.com/images/headerlogo.png" />
+                </div>
                 <div className="d-flex flex-column gap-1">
                     <b>{t('Invoice By')}:</b>
                     <p className="mb-0">{invoice?.franchise}</p>
@@ -857,10 +854,6 @@ const Invoice = ({ enrollment }) => {
                     <p className="mb-0">{invoice?.franchiseStreet}</p>
                     <p className="mb-0">{`${invoice?.franchiseCity}, ${invoice?.franchiseState}, ${invoice?.franchiseZip}`}</p>
                     <p className="mb-0">{invoice?.franchiseCountry}</p>
-                </div>
-                <div className="fs-1">
-                    //TODO Adjust the image path
-                    <img src="https://fms3.bricks4kidznow.com/images/headerlogo.png" />
                 </div>
             </div>
             <hr />
@@ -873,10 +866,10 @@ const Invoice = ({ enrollment }) => {
                 </div>
                 <div className="d-flex flex-column gap-1">
                     <b>{t('Bill to')}:</b>
-                    <p className="mb-0"><b>{t('Name')}{': '}</b>{invoice?.familyName}</p>
-                    <p className="mb-0"><b>{t('Email')}{': '}</b>{invoice?.familyEmail}</p>
-                    <p className="mb-0"><b>{t('Registration ID')}{': '}</b>{invoice?.familyUrl}</p>
-                    <div className="mb-0"><b>{t('Address')}{': '}</b>
+                    <p className="mb-0">{invoice?.familyName}</p>
+                    <p className="mb-0">{invoice?.familyEmail}</p>
+                    {invoice?.familyUrl && <p className="mb-0">{invoice?.familyUrl}</p>}
+                    <div className="mb-0">
                         {invoice?.familyStreet && <p className="mb-0">{invoice?.familyStreet}</p>}
                         {invoice?.familyCity && invoice.familyState && <p className="mb-0">{`${invoice?.familyCity}, ${invoice?.familyState}, ${invoice?.familyZip}`}</p>}
                         {invoice?.familyCountry && <p className="mb-0">{invoice?.familyCountry}</p>}

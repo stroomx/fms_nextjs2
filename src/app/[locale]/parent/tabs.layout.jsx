@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Select from '@/app/components/Select';
 
 export default function TabLayout({ children }) {
     const tabs = [
@@ -35,6 +36,7 @@ export default function TabLayout({ children }) {
                             </Link>
                         );
                     })}
+                    {/* <Select displayKey="name" valueKey="id" onChange={(e) => { console.log(e) }}></Select> */}
                 </nav>
                 {children}
             </div>
