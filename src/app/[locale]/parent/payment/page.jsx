@@ -140,7 +140,7 @@ export default function ParentPayment() {
                                         <td className='text-center'>{datef(transaction.paymentdate)}</td>
                                         <td className='text-center'>{transaction.locationName ?? transaction.franchiseName}</td>
                                         <td className={`${transaction.paymentstatus == 'pending' ? 'debit' : 'credit'} text-center`}>
-                                            {transaction.paymentstatus?.toUpperCase() || "SUCCESS"}
+                                            {transaction.paymentstatus?.toUpperCase() || t("success").toUpperCase()}
                                         </td>
                                         <td className='text-center'>
                                             <PrintContent icon='mdi-download' classes='text-danger' index={index}>

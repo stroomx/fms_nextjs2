@@ -339,9 +339,9 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                                     </PrintContent>
                                 }
                             </div>
-                            <button id={`modal-button-${schedule.scheduleenrollid}`} className="btn-payment-summary rounded-0" data-bs-toggle="modal" onMouseOver={hoverAction} onClick={() => { toggle('open'); hoverAction() }}
+                            {!loading && <button id={`modal-button-${schedule.scheduleenrollid}`} className="btn-payment-summary rounded-0" data-bs-toggle="modal" onMouseOver={hoverAction} onClick={() => { toggle('open'); hoverAction() }}
                                 data-bs-target={`#payment-modal-${index}`}>{t('Payments')}{schedule.isActive}
-                            </button>
+                            </button>}
                         </div>
                     </div>
                 </div>
@@ -425,9 +425,9 @@ const ParentScheduleCardGrid = ({ schedule, index, loading, hoverAction = () => 
                                 </PrintContent>
                             }
                         </div>
-                        <button className="btn-payment-summary rounded-0" data-bs-toggle="modal" onMouseOver={hoverAction}
+                        {!loading && <button className="btn-payment-summary rounded-0" data-bs-toggle="modal" onMouseOver={hoverAction}
                             data-bs-target={`#payment-modal-${index}`} onClick={() => { toggle('open'); hoverAction() }}>{t('Payments')}
-                        </button>
+                        </button>}
                     </div>
                 </div>
                 {/* Payment Modal */}
@@ -454,6 +454,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
 
     const [notes, setNotes] = useState([]);
     const [payments, setPayments] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [recurringPayments, setRecurringPayments] = useState([]);
     const [merchantPaymentActive, setMerchantPaymentActive] = useState(false);
 
@@ -529,6 +530,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
 
     const fetchData = async () => {
         try {
+            setLoading(true);
             const { data } = await axiosInstance.get(`/api/paymentdetails.php?scheduleenrollid=${schedule.scheduleenrollid}`);
             console.log(data);
             setNotes(data?.notes?.reverse());
@@ -540,6 +542,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
         } catch (err) {
             console.log(err);
         } finally {
+            setLoading(false);
             console.log('done');
         }
     };
@@ -642,9 +645,9 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                     <li className="nav-item" role="presentation">
                         <button className="nav-link rounded-0 active" id={`pills-history-tab-${index}`} data-bs-toggle="pill" data-bs-target={`#pills-history-${index}`} type="button" role="tab" aria-controls={`pills-history-${index}`} aria-selected="true">{t('Payment History')}</button>
                     </li>
-                    <li className="nav-item" role="presentation">
+                    {recurringPayments?.length > 0 && <li className="nav-item" role="presentation">
                         <button className="nav-link rounded-0" id={`pills-recurring-payments-tab-${index}`} data-bs-toggle="pill" data-bs-target={`#pills-recurring-payments-${index}`} type="button" role="tab" aria-controls={`pills-recurring-payments-${index}`} aria-selected="false">{t('Recurring Payments')}</button>
-                    </li>
+                    </li>}
                     <li className="nav-item" role="presentation">
                         <button className="nav-link rounded-0" id={`pills-logs-tab-${index}`} data-bs-toggle="pill" data-bs-target={`#pills-logs-${index}`} type="button" role="tab" aria-controls={`pills-logs-${index}`} aria-selected="false">{t('Enrollment Logs')}</button>
                     </li>
@@ -679,6 +682,13 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {loading && <tr>
+                                        <td className="text-center" colSpan="5">
+                                            <div className="spinner-border" role="status">
+                                                <span className="visually-hidden">Loading...</span>
+                                            </div>
+                                        </td>
+                                    </tr>}
                                     {payments?.map((payment, index) => (
                                         <tr key={index}>
                                             <td className="text-center">{index + 1}</td>
@@ -726,7 +736,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                             </table>
                         </div>
                     </div>
-                    <div className="tab-pane small-scroll-region fade" id={`pills-recurring-payments-${index}`} role="tabpanel" aria-labelledby="pills-recurring-payments-tab">
+                    {recurringPayments?.length > 0 && <div className="tab-pane small-scroll-region fade" id={`pills-recurring-payments-${index}`} role="tabpanel" aria-labelledby="pills-recurring-payments-tab">
                         <div className="container">
                             <h6 className="font-bold text-grey my-3">{t('Active Recurring Payment')}</h6>
                             {recurringPayments?.map(((recurringpayment, index) => (
@@ -812,7 +822,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    </div>}
                 </div>
             </>
             }
