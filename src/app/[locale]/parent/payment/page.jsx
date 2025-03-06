@@ -13,20 +13,14 @@ export default function ParentPayment() {
 
     const [loading, setLoading] = useState(true);
     const [payments, setPayments] = useState([]);
-    const [data, setData] = useState({
+    const [franchises, setFranchises] = useState([]);
+    const [history, setHistory] = useState({
         balance: 0,
-        credit: 0
+        credit: 0,
+        franchise: ""
     });
 
     const t = (text) => text;
-
-    const paymentTypes = {
-        "cash": "Cash",
-        "check": "Check",
-        "creditcard": "Online",
-        "outsidefmt": "Outside FMS",
-        "removecredit": "Credit Removal"
-    };
 
     const getPayments = async () => {
         try {
@@ -43,13 +37,41 @@ export default function ParentPayment() {
                     return paymentDateComparison;
                 });
 
+            var franchiseArr = {};
+
+            data?.payments?.map(payment => {
+                franchiseArr[payment.franchise] = { id: payment.franchise, name: (payment.locationName ?? payment.franchiseName) }
+            });
+
             setPayments(sortedPayments);
+            setFranchises(Object.values(franchiseArr));
             setLoading(false);
         } catch (err) {
             console.log(err);
         } finally {
             setLoading(false);
         }
+    }
+
+    const onFranchiseSelect = async (e) => {
+        const franchiseId = e.target.value;
+
+        if (!franchiseId) {
+            setHistory({
+                credit: 0,
+                balance: 0,
+                franchise: franchiseId
+            });
+            return;
+        }
+
+        const { data } = await axiosInstance.get(`/api/parentfranchisehistory.php?fid=${franchiseId}`);
+
+        setHistory({
+            credit: data?.credit,
+            balance: data?.balance,
+            franchise: franchiseId
+        });
     }
 
     useEffect(() => {
@@ -60,12 +82,18 @@ export default function ParentPayment() {
         <>
             <div className="home-section mt-4">
                 <div className="pay-details justify-content-between gap-3 align-items-center mb-3 rounded-0">
+                    <select className="form-select max-content rounded-0" name="franchise-selector" id="franchise-selector" onChange={onFranchiseSelect}>
+                        <option value="">{t('All Franchises')}</option>
+                        {
+                            franchises?.map((franchise) => <option value={franchise.id}>{franchise.name}</option>)
+                        }
+                    </select>
                     <div className="d-flex gap-3">
                         <p className="text-grey-200 font-semibold text-14">
-                            {t('Balance')}: <span className="text-red font-bold">{money(data?.balance)}</span>
+                            {t('Balance')}: <span className="text-red font-bold">{money(history?.balance)}</span>
                         </p>
                         <p className="text-grey-200 font-semibold text-14">
-                            {t('Credit')}: <span className="text-green font-bold">{money(data?.credit)}</span>
+                            {t('Credit')}: <span className="text-green font-bold">{money(history?.credit)}</span>
                         </p>
                     </div>
                     {/* <div className="title2 d-flex justify-content-end align-items-center gap-3 ">
@@ -93,7 +121,7 @@ export default function ParentPayment() {
                                 <td className='text-center'>{t('Schedule')}</td>
                                 <td className='text-center'>{t('Amount')}</td>
                                 <td className='text-center'>{t('Date & Time')}</td>
-                                <td className='text-center'>{t('Method')}</td>
+                                <td className='text-center'>{t('Franchise')}</td>
                                 <td className='text-center'>{t('Status')}</td>
                                 <td className='text-center'>{t('Receipt')}</td>
                             </tr>
@@ -110,7 +138,7 @@ export default function ParentPayment() {
                                             {money(transaction.amount)}
                                         </td>
                                         <td className='text-center'>{datef(transaction.paymentdate)}</td>
-                                        <td className='text-center'>{paymentTypes[transaction.paymenttype]}</td>
+                                        <td className='text-center'>{transaction.locationName ?? transaction.franchiseName}</td>
                                         <td className={`${transaction.paymentstatus == 'pending' ? 'debit' : 'credit'} text-center`}>
                                             {transaction.paymentstatus?.toUpperCase() || "SUCCESS"}
                                         </td>

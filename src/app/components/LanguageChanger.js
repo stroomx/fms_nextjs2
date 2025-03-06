@@ -37,7 +37,7 @@ export default function LanguageChanger() {
     };
 
     return (
-        <select onChange={handleChange} value={currentLocale}>
+        <select className="form-select max-content rounded-0" onChange={handleChange} value={currentLocale}>
             <option value="en">English</option>
             <option value="pl">Polish</option>
             <option value="fr">French</option>

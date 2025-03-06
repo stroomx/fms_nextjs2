@@ -76,7 +76,7 @@ const ParentProfile = () => {
                             <h6 className="text-grey font-bold">{t('Parent Info')}</h6>
                             <div className="flexed text-blue">
                                 <img src="/assets/img/pencil.svg" alt="" />
-                                <p className="text-14 font-semibold" onClick={() => { setFormStatus(false) }}>{t('Edit Profile')}</p>
+                                <p className="text-14 font-semibold cursor-pointer" onClick={() => { setFormStatus(false) }}>{t('Edit Profile')}</p>
                             </div>
                         </div>
                         <form onSubmit={handleSubmit}>
@@ -188,7 +188,7 @@ const ParentProfile = () => {
                         </div> */}
                             {
                                 !formStatus &&
-                                <button type="submit" className="btn btn-primary mt-3">
+                                <button type="submit" className="btn btn-primary mt-3 rounded-0">
                                     {t('Save Changes')}
                                 </button>
                             }
@@ -254,7 +254,7 @@ const StudentInfo = ({ students, loading = true, update = () => { } }) => {
                         <td className='text-center'>{t('Student')}</td>
                         <td className='text-center'>{t('Date of Birth')}</td>
                         <td className='text-center'>{t('Gender')}</td>
-                        <td className='text-center'>{t('Balance')}</td>
+                        <td className='text-center'>{t('Photo Release')}</td>
                         <td className='text-center'>{t('Status')}</td>
                         <td className='text-center'>{t('View')}</td>
                     </tr>
@@ -266,8 +266,10 @@ const StudentInfo = ({ students, loading = true, update = () => { } }) => {
                             <td className='text-center'>{student.studentname}</td>
                             <td className='text-center'>{student.studentbirthdate}</td>
                             <td className='text-center'>{student.studentgender}</td>
-                            <td className='text-center'>{student.balance || 0}</td>
-                            <td className={`${student.studentinactivateddate ? 'inactive' : 'active'} text-center`}>
+                            <td className='text-center'>{student.studentphotorelease == 1 ? <span class="badge text-bg-success">{t('Consented')}</span>
+                                : <span class="badge text-bg-danger">{t('No Consent')}</span>
+                            }</td>
+                            <td className={`text-${student.studentinactivateddate ? 'danger' : 'success'} text-center`}>
                                 {student.studentinactivateddate ? 'Inactive' : 'Active'}
                             </td>
                             <td className='text-center'>
@@ -327,11 +329,12 @@ const StudentInfo = ({ students, loading = true, update = () => { } }) => {
                                                             <label className="mt-3 required" htmlFor="studentgender">{t('Gender')}</label>
                                                             <select
                                                                 name="studentgender"
-                                                                className="form-select"
+                                                                className="form-select rounded-0"
                                                                 value={formData[index]?.studentgender ?? ''}
                                                                 onChange={(e) => handleChange(index, 'studentgender', e.target.value)}
                                                                 required
                                                             >
+                                                                <option value="" hidden>{t('Select')}</option>
                                                                 <option value="Male">{t('Male')}</option>
                                                                 <option value="Female">{t('Female')}</option>
                                                                 <option value="Other">{t('Other')}</option>
@@ -393,7 +396,7 @@ const StudentInfo = ({ students, loading = true, update = () => { } }) => {
                                                                 onChange={(e) => handleChange(index, 'studentparentpickup', e.target.value)}
                                                                 required
                                                             >
-                                                                <option value="">{t('Select')}</option>
+                                                                <option value="" hidden>{t('Select')}</option>
                                                                 <option value="Parent Pickup">{t('Parent Pickup')}</option>
                                                                 <option value="After School Care">{t('After School Care')}</option>
                                                                 <option value="Walk/Ride Bike">{t('Walk/Ride Bike')}</option>
@@ -482,7 +485,7 @@ const FranchisePolicies = ({ policies = [], loading = true }) => {
                             </td>
                             <td className='text-center'>
                                 <i
-                                    className="mdi mdi-clipboard-outline text-blue cursor-pointer"
+                                    className="mdi mdi-clipboard-outline text-primary cursor-pointer"
                                     data-bs-toggle="modal"
                                     data-bs-target={`#franchise-policy-${index}`}
                                 />
@@ -608,11 +611,11 @@ const ActionButtons = () => {
 
     return <>
         <div className="action-btns justify-content-center gap-5">
-            <button className="btn btn-delete rounded-0" data-bs-toggle="modal"
+            <button className="btn btn-outline-danger rounded-0" data-bs-toggle="modal"
                 data-bs-target="#delete-profile">
                 <i className="mdi mdi-delete-outline"></i> {t('Remove My Profile')}
             </button>
-            <button className="btn btn-profile rounded-0" onClick={downloadProfile}>
+            <button className="btn btn-outline-primary rounded-0" onClick={downloadProfile}>
                 <i className="mdi mdi-download"></i> {t('Download Profile')}
             </button>
             {/* <button

@@ -163,7 +163,7 @@ export default function ParentAddress() {
                         </div>
                         {
                             !formStatus &&
-                            <button type="submit" className="btn btn-primary mt-3">
+                            <button type="submit" className="btn btn-primary mt-3 rounded-0">
                                 {t('Save Changes')}
                             </button>
                         }

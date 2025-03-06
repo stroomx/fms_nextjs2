@@ -8,7 +8,10 @@ export default function Select({ displayKey, valueKey, id = 'customSelect', name
     const selectOption = (option) => {
         const selectDOM = document.getElementById(id);
 
+        var onChangeEvent = new Event('onchange');
         selectDOM.value = option[valueKey];
+        selectDOM.dispatchEvent(onChangeEvent); //TODO This does not work.
+
         setSelected(option[displayKey]);
     };
 
@@ -24,14 +27,14 @@ export default function Select({ displayKey, valueKey, id = 'customSelect', name
                     {selected ? selected : placeholder}
                 </button>
                 <ul className="dropdown-menu rounded-0">
-                    {options?.map((option) =>
-                        <li className="cursor-pointer" onClick={() => { selectOption(option) }}><span className="dropdown-item">{option[displayKey]}</span></li>
+                    {options?.map((option, index) =>
+                        <li key={index} className="cursor-pointer" onClick={() => { selectOption(option) }}><span className="dropdown-item">{option[displayKey]}</span></li>
                     )}
                 </ul>
             </div>
             <select name={name} id={id} onChange={onChange} className="">
-                {options?.map((option) =>
-                    <option value={option[valueKey]}>{option[displayKey]}</option>
+                {options?.map((option, index) =>
+                    <option key={index} value={option[valueKey]}>{option[displayKey]}</option>
                 )}
             </select>
         </> : "ERROR SETTING UP SELECT"

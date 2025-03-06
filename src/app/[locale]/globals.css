@@ -169,3 +169,8 @@ button.AcceptUI {
   content: " *";
   color: red;
 }
+
+.max-content {
+  width: max-content;
+  max-width: 100%;
+}

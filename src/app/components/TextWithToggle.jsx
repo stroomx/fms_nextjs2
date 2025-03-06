@@ -21,7 +21,7 @@ export default function TextWithToggle({ description, maxLength = 500, showtext 
       {/* Only show "Show More" button if the description is longer than maxLength */}
       {description?.length > maxLength && (<>{' '}
         <a onClick={toggleDescription} className={`text-blue cursor-pointer ${showtext ? 'text-decoration-underline' : ''} font-italic`}>
-          {isExpanded ? 'read less' : (showtext ? 'read more' : '...')}
+          {isExpanded ? 'read less' : (showtext ? ' read more' : '...')}
         </a></>
       )}
     </>

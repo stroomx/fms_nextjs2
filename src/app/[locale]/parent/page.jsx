@@ -80,13 +80,12 @@ export default function ParentProfile() {
     }
 
     useEffect(() => {
-        console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
         const getFranchises = (schedules = []) => {
             const franchises = {};
 
             schedules.forEach(obj => {
                 if (obj.hasOwnProperty('franchiseId')) {
-                    franchises[obj?.franchise] = { id: obj?.franchiseId, name: obj?.franchise };
+                    franchises[obj?.franchise] = { id: obj?.franchiseId, name: obj?.franchise, locationName: obj?.locationName };
                 }
             });
 
@@ -183,11 +182,11 @@ export default function ParentProfile() {
             <div className="col-lg-6 m-auto">
                 <div className="d-flex justify-content-start flex-column gap-2">
                     {(loading || franchises?.length == 0) ? '' :
-                        <div className="d-flex gap-3 align-items-center">
-                            <p className="text-grey fs-6 font-bold">{t('Locations')}</p>
-                            <select id="franchise-selector" defaultValue={franchises[0] ?? null} onChange={selectFranchise}>
+                        <div className="d-inline-flex gap-3 align-items-center">
+                            {/* <p className="text-grey fs-6 font-bold">{t('Locations')}</p> */}
+                            <select className="form-select rounded-0 max-content" id="franchise-selector" defaultValue={franchises[0] ?? null} onChange={selectFranchise}>
                                 {franchises.map((franchise) =>
-                                    <option value={franchise['id']} key={franchise['id']}>{franchise['name']}</option>
+                                    <option value={franchise['id']} key={franchise['id']}>{franchise['locationName'] ?? franchise['name']}</option>
                                 )}
                             </select>
                         </div>
@@ -199,7 +198,7 @@ export default function ParentProfile() {
                 <div className="heading end">
                     <button className="btn btn-outline-secondary py-1 rounded-0" title={t('Toggle Grid View')} onClick={() => setToggleGridView(!toggleGridView)}>
                         <i className={`mdi ${toggleGridView ? "mdi-grid" : "mdi-list-box-outline"} fs-4 px-1`}></i></button>
-                    <button className="btn btn-1 rounded-0" onClick={enrollIntoClass}>
+                    <button className="btn btn-outline-primary rounded-0" onClick={enrollIntoClass}>
                         <i className="mdi mdi-plus"></i>
                         {t('Enroll In New Class')}
                     </button>
