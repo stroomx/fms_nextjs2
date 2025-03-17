@@ -17,7 +17,7 @@ export default function TabLayout({ children }) {
     return (
         <main className="padding-top parent-home">
             <div className="container">
-                <nav className="tab-menu">
+                {/* <nav className="tab-menu">
                     {tabs.map(({ href, label }) => {
                         const isActive = pathname === href;
                         return (
@@ -36,8 +36,7 @@ export default function TabLayout({ children }) {
                             </Link>
                         );
                     })}
-                    {/* <Select displayKey="name" valueKey="id" onChange={(e) => { console.log(e) }}></Select> */}
-                </nav>
+                </nav> */}
                 {children}
             </div>
         </main>

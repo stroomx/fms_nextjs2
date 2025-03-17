@@ -79,10 +79,20 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
     const onSubmit = async () => {
         let studentsToSubmit = [];
 
+        // forea
+
         formData.forEach((ele) => {
             ele.studentname = `${ele.studentfirstname} ${ele.studentlastname}`;
-            if (ele.edited == true)
+            if (ele.edited == true) {
+                const form = document.getElementById(`student-form-${ele.studentid}`);
+
+                if (form.checkValidity() === false) {
+                    form.reportValidity();
+                    return;
+                }
+
                 studentsToSubmit.push(ele);
+            }
         });
 
         try {
@@ -209,7 +219,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                     </div>
                     <div id={`collapse${index}`} className="accordion-collapse collapse mb-3" data-bs-parent="#studentsAccordion">
                         <div className="custom-accordion-body small-select">
-                            <form method="post">
+                            <form id={`student-form-${student.studentid}`} method="post">
                                 <div className="row">
                                     <div className="col-6">
                                         <label className="mt-0 required" htmlFor="studentfirstname">{t('Student First Name')}</label>
@@ -258,6 +268,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                                             onChange={(e) => handleChange(index, 'studentgender', e.target.value)}
                                             required
                                         >
+                                            <option value="" hidden>{t('Select')}</option>
                                             <option value="Male">{t('Male')}</option>
                                             <option value="Female">{t('Female')}</option>
                                             <option value="Other">{t('Other')}</option>

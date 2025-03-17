@@ -75,7 +75,7 @@ const PaymentForm = ({ mode, students, return_url_params = [], cancelAction = ()
 
 
     const getReturnUrl = () => {
-        let url = `${window.location.origin}/parent?`;
+        let url = `${window.location.origin}/${return_url_params[0]['base'] ?? 'parent'}?`;
 
         return_url_params.forEach(ele => {
             url += `${ele['key']}=${ele['value']}&`;

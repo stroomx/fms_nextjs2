@@ -161,8 +161,6 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
         });
     };
 
-    useEffect(() => { applyFilters() }, [filterData]);
-
     const applyFilters = () => {
         console.log(filterData, 'filterdata');
         console.log(schedules);
@@ -240,7 +238,9 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                             </button>
                                         </div>
                                         <div className="d-flex gap-1 details pb-4">
-                                            <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1'>
+                                            <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1' onClick={() => {
+                                                router.push(`/profile/${franchise_id}/teacher`);
+                                            }}>
                                                 <i className="mdi mdi-human-male-board"></i>
                                                 {t('Teacher Application')}
                                             </button>

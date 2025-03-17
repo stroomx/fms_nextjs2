@@ -25,10 +25,11 @@ export default function ParentProfile() {
     const [toggleGridView, setToggleGridView] = useState(false);
     const [filteredSchedules, setFilteredSchedules] = useState([]);
     const [selectedFranchise, setSelectedFranchise] = useState('');
+    const [timelineToggle, setTimelineToggle] = useState('current');
 
     const enrollIntoClass = () => {
         const selectedFranchise = document.getElementById('franchise-selector')?.value;
-        const url = selectedFranchise ? `/profile/${selectedFranchise}` : '/profile/6209';
+        const url = selectedFranchise ? `/profile/${selectedFranchise}` : '/profile';
         router.push(url);
     }
 
@@ -63,7 +64,7 @@ export default function ParentProfile() {
 
     const filterSchedules = (franchise, data) => {
         const result = data
-            .filter((ele) => ele.franchiseId == franchise) // Filter by franchiseId
+            .filter((ele) => ele.franchiseId == franchise && schedulesTimeline(new Date(ele.lastDate + "Z"))) // Filter by franchiseId
             .sort((a, b) => {
                 // First compare by the student name
                 const studentName = a['studentName'].localeCompare(b['studentName']);
@@ -77,6 +78,17 @@ export default function ParentProfile() {
             });
 
         setFilteredSchedules(result);
+    }
+
+    const schedulesTimeline = (date) => {
+        switch (timelineToggle) {
+            case 'current':
+                return date >= new Date();
+            case 'past':
+                return date < new Date();
+            default:
+                return true;
+        }
     }
 
     useEffect(() => {
@@ -175,23 +187,33 @@ export default function ParentProfile() {
         if (selectedFranchise) {
             filterSchedules(selectedFranchise, schedules)
         }
-    }, [selectedFranchise]);
+    }, [selectedFranchise, timelineToggle]);
 
     return <div className="home-section mt-4">
         <div className="row">
             <div className="col-lg-6 m-auto">
                 <div className="d-flex justify-content-start flex-column gap-2">
                     {(loading || franchises?.length == 0) ? '' :
-                        <div className="d-inline-flex gap-3 align-items-center">
-                            {/* <p className="text-grey fs-6 font-bold">{t('Locations')}</p> */}
-                            <select className="form-select rounded-0 max-content" id="franchise-selector" defaultValue={franchises[0] ?? null} onChange={selectFranchise}>
-                                {franchises.map((franchise) =>
-                                    <option value={franchise['id']} key={franchise['id']}>{franchise['locationName'] ?? franchise['name']}</option>
-                                )}
-                            </select>
+                        <div className="d-flex gap-2">
+                            <div className="d-inline-flex gap-3 align-items-center">
+                                {/* <p className="text-grey fs-6 font-bold">{t('Locations')}</p> */}
+                                <select className="form-select rounded-0 max-content" id="franchise-selector" defaultValue={franchises[0] ?? null} onChange={selectFranchise}>
+                                    {franchises.map((franchise) =>
+                                        <option value={franchise['id']} key={franchise['id']}>{franchise['locationName'] ?? franchise['name']}</option>
+                                    )}
+                                </select>
+                            </div>
+
+                            <div className="d-inline-flex gap-3 align-items-center">
+                                {/* <p className="text-grey fs-6 font-bold">{t('Locations')}</p> */}
+                                <select className="form-select rounded-0 max-content" id="franchise-selector" defaultValue={timelineToggle} onChange={(e) => { setTimelineToggle(e.target.value) }}>
+                                    <option value="current">{t('Active Schedules')}</option>
+                                    <option value="past">{t('Past Schedules')}</option>
+                                </select>
+                            </div>
                         </div>
                     }
-                    <p className="text-grey fs-6 font-bold">{t('Student Enrollments')}</p>
+                    {/* <p className="text-grey fs-6 font-bold">{t('Student Enrollments')}</p> */}
                 </div>
             </div>
             <div className="col-lg-6">
@@ -239,10 +261,23 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
             ...internalSchedule,
             isClosed: status == 'open' ? true : false
         });
-        console.log(internalSchedule['isClosed'], status);
     }
 
+    const calendarToggle = (status = true) => {
+        setInternalSchedule({
+            ...internalSchedule,
+            showCalendar: status
+        })
+    }
+
+    const highlightDates = [
+        new Date(2025, 0, 2),  // Jan 2, 2025
+        new Date(2025, 0, 5),  // Jan 5, 2025
+        new Date(2025, 0, 7),  // Jan 7, 2025
+    ];
+
     return (
+
         <div className="card rounded-0">
             <div className="row">
                 <div className="col-md-3">
@@ -263,9 +298,54 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                     <div className="fs-4">
                         {loading ? <Skeleton width={200} /> : <b>{schedule.name}</b>}
                     </div>
-                    <div className="fs-6">
-                        {loading ? <><Skeleton width={350} /> <Skeleton count={4} /></> : <TextWithToggle description={schedule.description} />}
-                    </div>
+
+                    <span className='text-danger pb-1 d-none d-md-block'>{schedule.program}</span>
+                    {loading ? <Skeleton className="mb-2" /> : <div className="d-flex flex-wrap justify-content-lg-start align-items-lg-center gap-1 flex-column flex-lg-row justify-content-center align-items-start">
+                        <div className="d-flex gap-1 align-items-center font-semibold me-lg-2">
+                            <i className="mdi mdi-calendar-today fs-5"></i> {date(schedule?.firstDate, false) + ' - ' + date(schedule?.lastDate, false)}
+                        </div>
+                        <div className="d-flex align-items-center gap-1">
+                            <i className='mdi mdi-calendar-week fs-5'></i>
+                            <div className="days flexed">
+                                {schedule.days?.length === 7
+                                    ? t('All Week')
+                                    : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
+                                        schedule.days?.includes(day) ? (<span
+                                            key={day}
+                                        >
+                                            {day.slice(0, 2).toUpperCase()}
+                                        </span>) : (<p
+                                            key={day}
+                                        >
+                                            {day.slice(0, 2).toUpperCase()}
+                                        </p>)
+                                    ))}
+                            </div>
+                        </div>
+                    </div>}
+                    {loading ? <Skeleton className="mb-2" /> : <div className="d-flex justify-content-between flex-wrap">
+                        <div className="d-flex align-items-center gap-1">
+                            <i className='mdi mdi-face-man fs-5'></i>
+                            <p className="font-semibold text-danger">
+                                {`${schedule.minage || 0} - ${schedule.maxage || 'N/A'} years`}
+                            </p>
+                        </div>
+                        <div className="d-flex align-items-center gap-1">
+                            <i className='mdi mdi-map-marker fs-5'></i>
+                            <p className="font-semibold ">
+                                {schedule.location || 'Location not specified'}
+                            </p>
+                        </div>
+                        <div className="d-flex align-items-center gap-1">
+                            <i className='mdi mdi-human-male-board fs-5'></i>
+                            <p className="font-semibold ">
+                                {(schedule.teachers?.length > 0 ? schedule.teachers.join(', ') : 'No teachers assigned')}
+                            </p>
+                        </div>
+                    </div>}
+                    {loading ? <div className="mt-2"><Skeleton count={4} /></div> : <div className=''>
+                        <TextWithToggle description={schedule.description || ''} maxLength={110}></TextWithToggle>
+                    </div>}
                 </div>
                 <div className="col-md-4">
                     <div className="card rounded-0" style={{ backgroundColor: '#D8FBFE', marginBottom: 'unset' }}>
@@ -692,8 +772,8 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                     {payments?.map((payment, index) => (
                                         <tr key={index}>
                                             <td className="text-center">{index + 1}</td>
-                                            <td className="text-nowrap text-center">{date(payment?.paymentcreateddate)}</td>
-                                            <td className="text-center">{payment?.paymenttype}</td>
+                                            <td className="text-nowrap text-center">{date(payment?.paymentapplycreateddate)}</td>
+                                            <td className="text-center">{payment?.paymenttype ?? t('Credit')}</td>
                                             <td className="text-center">{money(payment?.paymentapplyamount)}</td>
                                             <td className="text-center"><TextWithToggle description={payment?.paymentapplydescription} maxLength={15} showtext={false} /></td>
                                             {/* <td className="text-center"><TextWithToggle description={payment?.paymenttransactionno} maxLength={10} showtext={false} /></td> */}

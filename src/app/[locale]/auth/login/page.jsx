@@ -133,7 +133,7 @@ export default function Login() {
                                 <div className="buttons mt-3 mb-1">
                                     <Link
                                         className="btn-style3 w-100 p-2 rounded-0"
-                                        href="#"
+                                        href="/profile"
                                     >
                                         {t('Find A Location')}
                                     </Link>

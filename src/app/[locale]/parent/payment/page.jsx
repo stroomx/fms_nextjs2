@@ -37,14 +37,23 @@ export default function ParentPayment() {
                     return paymentDateComparison;
                 });
 
-            var franchiseArr = {};
+            var franchiseObject = {};
 
             data?.payments?.map(payment => {
-                franchiseArr[payment.franchise] = { id: payment.franchise, name: (payment.locationName ?? payment.franchiseName) }
+                franchiseObject[payment.franchise] = { id: payment.franchise, name: (payment.locationName ?? payment.franchiseName) }
             });
 
+            const franchiseArray = Object.values(franchiseObject);
+
             setPayments(sortedPayments);
-            setFranchises(Object.values(franchiseArr));
+            setFranchises(franchiseArray);
+
+            if (franchiseArray.length === 1) {
+                onFranchiseSelect({ target: { value: franchiseArray[0]?.id } })
+            } else {
+                console.log(franchiseArray);
+            }
+
             setLoading(false);
         } catch (err) {
             console.log(err);
@@ -82,10 +91,15 @@ export default function ParentPayment() {
         <>
             <div className="home-section mt-4">
                 <div className="pay-details justify-content-between gap-3 align-items-center mb-3 rounded-0">
-                    <select className="form-select max-content rounded-0" name="franchise-selector" id="franchise-selector" onChange={onFranchiseSelect}>
+                    <select
+                        className="form-select max-content rounded-0"
+                        name="franchise-selector"
+                        id="franchise-selector"
+                        value={history?.franchise}
+                        onChange={onFranchiseSelect}>
                         <option value="">{t('All Franchises')}</option>
                         {
-                            franchises?.map((franchise) => <option value={franchise.id}>{franchise.name}</option>)
+                            franchises?.map((franchise, index) => <option key={index} value={franchise.id}>{franchise.name}</option>)
                         }
                     </select>
                     <div className="d-flex gap-3">
@@ -116,7 +130,7 @@ export default function ParentPayment() {
                         <thead>
                             <tr>
                                 <td className='text-center'>#</td>
-                                <td className='text-center'>{t('Txn. ID')}</td>
+                                <td className='text-center'>{t('ID')}</td>
                                 <td className='text-start'>{t('Student')}</td>
                                 <td className='text-center'>{t('Schedule')}</td>
                                 <td className='text-center'>{t('Amount')}</td>

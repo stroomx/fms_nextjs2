@@ -30,6 +30,16 @@ export default function AuthorizePaymentForm({ authData, environment = 'SANDBOX'
             buttonText={t('Proceed to Payment')}
             formButtonText={t('Make Payment')}
             formHeaderText={t('Input Card Details')}
+            buttonStyle={{
+                width: '100%',
+                color: 'white',
+                textAlign: 'center',
+                fontSize: '1.25rem',
+                padding: '0.5rem 1rem',
+                display: 'inline-block',
+                backgroundColor: '#198754',
+            }}
+            errorTextStyle={{ color: 'red' }}
         />
         {
             environment == 'SANDBOX' ?

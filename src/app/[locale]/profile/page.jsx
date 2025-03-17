@@ -5,7 +5,9 @@ export default function Profile() {
                 <div className="spinner"></div>
             </div>}
 
-            <h1 className="mt-4">Generic Profile Page</h1>
+            <div className="height-vw-100">
+                <h1 className="mt-3">Generic Profile Page</h1>
+            </div>
         </>
     );
 };

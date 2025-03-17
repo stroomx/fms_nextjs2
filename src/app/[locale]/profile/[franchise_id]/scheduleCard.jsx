@@ -6,9 +6,6 @@ import LoginModal from '../../auth/login/modal';
 
 export default function ScheduleCard({ franchise_id, schedule, modal = false, buttonAction = () => { }, }) {
     const { t } = useTranslation();
-
-    console.log(schedule, 'page1')
-
     const isLoggedIn = AuthService.isAuthenticated();
 
     return (

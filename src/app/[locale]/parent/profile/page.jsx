@@ -28,13 +28,12 @@ const ParentProfile = () => {
     const fetchData = async () => {
         try {
             const { data } = await axiosInstance.get('/api/parentprofile.php');
-            // console.log(data);
             setStudents(data?.students);
             setPolicies(data?.policies);
             setAgreements(data?.agreements);
             setFormData(data?.parentdetails);
         } catch (err) {
-            console.log(err);
+            console.error(err);
         } finally {
             setLoading(false);
         }
@@ -47,14 +46,12 @@ const ParentProfile = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
         try {
             const { data } = await axiosInstance.post('/api/parentprofile.php', formData);
-            console.log(data, 'response');
             setFormStatus(true);
-            fetchData();
+            alert({ type: "success", message: data?.message });
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     };
 
@@ -70,8 +67,8 @@ const ParentProfile = () => {
                 <div className="spinner"></div>
             </div>} */}
             <div className="home-section mt-4">
-                <div className="card">
-                    <div className="parent-info pb-4">
+                <div className="card rounded-0">
+                    <div className="parent-info pb-4 mb-4">
                         <div className="title">
                             <h6 className="text-grey font-bold">{t('Parent Info')}</h6>
                             <div className="flexed text-blue">
@@ -79,7 +76,7 @@ const ParentProfile = () => {
                                 <p className="text-14 font-semibold cursor-pointer" onClick={() => { setFormStatus(false) }}>{t('Edit Profile')}</p>
                             </div>
                         </div>
-                        <form onSubmit={handleSubmit}>
+                        <form className='pt-0' onSubmit={handleSubmit}>
                             <div className="input-flex">
                                 <div>
                                     <label htmlFor="first-name" className="mt-3">
@@ -89,13 +86,13 @@ const ParentProfile = () => {
                                         type="text"
                                         id="first-name"
                                         name="firstName"
-                                        className="input-style1 rounded-0"
+                                        className="form-control rounded-0"
                                         placeholder="John"
                                         value={formData.firstName}
                                         onChange={handleChange}
                                         disabled={formStatus}
                                         required
-                                    />) : (<Skeleton height={40} count={1} />)}
+                                    />) : (<Skeleton height={40} />)}
                                 </div>
                                 <div>
                                     <label htmlFor="last-name" className="mt-3">
@@ -105,13 +102,13 @@ const ParentProfile = () => {
                                         type="text"
                                         id="last-name"
                                         name="lastName"
-                                        className="input-style1 rounded-0"
+                                        className="form-control rounded-0"
                                         placeholder="Doe"
                                         value={formData.lastName}
                                         onChange={handleChange}
                                         disabled={formStatus}
                                         required
-                                    />) : (<Skeleton height={40} count={1} />)}
+                                    />) : (<Skeleton height={40} />)}
                                 </div>
                             </div>
                             <div className="input-flex">
@@ -123,13 +120,13 @@ const ParentProfile = () => {
                                         type="email"
                                         id="email"
                                         name="email"
-                                        className="input-style1 rounded-0"
+                                        className="form-control rounded-0"
                                         placeholder="doejohn125484@gmail.com"
                                         value={formData.email}
                                         onChange={handleChange}
                                         disabled={formStatus}
                                         required
-                                    />) : (<Skeleton height={40} count={1} />)}
+                                    />) : (<Skeleton height={40} />)}
                                 </div>
                                 <div>
                                     <label htmlFor="registrationid" className="mt-3">
@@ -139,12 +136,12 @@ const ParentProfile = () => {
                                         type="registrationid"
                                         id="registrationid"
                                         name="registrationid"
-                                        className="input-style1 rounded-0"
+                                        className="form-control rounded-0"
                                         placeholder="Registration Id"
                                         value={formData.registrationid ?? ''}
                                         onChange={handleChange}
                                         disabled={formStatus}
-                                    />) : (<Skeleton height={40} count={1} />)}
+                                    />) : (<Skeleton height={40} />)}
                                 </div>
                                 {/* <div>
                                 <label htmlFor="timezone" className="mt-3">
@@ -153,7 +150,7 @@ const ParentProfile = () => {
                                 <select
                                     id="timezone"
                                     name="timezone"
-                                    className="input-style1 rounded-0"
+                                    className="form-control rounded-0"
                                     value={formData.timezone}
                                     onChange={handleChange}
                                     disabled={formStatus}
@@ -188,12 +185,18 @@ const ParentProfile = () => {
                         </div> */}
                             {
                                 !formStatus &&
-                                <button type="submit" className="btn btn-primary mt-3 rounded-0">
-                                    {t('Save Changes')}
-                                </button>
+                                <div className="d-flex gap-1">
+                                    <button type="submit" className="btn btn-primary mt-3 rounded-0">
+                                        {t('Save Changes')}
+                                    </button>
+                                    <button type="button" className="btn btn-danger mt-3 rounded-0" onClick={() => { setFormStatus(true) }}>
+                                        {t('Cancel')}
+                                    </button>
+                                </div>
                             }
                         </form>
                     </div>
+                    <ParentAddress></ParentAddress>
                     <StudentInfo students={students} loading={loading} update={fetchData} />
                     <FranchisePolicies policies={policies} loading={loading} />
                     {agreements.length > 0 ? <FranchiseAgreements agreements={agreements} loading={loading} /> : ''}
@@ -201,6 +204,186 @@ const ParentProfile = () => {
                 </div>
             </div>
         </>
+    );
+};
+
+const ParentAddress = () => {
+    const [formStatus, setFormStatus] = useState(true);
+    const [formData, setFormData] = useState({
+        countries: [],
+        addressid: '',
+        addresszip: '',
+        addresscity: '',
+        addressstate: '',
+        addressstreet: '',
+        addresscountryid: ''
+    });
+    const [loading, setLoading] = useState(true);
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const { data } = await axiosInstance.get('/api/parentaddress.php');
+            setFormData({
+                countries: data?.countries,
+                addressid: data?.address.addressid ?? '',
+                addresszip: data?.address.addresszip ?? '',
+                addresscity: data?.address.addresscity ?? '',
+                addressstate: data?.address.addressstate ?? '',
+                addressstreet: data?.address.addressstreet ?? '',
+                addresscountryid: data?.address.addresscountryid ?? ''
+            });
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const obj = {
+            ...formData,
+            countries: []
+        }
+
+        try {
+            const { data } = await axiosInstance.post('/api/parentaddress.php', obj);
+            setFormStatus(true);
+            alert({ type: "success", message: data?.message });
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const t = (e) => e;
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    return (
+        <div className="parent-info pb-4">
+            <div className="title">
+                <h6 className="text-grey font-bold">{t('Address')}</h6>
+                <div className="flexed text-blue">
+                    <img src="/assets/img/pencil.svg" alt="Edit Address" />
+                    <p
+                        className="text-14 font-semibold cursor-pointer"
+                        onClick={() => setFormStatus(false)}
+                    >{t('Edit Address')}</p>
+                </div>
+            </div>
+            <form className='pt-0' onSubmit={handleSubmit}>
+                <div className="input-flex">
+                    <div>
+                        <label htmlFor="addressstreet" className="mt-3">{t('Street Address')}</label>
+                        {!loading ? (
+                            <input
+                                type="text"
+                                name="addressstreet"
+                                id="addressstreet"
+                                className="form-control rounded-0"
+                                value={formData.addressstreet}
+                                onChange={handleChange}
+                                disabled={formStatus}
+                            />
+                        ) : (
+                            <Skeleton height={40} />
+                        )}
+                    </div>
+                </div>
+                <div className="input-flex">
+                    <div>
+                        <label htmlFor="addresscity" className="mt-3">{t('City')}</label>
+                        {!loading ? (
+                            <input
+                                type="text"
+                                name="addresscity"
+                                id="addresscity"
+                                className="form-control rounded-0"
+                                value={formData.addresscity}
+                                onChange={handleChange}
+                                disabled={formStatus}
+                            />
+                        ) : (
+                            <Skeleton height={40} />
+                        )}
+                    </div>
+                    <div>
+                        <label htmlFor="addresszip" className="mt-3">{t('Zip Code')}</label>
+                        {!loading ? (
+                            <input
+                                type="text"
+                                name="addresszip"
+                                id="addresszip"
+                                className="form-control rounded-0"
+                                value={formData.addresszip}
+                                onChange={handleChange}
+                                disabled={formStatus}
+                            />
+                        ) : (
+                            <Skeleton height={40} />
+                        )}
+                    </div>
+                </div>
+                <div className="input-flex">
+                    <div>
+                        <label htmlFor="addresscountryid" className="mt-3">{t('Country')}</label>
+                        {!loading ? (
+                            <select
+                                className='form-select rounded-0'
+                                name="addresscountryid"
+                                id="addresscountryid"
+                                value={formData.addresscountryid}
+                                onChange={handleChange}
+                                disabled={formStatus}>
+                                <option value="" hidden>{t('Select Country')}</option>
+                                {formData?.countries.map((country, index) =>
+                                    <option key={index} value={country?.id}>
+                                        {country?.name}
+                                    </option>
+                                )}
+                            </select>
+                        ) : (
+                            <Skeleton height={40} />
+                        )}
+                    </div>
+                    <div>
+                        <label htmlFor="addressstate" className="mt-3">{t('State')}</label>
+                        {!loading ? (
+                            <input
+                                type="text"
+                                name="addressstate"
+                                id="addressstate"
+                                className="form-control rounded-0"
+                                value={formData.addressstate}
+                                onChange={handleChange}
+                                disabled={formStatus}
+                            />
+                        ) : (
+                            <Skeleton height={40} />
+                        )}
+                    </div>
+                </div>
+                {
+                    !formStatus &&
+                    <div className="d-flex gap-1">
+                        <button type="submit" className="btn btn-primary mt-3 rounded-0">
+                            {t('Save Changes')}
+                        </button>
+                        <button type="button" className="btn btn-danger mt-3 rounded-0" onClick={() => { setFormStatus(true) }}>
+                            {t('Cancel')}
+                        </button>
+                    </div>
+                }
+            </form>
+        </div>
     );
 };
 
@@ -234,7 +417,7 @@ const StudentInfo = ({ students, loading = true, update = () => { } }) => {
             const button = document.getElementById(`hide-button-${index}`);
             button.click();
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 
@@ -246,7 +429,7 @@ const StudentInfo = ({ students, loading = true, update = () => { } }) => {
         <div className="title">
             <h6 className="text-grey font-bold">{t('Student')}</h6>
         </div>
-        <div className="table-responsive mt-3">
+        <div className="table-responsive table-2 pb-5 mt-3 rounded-0">
             <table className="table table-hover">
                 <thead>
                     <tr>
@@ -565,9 +748,7 @@ const ActionButtons = () => {
         try {
             setLoading(true);
             const response = await axiosInstance.post('/api/deleteprofile.php', obj);
-            console.log(response);
             const close = document.getElementById('closeModalDelete');
-            console.log(close)
             close.click();
         } catch (err) {
             console.error('Error deleting profile:', err);
@@ -641,7 +822,7 @@ const ActionButtons = () => {
                                     type="email"
                                     id="useremail"
                                     name="useremail"
-                                    className="input-style1 rounded-0"
+                                    className="form-control rounded-0"
                                     placeholder="Email"
                                     defaultValue=''
                                     required
@@ -673,7 +854,7 @@ const ActionButtons = () => {
                                     type="email"
                                     id="useremail"
                                     name="useremail"
-                                    className="input-style1 rounded-0"
+                                    className="form-control rounded-0"
                                     placeholder="Email"
                                     defaultValue=''
                                     required

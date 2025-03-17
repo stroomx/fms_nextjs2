@@ -28,7 +28,7 @@ export default function Policy({ policies, action = (acceptedPolicies) => { cons
             {policies?.map((policy, index) => <div key={index}>
                 <div className="form-check">
                     <input className="form-check-input" type="checkbox" id={`policy-${index}`} onChange={handleChange} required />
-                    <label className="form-check-label">
+                    <label className="form-check-label required">
                         {t('I accept')} <span
                             className="text-blue cursor-pointer"
                             id={`policy-content-toggle-${index}`}

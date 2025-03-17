@@ -13,8 +13,13 @@
 @import 'react-loading-skeleton/dist/skeleton.css';
 @import "./parent_ui.css";
 @import "./components.css";
+@import "react-datepicker/dist/react-datepicker.css";
 
-
+.react-datepicker__day--highlighted {
+  background-color: lightgreen !important;
+  color: white !important;
+  border-radius: 50%;
+}
 
 html,
 body {
@@ -173,4 +178,8 @@ button.AcceptUI {
 .max-content {
   width: max-content;
   max-width: 100%;
+}
+
+.po-nopadding > .popover-body {
+  padding: 0;
 }
