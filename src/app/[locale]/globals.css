@@ -13,7 +13,6 @@
 @import 'react-loading-skeleton/dist/skeleton.css';
 @import "./parent_ui.css";
 @import "./components.css";
-@import "react-datepicker/dist/react-datepicker.css";
 
 .react-datepicker__day--highlighted {
   background-color: lightgreen !important;
