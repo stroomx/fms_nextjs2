@@ -14,7 +14,7 @@ const showSwal = (options = {}) => {
         },
         showConfirmButton: false,
         showCloseButton: true,
-        timer: options.timer ? options.timer : 5000,
+        timer: options.timer ? options.timer : 7000,
         timerProgressBar: true,
     });
 }

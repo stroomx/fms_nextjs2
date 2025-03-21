@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axiosInstance from '@/axios';
 import axios from 'axios';
 import alert from '@/app/components/SweetAlerts';
 import AuthService from '@/auth.service';
-import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 
-export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction = () => { } }) {
+export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction = () => { }, policies = [], schedule_id = 0 }) {
     const [formData, setFormData] = useState({
         email: '',
         phone: '',
@@ -16,29 +15,10 @@ export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction =
         firstname: '',
     });
 
-    const [policies, setPolicies] = useState([]);
     const [loading, setLoading] = useState(false);
     const [secondaryNumber, setSecondaryNumber] = useState(false);
 
     const t = (text) => text;
-
-    useEffect(() => {
-        const fetchPolicies = async () => {
-            try {
-                const { data } = await axiosInstance.get('/api/parentregistration.php');
-                setPolicies(data);
-            } catch (err) {
-                console.log(err);
-            }
-        }
-
-        fetchPolicies();
-    }, []);
-
-    const openPolicyModal = (index) => {
-        const policyModal = new Modal(document.getElementById(`policy-content-${index}`), {});
-        policyModal.show();
-    }
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -66,8 +46,6 @@ export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction =
         try {
             setLoading(true);
             const { data } = await axiosInstance.post('/api/parentregistration.php', formData);
-            console.log('Response:', data);
-            // Handle success, maybe redirect or show success message
 
             const config = {
                 headers: { Authorization: `Bearer ${data['token']}`, 'Content-Type': "application/json" }
@@ -212,29 +190,16 @@ export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction =
                     <div className="check-group mt-2">
                         {
                             policies?.map((policy, index) => <>
-                                <div className="form-check">
+                                <div key={index} className="form-check">
                                     <input className="form-check-input" type="checkbox" id={`policy-${index}`} required />
                                     <label className="form-check-label required">
                                         {t('I accept')} <span
                                             className="text-blue cursor-pointer"
                                             id={`policy-content-toggle`}
-                                            // data-bs-toggle="modal"
-                                            // data-bs-target={`#policy-content-${index}`}
-                                            onClick={() => { openPolicyModal(index) }}
+                                            data-bs-toggle="modal"
+                                            data-bs-target={`policy-content-${schedule_id}-${index}`}
                                         >{policy?.policytitle}</span>
                                     </label>
-                                </div>
-                                <div className="modal fade" id={`policy-content-${index}`} aria-hidden="true" >
-                                    <div className="modal-dialog modal-dialog-centered modal-lg">
-                                        <div className="modal-content ">
-                                            <div className="modal-header border-0 d-flex justify-content-between align-items-center ">
-                                                <p className="font-bold text-blue fs-5" id="modalLabel">{policy?.policytitle}</p>
-                                                <i className="mdi mdi-close" data-bs-dismiss="modal" aria-label="Close"></i>
-                                            </div>
-                                            <div className="modal-body pt-0" dangerouslySetInnerHTML={{ __html: policy?.policy }}>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </>)
                         }

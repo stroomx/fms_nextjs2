@@ -792,9 +792,9 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                         <td className="text-center">
                                             #
                                         </td>
-                                        <td className="text-center">
+                                        {/* <td className="text-center">
                                             {t('ID')}
-                                        </td>
+                                        </td> */}
                                         <td className="text-center">
                                             {t('Note')}
                                         </td>
@@ -807,7 +807,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                     {notes?.map((note, index) => (
                                         <tr key={index}>
                                             <td className="text-center">{index + 1}</td>
-                                            <td className="text-center">{note?.noteid}</td>
+                                            {/* <td className="text-center">{note?.noteid}</td> */}
                                             <td className="text-center"><TextWithToggle description={note?.notetext} maxLength={50} showtext={false} /></td>
                                             <td className="text-center">{date(note?.notecreateddate)}</td>
                                         </tr>

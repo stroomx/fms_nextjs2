@@ -2,8 +2,9 @@
 
 import EmbeddedLogin from "@/app/[locale]/auth/login/embedded";
 import { useRouter } from 'next/navigation';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EmbeddedSignUp from "../signup/embedded";
+import axiosInstance from "@/axios";
 
 export default function LoginModal({ franchise_id, schedule_id }) {
     const router = useRouter();
@@ -11,11 +12,27 @@ export default function LoginModal({ franchise_id, schedule_id }) {
     const t = (text) => text;
 
     const [signupToggle, setSignupToggle] = useState(false);
+    const [policies, setPolicies] = useState([]);
 
     const onLogin = () => {
         closeModal();
         router.push(`/profile/${franchise_id}/${schedule_id}/checkout`);
     }
+
+    useEffect(() => {
+        const fetchPolicies = async () => {
+            try {
+                const { data } = await axiosInstance.get('/api/parentregistration.php');
+                setPolicies(data);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        if (signupToggle) {
+            fetchPolicies();
+        }
+    }, [signupToggle]);
 
     const onSignup = () => {
         setSignupToggle(true);
@@ -30,24 +47,44 @@ export default function LoginModal({ franchise_id, schedule_id }) {
     }
 
     return (
-        <div className="modal fade" id={`selectSchedule${schedule_id}`} aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered modal-lg">
-                <div className="modal-content">
-                    <div className="modal-header border-0 d-flex justify-content-between align-items-center pb-0">
-                        <h3 className="text-blue font-bold" id="modalLabel">{signupToggle ? t('Create an account') : t('Sign in')}</h3>
-                        {/* <a id={`closeModal-${schedule_id}`} className="mdi mdi-close" data-bs-dismiss="modal" aria-label="Close"></a> */}
-                        <img id={`closeModal-${schedule_id}`} src="/assets/img/cancel-btn.svg" data-bs-dismiss="modal" aria-label="Close" />
-                    </div>
-                    <div className="modal-body pt-0">
-                        {
-                            signupToggle ?
-                                <EmbeddedSignUp loginAction={onLogin} cancelAction={onCancelSignup} /> :
-                                <EmbeddedLogin loginAction={onLogin} signupAction={onSignup} closeAction={closeModal} />
-                        }
+        <>
+            <div className="modal fade" id={`selectSchedule${schedule_id}`} aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered modal-lg">
+                    <div className="modal-content">
+                        <div className="modal-header border-0 d-flex justify-content-between align-items-center pb-0">
+                            <h3 className="text-blue font-bold" id="modalLabel">{signupToggle ? t('Create an account') : t('Sign in')}</h3>
+                            {/* <a id={`closeModal-${schedule_id}`} className="mdi mdi-close" data-bs-dismiss="modal" aria-label="Close"></a> */}
+                            <img id={`closeModal-${schedule_id}`} src="/assets/img/cancel-btn.svg" data-bs-dismiss="modal" aria-label="Close" />
+                        </div>
+                        <div className="modal-body pt-0">
+                            {
+                                signupToggle ?
+                                    <EmbeddedSignUp loginAction={onLogin} cancelAction={onCancelSignup} policies={policies} schedule_id={schedule_id} /> :
+                                    <EmbeddedLogin loginAction={onLogin} signupAction={onSignup} closeAction={closeModal} />
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            {policies?.map((policy, index) => <div key={index} className="modal fade" id={`policy-content-${schedule_id}-${index}`} aria-hidden="true" >
+                <div className="modal-dialog modal-dialog-centered modal-lg">
+                    <div className="modal-content ">
+                        <div className="modal-header border-0 d-flex justify-content-between align-items-center ">
+                            <p className="font-bold text-blue fs-5" id="modalLabel">{policy?.policytitle}</p>
+                            <i className="mdi mdi-close" data-bs-dismiss="modal" aria-label="Close"></i>
+                        </div>
+                        <div className="modal-body pt-0" dangerouslySetInnerHTML={{ __html: policy?.policy }}>
+                        </div>
+                        <div className="modal-footer">
+                            <button className="btn-style1 mt-3 d-inline w-100" type="button" data-bs-toggle="modal" data-bs-target={`selectSchedule${schedule_id}`}>
+                                {t('Enroll Now')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>)}
+        </>
     );
 };
 

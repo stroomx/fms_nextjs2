@@ -6,7 +6,9 @@ import LoginModal from '../../auth/login/modal';
 
 export default function ScheduleCard({ franchise_id, schedule, modal = false, buttonAction = () => { }, }) {
     const { t } = useTranslation();
+
     const isLoggedIn = AuthService.isAuthenticated();
+    const isWaitlist = (schedule.availablespots <= 0 && schedule.waitlist);
 
     return (
         <>
@@ -86,14 +88,20 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                             {schedule.cost || 0}
                         </p>
                         <p className="font-semibold text-danger">
-                            {(schedule.availablespots || 0) + ' ' + t('Available Spots')}
+                            {
+                                !isWaitlist ?
+                                    (schedule.availablespots || 0) + ' ' + t('Available Spots')
+                                    : t('No Available Spots')
+                            }
                         </p>
-                        {!modal &&
-                            (isLoggedIn ? <button className="btn-style1 mt-1 d-inline" type="button" onClick={() => buttonAction(schedule.id)}>
-                                {t('Enroll Now')}
-                            </button> : <button className="btn-style1 mt-1 d-inline" type="button" data-bs-toggle="modal" data-bs-target={`#selectSchedule${schedule.id}`}>
-                                {t('Enroll Now')}
-                            </button>)}
+                        {
+                            (!modal &&
+                                (isLoggedIn ? <button className="btn-style1 mt-1 d-inline" type="button" onClick={() => buttonAction(schedule.id, isWaitlist)}>
+                                    {!isWaitlist ? t('Enroll Now') : t('Register on Waitlist')}
+                                </button> : <button className="btn-style1 mt-1 d-inline" type="button" data-bs-toggle="modal" data-bs-target={`#selectSchedule${schedule.id}`}>
+                                    {!isWaitlist ? t('Enroll Now') : t('Register on Waitlist')}
+                                </button>))
+                        }
 
                     </div>
                     {modal && schedule.description &&
@@ -129,7 +137,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                         </div>}
                 </div>
             </div>
-            {isLoggedIn ? '' : <LoginModal schedule_id={schedule.id} franchise_id={franchise_id} />}
+            {isLoggedIn ? '' : <LoginModal schedule_id={schedule.id} franchise_id={franchise_id} isWaitlist={isWaitlist} />}
         </>
 
     );

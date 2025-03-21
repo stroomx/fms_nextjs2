@@ -47,7 +47,7 @@ export function middleware(request) {
     const authToken = cookieStore.get('auth_token');
 
     if (!authToken) {
-        return NextResponse.redirect(new URL('/auth/login', request.url));
+        return NextResponse.redirect(new URL(`/auth/login?redirect_url=${path}`, request.url));
     }
 
     // If authenticated, continue with i18n routing

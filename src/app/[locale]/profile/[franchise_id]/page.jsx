@@ -46,7 +46,6 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
         const fetchData = async () => {
             try {
                 const response = await axiosInstance.get(`api/profile.php?id=${franchise_id}`);
-                // console.log(response.data?.ageRange);
                 setPrograms(response.data?.programs || []);
                 setLocations(response.data?.locations || []);
                 setAgeRange(response.data?.ageRange || { min: 1, max: 16 });
@@ -124,9 +123,13 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
         });
     }
 
-    const enroll = (scheduleid) => {
+    const enroll = (scheduleid, isWaitlist = false) => {
         if (AuthService.isAuthenticated()) {
-            router.push(`/profile/${franchise_id}/${scheduleid}/checkout`)
+            if (isWaitlist) {
+                router.push(`/profile/${franchise_id}/${scheduleid}/waitlist`)
+            } else {
+                router.push(`/profile/${franchise_id}/${scheduleid}/checkout`)
+            }
         }
     }
 
@@ -169,7 +172,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
             const locationMatch = filterData.locations.length === 0 || filterData.locations.includes(schedule.locationid);
             const dateMatch = (!filterData.date.start || schedule.startdate >= filterData.date.start) &&
                 (!filterData.date.end || schedule.enddate <= filterData.date.end);
-            const ageMatch = schedule.minage >= filterData.age.min && schedule.maxage <= filterData.age.max;
+            const ageMatch = Number(schedule.minage) >= filterData.age.min && Number(schedule.maxage) <= filterData.age.max;
 
             return programMatch && locationMatch && dateMatch && ageMatch;
         });
@@ -229,7 +232,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                         <div className="d-flex gap-1 details pt-4 pb-1">
                                             <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1' data-bs-toggle="modal" data-bs-target={`#email-us`}>
                                                 <i className="mdi mdi-email-outline"></i>
-                                                {t('Email Us')}
+                                                {t('Contact Us')}
                                             </button>
                                             <></>
                                             <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1'>
@@ -273,7 +276,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                     <div className="modal-dialog modal-dialog-centered modal-lg">
                         <div className="modal-content">
                             <div className="modal-header border-0 d-flex justify-content-between align-items-center pb-0">
-                                <h3 className="text-blue font-bold" id="modalLabel">{t('Email Us')}</h3>
+                                <h3 className="text-blue font-bold" id="modalLabel">{t('Contact Us')}</h3>
                                 <i id="email-us-close" className="mdi mdi-close-circle text-primary fs-4 cursor-pointer" data-bs-dismiss="modal" aria-label="Close"></i>
                             </div>
                             <div className="modal-body pt-0">
@@ -353,13 +356,6 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                             ))}
                                         </select>
 
-                                        {/* <div className="calender">
-                                            <img
-                                                alt=""
-                                                className="cursor-pointer"
-                                                src="/assets/img/calender-icon.png"
-                                            />
-                                        </div> */}
                                     </div>
                                 </div>
                             </div>
@@ -466,7 +462,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                 <div className="col-12 col-lg-9 pe-0 overflow-y-auto">
                                     {filteredSchedules.length > 0 ? filteredSchedules?.map(function (schedule) {
                                         return (
-                                            (schedule.availablespots > 0) ? <ScheduleCard franchise_id={franchise_id} schedule={schedule} buttonAction={enroll} key={schedule.id} /> : ''
+                                            <ScheduleCard franchise_id={franchise_id} schedule={schedule} buttonAction={enroll} key={schedule.id} />
                                         );
                                     }) : <div className="fs-3 d-flex justify-content-center fw-bold">{t('No Available Schedules')}</div>}
                                 </div>
@@ -475,38 +471,6 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                     </div>
                 </div>
             </section >
-            {/* <section>
-                <div className="bg-images">
-                    <div className="party">
-                        <div className="text-center">
-                            <p className="text-white font-semibold">
-                                {
-                                    t('Looking for something different than the old run of the mill birthday parties? Why not have a Bricks 4 Kidz® birthday party?')
-                                }
-                            </p>
-                            <a href="party.html">
-                                <button className="btn-style2 red mt-5">
-                                    {t('Birthday party Request')}
-                                </button>
-                            </a>
-                        </div>
-                    </div>
-                    <div className="teacher">
-                        <div className="text-center">
-                            <p className="text-white font-semibold">
-                                {
-                                    t('Looking for tech, we are hiring, join us and build a creativity community with fun We Learn, We Build, We Play with LEGO® Bricks')
-                                }
-                            </p>
-                            <a href="apply-teacher.html">
-                                <button className="btn-style2 blue mt-5">
-                                    {t('Apply For Teacher')}
-                                </button>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section> */}
         </div >
     );
 };

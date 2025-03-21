@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import alert from '@/app/components/SweetAlerts';
 import AuthService from '@/auth.service';
 
@@ -15,6 +15,7 @@ import AuthService from '@/auth.service';
 export default function Login() {
 
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     useEffect(() => {
         // Check if the user is authenticated when the component mounts
@@ -41,7 +42,13 @@ export default function Login() {
             AuthService.login(userDetails['data'], token);
             alert({ type: "success", message: t('Login Successful'), timer: 3000 });
 
-            router.push(`/parent`);
+            const redirectUrl = searchParams.get('redirect_url');
+
+            if (redirectUrl) {
+                router.push(redirectUrl);
+            } else {
+                router.push(`/parent`);
+            }
         } catch (error) {
             const { response } = error;
             alert({ type: "error", message: t(response?.data?.error), timer: 3000 });

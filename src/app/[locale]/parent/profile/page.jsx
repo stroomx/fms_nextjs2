@@ -449,8 +449,8 @@ const StudentInfo = ({ students, loading = true, update = () => { } }) => {
                             <td className='text-center'>{student.studentname}</td>
                             <td className='text-center'>{student.studentbirthdate}</td>
                             <td className='text-center'>{student.studentgender}</td>
-                            <td className='text-center'>{student.studentphotorelease == 1 ? <span class="badge text-bg-success">{t('Consented')}</span>
-                                : <span class="badge text-bg-danger">{t('No Consent')}</span>
+                            <td className='text-center'>{student.studentphotorelease == 1 ? <span className="badge text-bg-success">{t('Consented')}</span>
+                                : <span className="badge text-bg-danger">{t('No Consent')}</span>
                             }</td>
                             <td className={`text-${student.studentinactivateddate ? 'danger' : 'success'} text-center`}>
                                 {student.studentinactivateddate ? 'Inactive' : 'Active'}
