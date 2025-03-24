@@ -5,7 +5,7 @@ import axiosInstance from '@/axios';
 import axios from 'axios';
 import alert from '@/app/components/SweetAlerts';
 import AuthService from '@/auth.service';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 
 
@@ -38,6 +38,8 @@ export default function SignUp() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
     const [step, setStep] = useState(1); // To track the current step in the form
     const [loading, setLoading] = useState(false);
 
@@ -63,7 +65,11 @@ export default function SignUp() {
         }
 
         e.preventDefault();
-        console.log('Form submitted:', formData);
+
+        if (!Cookies.get('consent_cookie')) {
+            alert({ message: t('Please accept cookie notice.') });
+            return;
+        }
 
         try {
             setLoading(true);
@@ -76,7 +82,7 @@ export default function SignUp() {
             };
 
             axios.defaults.headers.common = config['headers'];
-            const userDetails = await axios.get("https://fms3.bricks4kidznow.com/api/userdetails.php");
+            const userDetails = await axios.get(`${apiUrl}/api/userdetails.php`);
 
             AuthService.login(userDetails['data'], data['token']);
             alert({ type: "success", message: t(data['message']), timer: 3000 });

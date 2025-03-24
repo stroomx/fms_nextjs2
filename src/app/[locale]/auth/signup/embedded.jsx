@@ -6,17 +6,20 @@ import axios from 'axios';
 import alert from '@/app/components/SweetAlerts';
 import AuthService from '@/auth.service';
 
-export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction = () => { }, policies = [], schedule_id = 0 }) {
+export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction = () => { }, policies = [], schedule_id = 0, franchise_id = 0 }) {
     const [formData, setFormData] = useState({
         email: '',
         phone: '',
         password: '',
         lastname: '',
         firstname: '',
+        franchiseid: franchise_id
     });
 
     const [loading, setLoading] = useState(false);
     const [secondaryNumber, setSecondaryNumber] = useState(false);
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     const t = (text) => text;
 
@@ -41,7 +44,11 @@ export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction =
         }
 
         e.preventDefault();
-        console.log('Form submitted:', formData);
+
+        if (!Cookies.get('consent_cookie')) {
+            alert({ message: t('Please accept cookie notice.') });
+            return;
+        }
 
         try {
             setLoading(true);
@@ -52,7 +59,7 @@ export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction =
             };
 
             axios.defaults.headers.common = config['headers'];
-            const userDetails = await axios.get("https://fms3.bricks4kidznow.com/api/userdetails.php");
+            const userDetails = await axios.get(`${apiUrl}/api/userdetails.php`);
 
             AuthService.login(userDetails['data'], data['token']);
             alert({ type: "success", message: t(data['message']), timer: 3000 });

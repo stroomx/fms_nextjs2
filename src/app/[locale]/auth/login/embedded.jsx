@@ -2,20 +2,27 @@
 
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRouter } from 'next/navigation';
 
 import axios from "axios";
 import Link from "next/link";
 import AuthService from "@/auth.service";
 import alert from "@/app/components/SweetAlerts";
+import Cookies from 'js-cookie';
+
 
 export default function EmbeddedLogin({ loginAction = () => { }, signupAction = () => { }, closeAction = () => { } }) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!Cookies.get('consent_cookie')) {
+            alert({ message: t('Please accept cookie notice.') });
+            return;
+        }
+
         try {
-            const response = await axios.post("https://fms3.bricks4kidznow.com/api/login.php", formData);
+            const response = await axios.post(`${apiUrl}/api/login.php`, formData);
             const token = response.data.token;
 
             const config = {
@@ -23,7 +30,7 @@ export default function EmbeddedLogin({ loginAction = () => { }, signupAction = 
             };
 
             axios.defaults.headers.common = config['headers'];
-            const userDetails = await axios.get("https://fms3.bricks4kidznow.com/api/userdetails.php");
+            const userDetails = await axios.get(`${apiUrl}/api/userdetails.php`);
 
             AuthService.login(userDetails['data'], token);
             alert({ type: "success", message: t('Login Successful'), timer: 3000 });

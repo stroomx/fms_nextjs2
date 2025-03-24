@@ -97,6 +97,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
         }, 500);
     }
 
+
     function filterSchedules() {
         const programId = searchParams.get('program');
         const locationId = searchParams.get('location');

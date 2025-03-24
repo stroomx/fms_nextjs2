@@ -28,7 +28,6 @@ export default function ParentProfile() {
     const [timelineToggle, setTimelineToggle] = useState('current');
 
     const enrollIntoClass = () => {
-        const selectedFranchise = document.getElementById('franchise-selector')?.value;
         const url = selectedFranchise ? `/profile/${selectedFranchise}` : '/profile';
         router.push(url);
     }
@@ -109,6 +108,8 @@ export default function ParentProfile() {
         const fetchData = async () => {
             try {
                 const { data } = await axiosInstance.get('/api/enrollments.php');
+                setSelectedFranchise(data?.franchises[0]?.id);
+                setFranchises(data?.franchises);
                 if (data?.schedules?.length > 0) {
                     const unactive = data?.schedules.map(ele => {
                         ele['isActive'] = false;
@@ -117,8 +118,7 @@ export default function ParentProfile() {
                     // console.log(unactive)
                     setSchedules(unactive);
                     filterSchedules(unactive[0]?.franchiseId, unactive);
-                    setFranchises(getFranchises(unactive));
-                    setSelectedFranchise(unactive[0]?.franchiseId);
+                    // setFranchises(getFranchises(unactive));
                     setLoading(false);
                     setTimeout(() => {
                         handleEnrollment(unactive);
@@ -193,11 +193,11 @@ export default function ParentProfile() {
         <div className="row">
             <div className="col-lg-6 m-auto">
                 <div className="d-flex justify-content-start flex-column gap-2">
-                    {(loading || franchises?.length == 0) ? '' :
+                    {(loading || (franchises?.length == 0 && !selectedFranchise)) ? '' :
                         <div className="d-flex gap-2">
                             <div className="d-inline-flex gap-3 align-items-center">
                                 {/* <p className="text-grey fs-6 font-bold">{t('Locations')}</p> */}
-                                <select className="form-select rounded-0 max-content" id="franchise-selector" defaultValue={franchises[0] ?? null} onChange={selectFranchise}>
+                                <select className="form-select rounded-0 max-content" id="franchise-selector" defaultValue={selectedFranchise} onChange={selectFranchise}>
                                     {franchises.map((franchise) =>
                                         <option value={franchise['id']} key={franchise['id']}>{franchise['locationName'] ?? franchise['name']}</option>
                                     )}

@@ -225,8 +225,8 @@ export default function TeacherApplication({ params: { franchise_id } }) {
                                 />
                             </div>
                         </div>
-                        <div className="d-flex align-items-center gap-2 mt-3">
-                            <button className="btn btn-primary rounded-0 flex-grow-1">{t('Submit')}</button>
+                        <div className="d-flex justify-content-end align-items-center gap-2 mt-3">
+                            <button className="btn btn-primary rounded-0">{t('Submit')}</button>
                             <button type='button' onClick={() => { router.push(`/profile/${franchise_id}`) }} className="btn btn-danger rounded-0">{t('Cancel')}</button>
                         </div>
                     </form>

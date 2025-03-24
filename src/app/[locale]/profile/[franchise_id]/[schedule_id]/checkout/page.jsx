@@ -160,16 +160,18 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
     const calculateCouponDiscount = (price) => {
         //apply discounts to paymentdue from coupon
         let costAfterCoupon = price;
-
-        if (coupon['couponfree'])
+        if (coupon['couponfree']) {
             costAfterCoupon = 0;
-        else if (coupon['couponpercentoff'])
+        }
+        else if (coupon['couponpercentoff'] && coupon['couponpercentoff'] !== '0.00') {
             costAfterCoupon *= (1.0 - coupon['couponpercentoff']); //TODO Set FloatVal for percent
+        }
         else if (coupon['couponamountoff']) {
             if (coupon['couponamountoff'] > costAfterCoupon)
                 costAfterCoupon = 0;
-            else
+            else {
                 costAfterCoupon = costAfterCoupon - coupon['couponamountoff'];
+            }
         }
         if (costAfterCoupon < 0)
             costAfterCoupon = 0;
@@ -251,15 +253,14 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
 
 
         if ((coupon && coupon != null) && formData?.paymentoption !== 'recurringPayments') {
-            discount = calculateCouponDiscount();
-
+            discount = calculateCouponDiscount(newTotalCost);
             newPaymentCardSettings = { ...newPaymentCardSettings, useCoupon: true, couponDiscount: discount };
-
         } else {
             newPaymentCardSettings = { ...newPaymentCardSettings, useCoupon: false, couponDiscount: 0 };
         }
 
         const enrollmentCost = newTotalCost - discount;
+        totalPayable = enrollmentCost; //TODO Make sure this is solid.
 
         if (formData?.paymentoption == 'minimumDeposit') {
             // Make sure to always pay minimum deposit unless the amount remaining after discount is less than minimum desposit, then pay remaining amount.

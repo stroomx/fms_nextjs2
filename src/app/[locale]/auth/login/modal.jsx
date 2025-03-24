@@ -59,8 +59,18 @@ export default function LoginModal({ franchise_id, schedule_id }) {
                         <div className="modal-body pt-0">
                             {
                                 signupToggle ?
-                                    <EmbeddedSignUp loginAction={onLogin} cancelAction={onCancelSignup} policies={policies} schedule_id={schedule_id} /> :
-                                    <EmbeddedLogin loginAction={onLogin} signupAction={onSignup} closeAction={closeModal} />
+                                    <EmbeddedSignUp
+                                        loginAction={onLogin}
+                                        cancelAction={onCancelSignup}
+                                        policies={policies}
+                                        schedule_id={schedule_id}
+                                        franchise_id={franchise_id}
+                                    /> :
+                                    <EmbeddedLogin
+                                        loginAction={onLogin}
+                                        signupAction={onSignup}
+                                        closeAction={closeModal}
+                                    />
                             }
                         </div>
                     </div>

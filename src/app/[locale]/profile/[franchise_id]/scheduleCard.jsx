@@ -3,12 +3,33 @@ import { useTranslation } from 'react-i18next';
 import TextWithToggle from '@/app/components/TextWithToggle';
 import AuthService from '@/auth.service';
 import LoginModal from '../../auth/login/modal';
+import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export default function ScheduleCard({ franchise_id, schedule, modal = false, buttonAction = () => { }, }) {
     const { t } = useTranslation();
+    const searchParams = useSearchParams();
 
     const isLoggedIn = AuthService.isAuthenticated();
     const isWaitlist = (schedule.availablespots <= 0 && schedule.waitlist);
+
+    const scheduleSelection = () => {
+        const selected_schedule = searchParams.get('selected_schedule');
+
+        if (selected_schedule == schedule.id) {
+            if (isLoggedIn) {
+                buttonAction(schedule.id, isWaitlist);
+                return;
+            }
+
+            const enrollButton = document.getElementById(`enroll-button-${schedule.id}`);
+            enrollButton.click();
+        }
+    }
+
+    useEffect(() => {
+        scheduleSelection();
+    }, []);
 
     return (
         <>
@@ -98,7 +119,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                             (!modal &&
                                 (isLoggedIn ? <button className="btn-style1 mt-1 d-inline" type="button" onClick={() => buttonAction(schedule.id, isWaitlist)}>
                                     {!isWaitlist ? t('Enroll Now') : t('Register on Waitlist')}
-                                </button> : <button className="btn-style1 mt-1 d-inline" type="button" data-bs-toggle="modal" data-bs-target={`#selectSchedule${schedule.id}`}>
+                                </button> : <button className="btn-style1 mt-1 d-inline" id={`enroll-button-${schedule.id}`} type="button" data-bs-toggle="modal" data-bs-target={`#selectSchedule${schedule.id}`}>
                                     {!isWaitlist ? t('Enroll Now') : t('Register on Waitlist')}
                                 </button>))
                         }
