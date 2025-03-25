@@ -5,6 +5,7 @@ import axiosInstance from '@/axios';
 import axios from 'axios';
 import alert from '@/app/components/SweetAlerts';
 import AuthService from '@/auth.service';
+import Cookies from 'js-cookie';
 
 export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction = () => { }, policies = [], schedule_id = 0, franchise_id = 0 }) {
     const [formData, setFormData] = useState({

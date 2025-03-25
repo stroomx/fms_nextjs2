@@ -440,13 +440,13 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                     <div className="text-primary fw-bold mb-2">{t('Age')}</div>
 
                                     <div className="d-flex justify-content-center align-items-center gap-2">
-                                        <div>{filterData.age.min}</div>
+                                        <div>{filterData?.age?.min}</div>
                                         {(ageRange['min'] && !clear) && <MultiRangeSlider
                                             min={ageRange['min']}
                                             max={ageRange['max']}
                                             changeFunction={silderChange}
                                         />}
-                                        <div>{filterData.age.max}</div>
+                                        <div>{filterData?.age?.max}</div>
                                     </div>
 
                                     <hr className="my-3" />
