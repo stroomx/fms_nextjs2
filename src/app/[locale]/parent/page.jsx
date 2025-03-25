@@ -701,7 +701,8 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                     id="amount"
                                     value={formData['amount'] ?? 0}
                                     onChange={handleChange}
-                                    min={1}
+                                    min={0.5}
+                                    step={0.1}
                                     max={schedule?.cost - schedule?.paidAmount}
                                 />
                                 <button className="btn btn-success rounded-0 text-nowrap">{t('Pay Now')}</button>

@@ -30,10 +30,10 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
         marketingagreed: false, // Marketing Checkbox
         minimumDeposit: false, // Minimum Payment Checkbox
         returnURL: [
-            { "base": `profile/${franchise_id}/${schedule_id}/checkout` },
-            { "key": "", "value": "" },
-            { "key": "", "value": "" },
-            { "key": "", "value": "" },
+            // { "base": `parent` },
+            // { "key": "", "value": "" },
+            // { "key": "", "value": "" },
+            // { "key": "", "value": "" },
         ]
     });
 

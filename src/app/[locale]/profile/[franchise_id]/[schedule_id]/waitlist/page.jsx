@@ -50,6 +50,7 @@ export default function WaitList({ params: { franchise_id, schedule_id } }) {
             const { data } = await axiosInstance.post('/api/waitlist.php', obj);
             alert({ type: "success", message: data?.message });
             await fetch();
+            router.push(`/profile/${franchise_id}`);
 
         } catch (err) {
             console.error(err);
