@@ -8,6 +8,8 @@ import money from '@/app/localization/currency';
 import PrintContent from '@/app/components/PrintContent';
 
 import Skeleton from 'react-loading-skeleton';
+import { useTranslation } from 'react-i18next';
+
 
 export default function ParentPayment() {
 
@@ -20,7 +22,7 @@ export default function ParentPayment() {
         franchise: ""
     });
 
-    const t = (text) => text;
+    const { t } = useTranslation();
 
     const getPayments = async () => {
         try {

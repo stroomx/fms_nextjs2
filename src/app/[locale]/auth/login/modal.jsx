@@ -6,10 +6,13 @@ import { useState, useEffect } from "react";
 import EmbeddedSignUp from "../signup/embedded";
 import axiosInstance from "@/axios";
 
+import { useTranslation } from 'react-i18next';
+
+
 export default function LoginModal({ franchise_id, schedule_id }) {
     const router = useRouter();
 
-    const t = (text) => text;
+    const { t } = useTranslation();
 
     const [signupToggle, setSignupToggle] = useState(false);
     const [policies, setPolicies] = useState([]);

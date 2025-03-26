@@ -3,8 +3,10 @@
 import axiosInstance from '@/axios';
 import { useEffect, useState } from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 export default function IzyicoPaymentForm({ authData, returnUrl = 'SANDBOX', paymentData = {} }) {
-    const t = (text) => text;
+    const { t } = useTranslation();
 
     const [paymentUrl, setPaymentUrl] = useState('');
 

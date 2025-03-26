@@ -12,6 +12,8 @@ import TextWithToggle from "@/app/components/TextWithToggle";
 import MerchantGateWay from "@/app/components/payment_gateways/MerchantGateWay";
 import PrintContent from "@/app/components/PrintContent";
 
+import { useTranslation } from 'react-i18next';
+
 
 export default function ParentProfile() {
     const router = useRouter();
@@ -50,13 +52,6 @@ export default function ParentProfile() {
         });
 
         setFilteredSchedules(editedSchedules);
-    }
-
-    const onClose = (i) => {
-        const editedSchedules = filterSchedules.map((ele, index) => {
-            if (index === i)
-                ele['isClosed'] = true;
-        })
     }
 
     const t = (string) => string;
@@ -253,7 +248,7 @@ export default function ParentProfile() {
 }
 
 const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } }) => {
-    const t = (text) => text;
+    const { t } = useTranslation();
     const [internalSchedule, setInternalSchedule] = useState({ ...schedule });
 
     const toggle = (status = 'open') => {
@@ -444,7 +439,7 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
 }
 
 const ParentScheduleCardGrid = ({ schedule, index, loading, hoverAction = () => { } }) => {
-    const t = (text) => text;
+    const { t } = useTranslation();
 
     const [isImageLoaded, setIsImageLoaded] = useState(false);
 
@@ -530,7 +525,7 @@ const ParentScheduleCardGrid = ({ schedule, index, loading, hoverAction = () => 
 }
 
 const PaymentDetails = ({ schedule, index, active = false }) => {
-    const t = (text) => text;
+    const { t } = useTranslation();
 
     const [notes, setNotes] = useState([]);
     const [payments, setPayments] = useState([]);

@@ -19,7 +19,7 @@ export default function AuthorizePaymentForm({ authData, environment = 'SANDBOX'
         setCard(response?.messages?.message[0]?.text ? true : false);
     };
 
-    const t = (text) => text;
+    const { t } = useTranslation();
 
     return <>
         <HostedForm

@@ -13,14 +13,14 @@ export default function CookieConsent() {
         setCookie(Cookies.get('consent_cookie'));
         setAuth(Cookies.get('auth_token'));
         setLoading(false);
-    }, [])
+    }, []);
 
     const setBrowserCookie = (value) => {
         Cookies.set('consent_cookie', value);
         setCookie(Cookies.get('consent_cookie'));
     }
 
-    return !auth && !loading && !cookie && <div className="fixed-bottom p-4">
+    return !auth && !loading && !cookie && <div className="fixed-bottom p-4" style={{ zIndex: 9999 }}>
         <div className="bg-light w-100 mw-100" data-autohide="false">
             <div className="container p-4 d-flex flex-column">
                 <div className="text-center mb-3">

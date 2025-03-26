@@ -7,6 +7,9 @@ import time from "@/app/localization/time";
 import { useEffect, useState } from "react";
 import axiosInstance from "@/axios";
 
+import { useTranslation } from 'react-i18next';
+
+
 
 const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
 
@@ -14,7 +17,7 @@ const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
 
     const [daata, setData] = useState({});
 
-    const t = (text) => text;
+    const { t } = useTranslation();
 
     const data = {
         scheduleDateFrom: '2024-12-12',

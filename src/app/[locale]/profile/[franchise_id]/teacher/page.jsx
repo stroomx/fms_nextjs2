@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import alert from '@/app/components/SweetAlerts';
 import { useRouter } from "next/navigation";
 
+import { useTranslation } from 'react-i18next';
+
 
 export default function TeacherApplication({ params: { franchise_id } }) {
 
@@ -58,7 +60,7 @@ export default function TeacherApplication({ params: { franchise_id } }) {
 
 
 
-    const t = (text) => text;
+    const { t } = useTranslation();
     return <>
         {!franchise && <div className="loading-overlay">
             <div className="spinner"></div>

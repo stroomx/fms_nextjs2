@@ -4,11 +4,11 @@ import axiosInstance from '@/axios';
 import { useEffect, useState } from 'react';
 import { AcceptHosted } from 'react-acceptjs';
 
-
+import { useTranslation } from 'react-i18next';
 
 export default function AuthorizePaymentFormHosted({ authData, environment = 'SANDBOX', paymentData = {} }) {
 
-    const t = (text) => text;
+    const { t } = useTranslation();
 
     const [formToken, setFormToken] = useState();
 

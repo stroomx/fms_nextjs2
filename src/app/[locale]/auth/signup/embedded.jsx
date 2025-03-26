@@ -7,6 +7,9 @@ import alert from '@/app/components/SweetAlerts';
 import AuthService from '@/auth.service';
 import Cookies from 'js-cookie';
 
+import { useTranslation } from 'react-i18next';
+
+
 export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction = () => { }, policies = [], schedule_id = 0, franchise_id = 0 }) {
     const [formData, setFormData] = useState({
         email: '',
@@ -22,7 +25,7 @@ export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction =
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-    const t = (text) => text;
+    const { t } = useTranslation();
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;

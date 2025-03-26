@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
+
 
 export default function Policy({ policies, action = (acceptedPolicies) => { console.log(acceptedPolicies) } }) {
 
-    const t = (t) => t;
+    const { t } = useTranslation();
     const [acceptedPolicies, setAcceptedPolicies] = useState(0);
 
     useEffect(() => {

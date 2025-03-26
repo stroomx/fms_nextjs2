@@ -7,7 +7,7 @@ import alert from '@/app/components/SweetAlerts';
 import AuthService from '@/auth.service';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-
+import { useTranslation } from 'react-i18next';
 
 export default function SignUp() {
     const [formData, setFormData] = useState({
@@ -54,7 +54,7 @@ export default function SignUp() {
         setFormData({ ...formData, [name]: value });
     };
 
-    const t = (text) => text;
+    const { t } = useTranslation();
 
     const handleSubmit = async (e) => {
         const form = document.getElementById('form');

@@ -5,8 +5,11 @@ import { useEffect, useState } from "react";
 import alert from '@/app/components/SweetAlerts';
 import { useSearchParams, useRouter } from 'next/navigation';
 
+import { useTranslation } from 'react-i18next';
+
+
 export default function ForgotPassword() {
-    const t = (t) => t;
+    const { t } = useTranslation();
 
     const router = useRouter();
     const searchParams = useSearchParams();

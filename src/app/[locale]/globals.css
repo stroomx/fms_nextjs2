@@ -182,3 +182,8 @@ button.AcceptUI {
 .po-nopadding > .popover-body {
   padding: 0;
 }
+
+[type="checkbox"], [type="radio"] {
+  /* border-radius: 0 !important; */
+  border: 1px solid var(--primary-grey-200) !important;
+}

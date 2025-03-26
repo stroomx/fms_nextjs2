@@ -3,6 +3,9 @@ import { useEffect, useState } from "react"
 import StripePaymentForm from "./StripePaymentForm";
 import AuthorizePaymentForm from "./AuthorizePaymentForm";
 
+import { useTranslation } from 'react-i18next';
+
+
 export default function MerchantGateWay({ merchant_id, paymentData, cancelAction = () => { }, submitAction = () => { } }) {
 
     const [gateway, setgateway] = useState('');
@@ -15,7 +18,7 @@ export default function MerchantGateWay({ merchant_id, paymentData, cancelAction
         }
     }
 
-    const t = (t) => t;
+    const { t } = useTranslation();
 
     const showMerchant = () => {
         if (!gateway?.merchant)

@@ -1,5 +1,9 @@
+'use client';
+
+import { useTranslation } from 'react-i18next';
+
 export default function BirthdayPartyRequest({ franchise = { name: 'Testing Franchise' } }) {
-    const t = (text) => text;
+    const { t } = useTranslation();
     return <>
         <div className="wrapper2">
             <div className="container">
