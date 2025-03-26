@@ -20,8 +20,8 @@ const MultiRangeSlider = ({ min, max, changeFunction = () => { } }) => {
     useEffect(() => {
         const minPercent = getPercent(minVal);
         const maxPercent = getPercent(maxValRef.current);
-        // console.log(minVal);
-        // console.log(maxVal);
+        console.log(minVal);
+        console.log(maxVal);
 
         if (range.current) {
             range.current.style.left = `${minPercent}%`;
@@ -34,8 +34,8 @@ const MultiRangeSlider = ({ min, max, changeFunction = () => { } }) => {
         const minPercent = getPercent(minValRef.current);
         const maxPercent = getPercent((maxVal));
 
-        // console.log(minVal);
-        // console.log(maxVal);
+        console.log(minVal);
+        console.log(maxVal);
 
         if (range.current) {
             range.current.style.width = `${maxPercent - minPercent}%`;
@@ -68,9 +68,10 @@ const MultiRangeSlider = ({ min, max, changeFunction = () => { } }) => {
                 max={max}
                 value={maxVal}
                 onChange={(event) => {
-                    const value = Math.max(Number(event.target.value), minVal + 1);
-                    setMaxVal(value);
-                    maxValRef.current = value;
+                    const value = Math.max(Number(event.target.value), +minVal + 1);
+
+                    setMaxVal(Math.min(value, max));
+                    maxValRef.current = Math.min(value, max);
                 }}
                 className="thumb thumb--right"
             />

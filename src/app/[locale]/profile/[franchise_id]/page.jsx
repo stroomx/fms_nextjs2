@@ -325,7 +325,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
             </section>
             <section>
                 <div className="programs">
-                    <div className="section-title d-none">
+                    <div className="section-title">
                         <div className="container">
                             <div className="row">
                                 <div className="col-lg-5 m-auto">
