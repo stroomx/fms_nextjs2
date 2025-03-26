@@ -66,6 +66,8 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
             const button = document.getElementById(`student-button-${students?.length}`);
             button.click();
         }, 1);
+
+        setUpdate(true);
     };
 
     const deleteStudent = (index) => {
@@ -78,8 +80,6 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
 
     const onSubmit = async () => {
         let studentsToSubmit = [];
-
-        // forea
 
         formData.forEach((ele) => {
             ele.studentname = `${ele.studentfirstname} ${ele.studentlastname}`;
@@ -124,6 +124,18 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
         }
     }
 
+    const outDatedDetails = (date) => {
+        if (!date)
+            return false;
+
+        const dateObject = new Date(date);
+        const currentDate = new Date();
+
+        const monthDiff = (currentDate.getFullYear() - dateObject.getFullYear()) * 12 + currentDate.getMonth() - dateObject.getMonth();
+
+        return monthDiff >= 6;
+    }
+
     const fetchData = async () => {
         try {
             const url = `api/students.php${schedule_id ? `?sid=${schedule_id}` : ''}`;
@@ -142,6 +154,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                 studentparentpickup: student?.studentparentpickup ? student?.studentparentpickup : "",
                 studentphotorelease: student?.studentphotorelease ? student?.studentphotorelease : "",
                 studentspecialinstruction: student?.studentspecialinstruction ? student?.studentspecialinstruction : "",
+                studentupdateddate: student?.studentupdateddate ? student?.studentupdateddate : "",
 
                 enrolled: student?.enrolled ? student?.enrolled : false,
                 selected: passedStudents.includes(student?.studentid) ? true : false
@@ -194,6 +207,17 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
         return borderClass;
     }
 
+    const getMaxDate = () => {
+        const max = new Date();
+        max.setFullYear(max.getFullYear() - process.env.NEXT_PUBLIC_MIN_STUDENT_AGE);
+
+        const year = max.getFullYear();
+        const month = (max.getMonth() + 1).toString().padStart(2, '0');
+        const day = max.getDate().toString().padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
     return <>
         <div className="accordion" id="studentsAccordion" onChange={showUpdateButton}>
             {students?.map((student, index) =>
@@ -213,6 +237,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                                     <p className="text-grey">{`${t('Grade')} ${student?.studentgrade}`}</p></>}
                                 {student.enrolled && <><span className="text-grey">|</span> <p className="text-danger">{t('Already Enrolled')}</p> </>}
                                 {student.studentid == 0 && <><span className="text-grey">|</span> <p className="text-danger">{t('Save Student To Select.')}</p> </>}
+                                {outDatedDetails(student.studentupdateddate) && (<div className="ms-auto me-3"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>{t('Student Details Are Outdated')}</title><path d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg></div>)}
                                 {student.studentid == 0 && (<div className="ms-auto me-3"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" onClick={() => { deleteStudent(index) }}><path d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" /></svg></div>)}
                             </div>
                         </button>
@@ -253,6 +278,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                                             name="studentbirthdate"
                                             id="studentbirthdate"
                                             autoComplete="off"
+                                            max={getMaxDate()}
                                             className="form-control rounded-0"
                                             onChange={(e) => handleChange(index, 'studentbirthdate', e.target.value)}
                                             value={formData[index]?.studentbirthdate}

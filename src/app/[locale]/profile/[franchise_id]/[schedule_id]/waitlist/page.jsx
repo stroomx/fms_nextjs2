@@ -217,6 +217,17 @@ function AddStudent({ refresh = async () => { } }) {
         setFormData(updatedData);
     };
 
+    const getMaxDate = () => {
+        const max = new Date();
+        max.setFullYear(max.getFullYear() - process.env.NEXT_PUBLIC_MIN_STUDENT_AGE);
+
+        const year = max.getFullYear();
+        const month = (max.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+        const day = max.getDate().toString().padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
     const onSubmit = async (e) => {
         try {
             e.preventDefault();
@@ -233,7 +244,7 @@ function AddStudent({ refresh = async () => { } }) {
             const button = document.getElementById(`closeModal`);
             button.click();
 
-            // setFormData({});
+            setFormData({});
         } catch (err) {
             console.error(err);
         }
@@ -286,6 +297,7 @@ function AddStudent({ refresh = async () => { } }) {
                                         autoComplete="off"
                                         className="form-control rounded-0"
                                         onChange={handleChange}
+                                        max={getMaxDate()}
                                         value={formData?.studentbirthdate ?? ''}
                                         required
                                     />

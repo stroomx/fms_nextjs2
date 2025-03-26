@@ -3,7 +3,7 @@
 import axiosInstance from "@/axios";
 import alert from '@/app/components/SweetAlerts';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import StudentSelection from "../../studentSelect";
@@ -117,7 +117,6 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
     }
 
     const tokenEnroll = (token) => {
-        console.log(token);
         setFormData({ ...formData, token: token });
     }
 
@@ -213,7 +212,8 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
             setStudents(data?.students);
             if (data?.schedule?.availablespots <= 0) {
                 alert({ type: "error", message: t(`Schedule (${data?.schedule?.name}) has no available spots.`) });
-                router.push(`/profile/${franchise_id}`);
+                const redirectRoute = true ? `/profile/${franchise_id}` : `/profile/${franchise_id}/${schedule_id}/waitlist`;
+                router.push(redirectRoute);
             }
             if (studentIds.length <= 0) {
                 const btn = document.getElementById('selectStudents')
@@ -227,6 +227,24 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
             setLoading(false);
         }
     };
+
+    function ageWarning(name, dob) {
+        const dobDate = new Date(dob);
+
+        const diff_ms = Date.now() - dobDate.getTime();
+
+        const age_dt = new Date(diff_ms);
+
+        const age = Math.abs(age_dt.getUTCFullYear() - 1970);
+
+        if (age < schedule.minage) {
+            return `${name} ` + t("is below the recommended age for this schedule.");
+        } else if (age > schedule.minage) {
+            return `${name} ` + t("is above the recommended age for this schedule.");
+        }
+
+        return false;
+    }
 
     const calculatePayment = () => {
         let newTotalCost = schedule.cost?.totalcost * studentIds.length;
@@ -293,7 +311,16 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
 
     useEffect(() => {
         calculatePayment();
-    }, [coupon, schedule, formData])
+    }, [coupon, schedule, formData]);
+
+    useEffect(() => {
+        const firstRadioButton = document.querySelector('#paymentoption-radios input[type="radio"]:first-of-type')?.value;
+
+        setFormData({
+            ...formData,
+            paymentoption: firstRadioButton
+        });
+    }, [schedule]);
 
     useEffect(() => {
         fetchData();
@@ -313,17 +340,20 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                 <h6 className="font-bold text-grey">{t('Schedule')}</h6>
                             </div>
                             <div className="check-out">
-                                <div className="checkout-item">
-                                    <img
-                                        alt="..."
-                                        className="card-img"
-                                        src={schedule.image ? schedule.image : "/assets/img/program-1.png"}
-                                    />
-                                    <div>
+                                <div className="row">
+                                    <div className="col-md-3 col-12">
+
+                                        <img
+                                            alt="..."
+                                            className="card-img"
+                                            src={schedule.image ? schedule.image : "/assets/img/program-1.png"}
+                                        />
+                                    </div>
+                                    <div className="col-md-5 col-12 mt-md-0 mt-2">
                                         <h6 className="font-bold mb-2">{schedule.name || 'N/A'}</h6>
                                         <p className="font-semibold text-13 mb-2">{schedule.daterange || 'N/A'}</p>
                                     </div>
-                                    <div className="cost">
+                                    <div className="col-md-4 col-12 cost mt-md-0 mt-2">
                                         <p className=" text-grey-200 font-semibold mb-2">{t('Schedule Cost')} : <span className="font-bolder text-black">{money(schedule.cost?.totalcost) || 0}</span></p>
                                         <p className="font-semibold text-13 text-orange">{(schedule.availablespots || 0) + ' ' + t('Available Spots')}
                                         </p>
@@ -375,6 +405,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                         <p className=" text-grey-200 font-semibold">{`${t('Student')}: `}
                                             <span className=" text-black">{student.studentname}</span>
                                         </p>
+                                        {ageWarning(student?.studentname, student?.studentbirthdate) && <i className="mdi mdi-alert-circle text-danger" title={ageWarning(student?.studentname, student?.studentbirthdate)}></i>}
                                     </div>
                                 })
                             }
@@ -385,7 +416,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                     <h6 className="font-bold text-grey">{t('Payment Options')}</h6>
                                 </div>
 
-                                <div className="radio-group">
+                                <div className="radio-group" id="paymentoption-radios">
                                     {schedule.scheduleallowonlinepayment != 0 ? <div className="form-check form-check-inline">
                                         <input
                                             className="form-check-input"
@@ -463,10 +494,10 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                 <h6 className="font-bold text-grey">{t('Our Policies')}</h6>
                             </div>
                             <Policy policies={schedule?.policies} action={handlePolicies}></Policy>
-                            <small className="text-small text-danger">{t('Please accept the policy to proceed.')}</small>
+                            {/* <small className="text-small text-danger">{t('Please accept the policy to proceed.')}</small> */}
                         </div>
                         <div className="col-lg-5">
-                            <div className="coupon mb-4">
+                            <div className="coupon mb-4 mt-4 mt-md-0">
                                 {formData?.paymentoption !== 'recurringPayments' ? <>
                                     <input type="text" id="coupon" maxLength={16} className="input-style1 rounded-0" placeholder="Have coupon code ? Enter here" onChange={(e) => setCouponCode(e.target.value)} />
                                     <button className="btn btn-outline-primary fs-5 rounded-0" disabled={couponCode == ''} onClick={validateCoupon}>{t('Apply')}</button>
@@ -544,6 +575,8 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                     </div>
                                 </div>
                             </div>
+                            {!showPaymentGateway() && <p className="text-danger text-center">{t('Please select a payment option and accept our policies to proceed.')}</p>}
+
                             <div className="d-flex gap-2 flex-column">
                                 {showPaymentGateway() && <MerchantGateWay key={formData['paymentoption']} merchant_id={franchise_id} paymentData={{ ...formData, students: studentIds, coupon: coupon?.couponcode }} cancelAction={() => setFormData({ ...formData, paymentoption: '' })} submitAction={(token) => { tokenEnroll(token) }} />}
                                 {((formData['paymentoption'] == 'cash' || paymentCardSettings?.totalPayable == 0) && showPaymentGateway(false)) && <button className="btn btn-success btn-lg w-100 rounded-0" onClick={enroll}>{t('Enroll Now')}</button>}
@@ -552,7 +585,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                     </div>
                 </div>
             </div>
-        </section>
+        </section >
         <div className="modal fade" id="select-student" aria-hidden="true" data-bs-backdrop={studentIds?.length > 0 ? "true" : "static"} data-bs-keyboard={studentIds?.length > 0 ? "true" : "false"}>
             <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                 <div className="modal-content">
