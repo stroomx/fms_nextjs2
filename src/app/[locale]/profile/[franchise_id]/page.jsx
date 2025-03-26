@@ -325,7 +325,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
             </section>
             <section>
                 <div className="programs">
-                    <div className="section-title">
+                    <div className="section-title d-none">
                         <div className="container">
                             <div className="row">
                                 <div className="col-lg-5 m-auto">
@@ -362,8 +362,116 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                             </div>
                         </div>
                     </div>
+                    <div className="container d-block d-lg-none p-0">
+                        <div className="card rounded-0 mb-2 h-100">
+                            <div className="row mb-3">
+                                <div className="col-md-4 col-6">
+                                    <div className="text-primary fw-bold mb-2">{t('Programs')}</div>
+                                    <div className="checkbox-group">
+                                        {
+                                            programs?.map((ele, index) => (
+                                                <div className="form-check" key={index}>
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        value={ele.id}
+                                                        id={`programCheck-${index}`}
+                                                        checked={filterData['programs'].includes(ele.id)}
+                                                        onChange={(e) => handleFilterChange('programs', e.target.value, e.target.checked)}
+                                                    />
+                                                    <label className="form-check-label" htmlFor={`programCheck-${index}`}>
+                                                        {ele.name}
+                                                    </label>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
+
+
+                                {/* <hr className="my-3 m-auto w-75 text-center" /> */}
+                                <div className="col-md-4 col-6">
+                                    <div className="text-primary fw-bold mb-2">{t('Locations')}</div>
+                                    <div className="checkbox-group">
+                                        {
+                                            locations?.map((ele, index) => (
+                                                <div className="form-check" key={index}>
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        value={ele.id}
+                                                        id={`locationCheck-${index}`}
+                                                        checked={filterData['locations'].includes(ele.id)}
+                                                        onChange={(e) => handleFilterChange('locations', e.target.value, e.target.checked)}
+                                                    />
+                                                    <label className="form-check-label" htmlFor={`locationCheck-${index}`}>
+                                                        {ele.name}
+                                                    </label>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
+
+                                {/* <hr className="my-3 m-auto w-75 text-center" /> */}
+                                <div className="col-md-4 col-12">
+                                    <div className="text-primary fw-bold mb-2">{t('Date')}</div>
+                                    <div className="title2">
+                                        <div className="dates row g-2">
+                                            <div className="col-12 d-flex align-items-center gap-3">
+                                                <label className="text-grey-200">{t('Start')}</label>
+                                                <input
+                                                    type="date"
+                                                    name="start"
+                                                    className="rounded-0 p-1 w-100"
+                                                    value={filterData['date']['start'] ?? ''}
+                                                    onChange={(e) => handleFilterChange('date', { name: 'start', value: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className="col-12 d-flex align-items-center gap-3">
+                                                <label className="text-grey-200">{t('End')}</label>
+                                                <input
+                                                    type="date"
+                                                    name="end"
+                                                    value={filterData['date']['end'] ?? ''}
+                                                    className="rounded-0 p-1 w-100"
+                                                    onChange={(e) => handleFilterChange('date', { name: 'end', value: e.target.value })}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* <hr className="my-3 m-auto w-75 text-center" /> */}
+                                {/* <div>
+                                    <div className="text-primary fw-bold mb-2">{t('Age')}
+                                        <span className="fw-normal text-black ms-1">
+                                            {`(${filterData?.age?.min} - ${filterData?.age?.max})`}
+                                        </span>
+                                    </div>
+
+                                    {(ageRange['min'] && !clear) && <MultiRangeSlider
+                                        min={ageRange['min']}
+                                        max={ageRange['max']}
+                                        changeFunction={silderChange}
+                                    />}
+                                </div> */}
+
+                                {/* <hr className="my-3" /> */}
+                            </div>
+                            <div className="d-flex gap-2">
+                                <button
+                                    className="btn btn-primary fw-bold w-100 rounded-0"
+                                    onClick={applyFilters}
+                                >
+                                    {t('Apply Filters')}
+                                </button>
+                                <button className="btn btn-danger fw-bold rounded-0" onClick={clearFilters}>{t('Clear')}</button>
+                            </div>
+                        </div>
+                    </div>
                     <div className="program-cards">
-                        <div className="container">
+                        <div className="container ps-md-0">
                             <div className="row">
                                 <div className="col-md-3 d-none d-lg-block card rounded-0 mb-2 h-100">
                                     <div className="text-primary fw-bold mb-2">{t('Programs')}</div>
@@ -411,25 +519,25 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
 
                                     <hr className="my-3 m-auto w-75 text-center" />
                                     <div className="text-primary fw-bold mb-2">{t('Date')}</div>
-                                    <div className="title2">
-                                        <div className="dates d-flex gap-2 align-items-start">
-                                            <div className="d-flex flex-column justify-content-start gap-1 align-items-start">
+                                    <div className="title2 container-flex">
+                                        <div className="dates row">
+                                            <div className="col-12 col-md-6">
                                                 <label className="text-grey-200">{t('Start')}</label>
                                                 <input
                                                     type="date"
                                                     name="start"
-                                                    className="rounded-0 p-1"
+                                                    className="rounded-0 p-1 w-100"
                                                     value={filterData['date']['start'] ?? ''}
                                                     onChange={(e) => handleFilterChange('date', { name: 'start', value: e.target.value })}
                                                 />
                                             </div>
-                                            <div className="d-flex flex-column justify-content-start gap-1 align-items-start">
+                                            <div className="col-12 col-md-6">
                                                 <label className="text-grey-200">{t('End')}</label>
                                                 <input
                                                     type="date"
                                                     name="end"
                                                     value={filterData['date']['end'] ?? ''}
-                                                    className="rounded-0 p-1"
+                                                    className="rounded-0 p-1 w-100"
                                                     onChange={(e) => handleFilterChange('date', { name: 'end', value: e.target.value })}
                                                 />
                                             </div>
@@ -437,17 +545,13 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                     </div>
 
                                     <hr className="my-3 m-auto w-75 text-center" />
-                                    <div className="text-primary fw-bold mb-2">{t('Age')}</div>
+                                    <div className="text-primary fw-bold mb-2">{t('Age')} <span className="fw-normal text-black ms-1">{`(${filterData?.age?.min} - ${filterData?.age?.max})`}</span></div>
 
-                                    <div className="d-flex justify-content-center align-items-center gap-2">
-                                        <div>{filterData?.age?.min}</div>
-                                        {(ageRange['min'] && !clear) && <MultiRangeSlider
-                                            min={ageRange['min']}
-                                            max={ageRange['max']}
-                                            changeFunction={silderChange}
-                                        />}
-                                        <div>{filterData?.age?.max}</div>
-                                    </div>
+                                    {(ageRange['min'] && !clear) && <MultiRangeSlider
+                                        min={ageRange['min']}
+                                        max={ageRange['max']}
+                                        changeFunction={silderChange}
+                                    />}
 
                                     <hr className="my-3" />
                                     <div className="d-flex gap-2">

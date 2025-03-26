@@ -45,13 +45,13 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                     </div>
                     <div className="col-12 d-md-none pb-2">
                         <div className="row">
-                            <div className="col-9">
+                            <div className="col-md-9 col-8">
                                 <p className="font-bold fs-5">
                                     {schedule.name || 'N/A'}
                                 </p>
                                 <span className='text-danger'>{schedule.program}</span>
                             </div>
-                            <div className="col-3">
+                            <div className="col-md-3 col-4">
                                 <p className="text-blue font-bold text-end fs-2">
                                     {schedule.cost || 0}
                                 </p>

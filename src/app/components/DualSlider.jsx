@@ -48,7 +48,12 @@ const MultiRangeSlider = ({ min, max, changeFunction = () => { } }) => {
     }, [minVal, maxVal]);
 
     return (
-        <div className="slider-container">
+        // <div className="d-flex">
+        //     {/* <div className="me-1">{minVal}</div> */}
+
+        //     {/* <div className="ms-1">{maxVal}</div> */}
+        // </div>
+        <div className="slider-container py-2">
             <input
                 type="range"
                 min={min}
@@ -60,6 +65,7 @@ const MultiRangeSlider = ({ min, max, changeFunction = () => { } }) => {
                     minValRef.current = value;
                 }}
                 className="thumb thumb--left"
+                title={minVal}
                 style={{ zIndex: minVal > max - 100 && "5" }}
             />
             <input
@@ -73,6 +79,7 @@ const MultiRangeSlider = ({ min, max, changeFunction = () => { } }) => {
                     setMaxVal(Math.min(value, max));
                     maxValRef.current = Math.min(value, max);
                 }}
+                title={maxVal}
                 className="thumb thumb--right"
             />
 
