@@ -214,6 +214,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                 alert({ type: "error", message: t(`Schedule (${data?.schedule?.name}) has no available spots.`) });
                 const redirectRoute = true ? `/profile/${franchise_id}` : `/profile/${franchise_id}/${schedule_id}/waitlist`;
                 router.push(redirectRoute);
+                return;
             }
             if (studentIds.length <= 0) {
                 const btn = document.getElementById('selectStudents')

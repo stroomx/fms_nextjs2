@@ -177,7 +177,61 @@ export default function ParentPayment() {
 }
 
 const PaymentReciept = ({ payment }) => {
+    const t = (t) => t;
     return <>
-        <p className="fs-1 text-danger">Printing Payment #{payment?.paymentid}</p>
+        <div className="d-flex flex-column gap-2">
+            <div className="d-flex justify-content-between align-items-start">
+                <div className="fs-1">
+                    {/* //TODO Adjust the image path */}
+                    <img src="https://fms3.bricks4kidznow.com/images/headerlogo.png" />
+                </div>
+                <div className="d-flex flex-column gap-1">
+                    <b>{t('Reciept By')}:</b>
+                    <p className="mb-0">{payment?.franchisename}</p>
+                    <p className="mb-0">{payment?.franchiseEmail}</p>
+                    <p className="mb-0">{payment?.franchisePhone}</p>
+                    <p className="mb-0">{payment?.franchiseStreet}</p>
+                    <p className="mb-0">{`${payment?.franchiseCity}, ${payment?.franchiseState}, ${payment?.franchiseZip}`}</p>
+                    <p className="mb-0">{payment?.franchiseCountry}</p>
+                </div>
+            </div>
+            <hr />
+            <div className="d-flex justify-content-between align-items-start">
+                <div className="d-flex flex-column gap-1">
+                    <p className="mb-0"><b>{t('Reciept Number')}{': '}</b>{payment?.paymentapplyid}</p>
+                    <p className="mb-0"><b>{t('Student')}{': '}</b>{payment?.studentName}</p>
+                    {payment?.studentUrl && <p className="mb-0"><b>{t('Registration ID')}{': '}</b>{payment?.studentUrl}</p>}
+                </div>
+                <div className="d-flex flex-column gap-1">
+                    <b>{t('Bill to')}:</b>
+                    <p className="mb-0">{payment?.familyName}</p>
+                    <p className="mb-0">{payment?.familyEmail}</p>
+                    {payment?.familyUrl && <p className="mb-0">{payment?.familyUrl}</p>}
+                    <div className="mb-0">
+                        {payment?.familyStreet && <p className="mb-0">{payment?.familyStreet}</p>}
+                        {payment?.familyCity && invoice.familyState && <p className="mb-0">{`${payment?.familyCity}, ${payment?.familyState}, ${payment?.familyZip}`}</p>}
+                        {payment?.familyCountry && <p className="mb-0">{payment?.familyCountry}</p>}
+                    </div>
+                </div>
+            </div>
+            <div className="table-responsive mt-2">
+                <table className="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col" className="text-center">{t('Date')}</th>
+                            <th scope="col">{t('Description')}</th>
+                            <th scope="col" className="text-center">{t('Cost')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td className="text-center text-nowrap">{datef(payment?.paymentdate, false)}</td>
+                            <td>{payment?.description}</td>
+                            <td className="text-center">{money(payment?.amount)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div >
     </>
 }

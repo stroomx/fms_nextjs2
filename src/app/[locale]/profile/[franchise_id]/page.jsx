@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from 'react-i18next';
 
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
@@ -28,13 +28,16 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
     const [schedules, setSchedules] = useState([]);
     const [franchise, setFranchise] = useState(null);
     const [filteredSchedules, setFilteredSchedules] = useState([]);
+    const [emailFormData, setEmailFormData] = useState({
+        franchise: franchise_id
+    });
 
     const [filterData, setFilterData] = useState({
-        locations: [],
-        programs: [],
+        locations: searchParams.get('locations') ? searchParams.get('locations').split(',') : [],
+        programs: searchParams.get('programs') ? searchParams.get('programs').split(',') : [],
         date: {
-            start: '',
-            end: ''
+            start: searchParams.get('startdate') || '',
+            end: searchParams.get('enddate') || ''
         },
         age: {
             min: 1,
@@ -42,97 +45,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
         }
     });
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axiosInstance.get(`api/profile.php?id=${franchise_id}`);
-                setPrograms(response.data?.programs || []);
-                setLocations(response.data?.locations || []);
-                setAgeRange(response.data?.ageRange || { min: 1, max: 16 });
-                setFilterData({ ...filterData, age: response.data?.ageRange });
-                setSchedules(response.data?.schedules || []);
-                setFranchise(response.data?.franchise);
-                setFilteredSchedules(response.data?.schedules || []);
-            } catch (err) {
-                console.log(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []); // Fetch data once on mount
-
-
-    useEffect(() => {
-        // Filter schedules whenever schedules or searchParams change
-        setFilteredSchedules(filterSchedules());
-    }, [schedules, searchParams]);
-
-    function locationFilter(locationId) {
-        const params = new URLSearchParams(searchParams);
-        if (locationId) {
-            params.set('location', locationId);
-        } else {
-            params.delete('location');
-        }
-        const currentScrollY = window.scrollY;
-        replace(`${pathname}?${params.toString()}`);
-        setTimeout(() => {
-            window.scrollTo(0, currentScrollY);
-        }, 500);
-    }
-
-    function programFilter(programId) {
-        const params = new URLSearchParams(searchParams);
-        if (programId) {
-            params.set('program', programId);
-        } else {
-            params.delete('program');
-        }
-        const currentScrollY = window.scrollY;
-        replace(`${pathname}?${params.toString()}`);
-        setTimeout(() => {
-            window.scrollTo(0, currentScrollY);
-        }, 500);
-    }
-
-
-    function filterSchedules() {
-        const programId = searchParams.get('program');
-        const locationId = searchParams.get('location');
-
-        return schedules.filter((ele) =>
-            (programId ? ele['programid'] === programId : true) &&
-            (locationId ? ele['locationid'] === locationId : true)
-        );
-    }
-
-    function silderChange(min = 0, max = 0) {
-        // console.log(min, max, 'pre')
-        if (max == 0)
-            return;
-
-        // console.log(
-        //     { min: min, max: max }
-        // )
-        setFilterData({
-            ...filterData, age: {
-                min: min,
-                max: max
-            }
-        });
-    }
-
-    const enroll = (scheduleid, isWaitlist = false) => {
-        if (AuthService.isAuthenticated()) {
-            if (isWaitlist) {
-                router.push(`/profile/${franchise_id}/${scheduleid}/waitlist`)
-            } else {
-                router.push(`/profile/${franchise_id}/${scheduleid}/checkout`)
-            }
-        }
-    }
+    const scrollY = useRef(0);
 
     const handleFilterChange = (type, value, checked) => {
         setFilterData((prev) => {
@@ -166,23 +79,41 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
     };
 
     const applyFilters = () => {
-        console.log(filterData, 'filterdata');
-        console.log(schedules);
+        const currentScrollY = scrollY.current;
+
+        const { programs = [], locations = [], date = {}, age = {} } = filterData;
+        const { start: startDate, end: endDate } = date;
+        const { min: minAge, max: maxAge } = age;
+
         const filteredSchedules = schedules.filter((schedule) => {
-            const programMatch = filterData.programs.length === 0 || filterData.programs.includes(schedule.programid);
-            const locationMatch = filterData.locations.length === 0 || filterData.locations.includes(schedule.locationid);
-            const dateMatch = (!filterData.date.start || schedule.startdate >= filterData.date.start) &&
-                (!filterData.date.end || schedule.enddate <= filterData.date.end);
-            const ageMatch = Number(schedule.minage) >= filterData.age.min && Number(schedule.maxage) <= filterData.age.max;
+            const programMatch = !programs.length || programs.includes(schedule.programid);
+            const locationMatch = !locations.length || locations.includes(schedule.locationid);
+            const dateMatch = (!startDate || schedule.startdate >= startDate) &&
+                (!endDate || schedule.enddate <= endDate);
+            const ageMatch = Number(schedule.minage) >= minAge && Number(schedule.maxage) <= maxAge;
 
             return programMatch && locationMatch && dateMatch && ageMatch;
         });
 
-        console.log('Filtered Schedules:', filteredSchedules);
+        const filterParams = new URLSearchParams(searchParams);
+
+        if (programs.length) filterParams.set('programs', programs.join(','));
+        if (locations.length) filterParams.set('locations', locations.join(','));
+        if (startDate) filterParams.set('startdate', startDate);
+        if (endDate) filterParams.set('enddate', endDate);
+
+        const filterURI = filterParams.toString() ? `?${filterParams.toString()}` : '';
+
+        replace(`${pathname}${filterURI}`);
         setFilteredSchedules(filteredSchedules);
+        setTimeout(() => {
+            window.scrollTo(0, currentScrollY);
+        }, 300);
     };
 
     const clearFilters = () => {
+        const currentScrollY = scrollY.current;
+
         setFilteredSchedules(schedules);
         setFilterData({
             locations: [],
@@ -200,7 +131,91 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
         setTimeout(() => {
             setClear(false);
         }, 1)
+
+        replace(`${pathname}`);
+        setTimeout(() => {
+            window.scrollTo(0, currentScrollY);
+        }, 300);
     }
+
+    const silderChange = (min = 0, max = 0) => {
+        // console.log(min, max, 'pre')
+        if (max == 0)
+            return;
+
+        // console.log(
+        //     { min: min, max: max }
+        // )
+        setFilterData({
+            ...filterData, age: {
+                min: min,
+                max: max
+            }
+        });
+    }
+
+    const sendEmail = async (e) => {
+        e.preventDefault();
+        try {
+            const obj = {
+                franchise: 6209,
+                email: 'ahmed@stroomx.com',
+                body: 'HI THIS IS AN EMAIL FROM AHMED',
+                subject: 'test email from UI',
+                name: 'AHMED ABDELSALAM'
+            };
+            const { data } = await axiosInstance.post('api/sendmail.php', obj);
+            console.log(data);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    const enroll = (scheduleid, isWaitlist = false) => {
+        if (AuthService.isAuthenticated()) {
+            if (isWaitlist) {
+                router.push(`/profile/${franchise_id}/${scheduleid}/waitlist`)
+            } else {
+                router.push(`/profile/${franchise_id}/${scheduleid}/checkout`)
+            }
+        }
+    }
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axiosInstance.get(`api/profile.php?id=${franchise_id}`);
+                setPrograms(response.data?.programs || []);
+                setLocations(response.data?.locations || []);
+                setAgeRange(response.data?.ageRange || { min: 1, max: 16 });
+                setFilterData({ ...filterData, age: response.data?.ageRange });
+                setSchedules(response.data?.schedules || []);
+                setFranchise(response.data?.franchise);
+                setFilteredSchedules(response.data?.schedules || []);
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const handleScroll = () => {
+            scrollY.current = window.scrollY;
+        };
+
+        fetchData();
+
+        window.addEventListener('scroll', handleScroll);
+
+        // Cleanup event listener when component unmounts
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    useEffect(() => {
+        applyFilters()
+    }, [schedules]);
 
 
     return (
@@ -281,43 +296,61 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                 <i id="email-us-close" className="mdi mdi-close-circle text-primary fs-4 cursor-pointer" data-bs-dismiss="modal" aria-label="Close"></i>
                             </div>
                             <div className="modal-body pt-0">
-                                <div className='col-12'>
-                                    <label htmlFor="from">
-                                        {t('Name')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        id="name"
-                                        className="form-control rounded-0"
-                                        required={true}
-                                    />
-                                </div>
-                                <div className='col-12 mt-2'>
-                                    <label htmlFor="subject">
-                                        {t('Subject')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="subject"
-                                        id="subject"
-                                        className="form-control rounded-0"
-                                        required={true}
-                                    />
-                                </div>
-                                <div className='col-12 mt-2'>
-                                    <label htmlFor="body">
-                                        {t('Email Body')}
-                                    </label>
-                                    <textarea
-                                        type="text"
-                                        name="body"
-                                        id="body"
-                                        className="form-control rounded-0"
-                                        required={true}
-                                    ></textarea>
-                                </div>
-                                <button className="btn btn-primary w-100 rounded-0 mt-3">{t('Send Mail')}</button>
+                                <form onSubmit={sendEmail}>
+                                    <div className="row">
+
+                                        <div className='col-12 col-md-6'>
+                                            <label className="required" htmlFor="name">
+                                                {t('Name')}
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="name"
+                                                id="name"
+                                                className="form-control rounded-0"
+                                                required={true}
+                                            />
+                                        </div>
+                                        <div className='col-12 col-md-6'>
+                                            <label className="required" htmlFor="from">
+                                                {t('Email')}
+                                            </label>
+                                            <input
+                                                type="email"
+                                                name="from"
+                                                id="from"
+                                                className="form-control rounded-0"
+                                                required={true}
+                                            />
+                                        </div>
+                                        <div className='col-12 mt-2'>
+                                            <label className="required" htmlFor="subject">
+                                                {t('Subject')}
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="subject"
+                                                id="subject"
+                                                className="form-control rounded-0"
+                                                required={true}
+                                            />
+                                        </div>
+                                        <div className='col-12 mt-2'>
+                                            <label className="required" htmlFor="body">
+                                                {t('Email Body')}
+                                            </label>
+                                            <textarea
+                                                type="text"
+                                                name="body"
+                                                id="body"
+                                                rows={6}
+                                                className="form-control rounded-0"
+                                                required={true}
+                                            ></textarea>
+                                        </div>
+                                    </div>
+                                    <button className="btn btn-primary w-100 rounded-0 mt-3">{t('Send Mail')}</button>
+                                </form>
                             </div>
                         </div>
                     </div>
