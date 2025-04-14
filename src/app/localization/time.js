@@ -1,4 +1,7 @@
 export default function formatTime(time, locale = navigator.language) {
+    if (!time)
+        return;
+
     // Parse the ISO formatted date string into a Date object
     const date = new Date('2000-01-01 ' + time + "Z");
 

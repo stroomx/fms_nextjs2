@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@nextui-org/date-picker": "^2.3.7",
+    "@react-google-maps/api": "^2.20.6",
     "@stripe/react-stripe-js": "^2.9.0",
     "@stripe/stripe-js": "^5.0.0",
     "bootstrap": "^5.3.3",

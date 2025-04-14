@@ -527,6 +527,8 @@ const ParentScheduleCardGrid = ({ schedule, index, loading, hoverAction = () => 
 const PaymentDetails = ({ schedule, index, active = false }) => {
     const { t } = useTranslation();
 
+    const appURL = process.env.NEXT_PUBLIC_APP_URL;
+
     const [notes, setNotes] = useState([]);
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -711,10 +713,8 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
             {showPayment() ? <>
                 <div className="fs-4 mb-2 mt-0 align-items-start">{t('Amount To Be Paid is')} {money(formData?.amount)}</div>
                 <MerchantGateWay merchant_id={schedule?.franchiseId} paymentData={{
-                    ...formData, students: [schedule.studentId], returnURL: [
-                        { key: 'eid', value: schedule.scheduleenrollid },
-                        { key: 'amount', value: formData?.amount },
-                    ]
+                    ...formData, students: [schedule.studentId], returnURL: `${appURL}/profile?eid=${schedule.scheduleenrollid}&amount=${formData?.amount}`,
+                    cancelURL: `${appURL}/profile?eid=${schedule.scheduleenrollid}&amount=${formData?.amount}`
                 }} cancelAction={cancelPayment} submitAction={(token) => { tokenEnroll(token) }} />
             </> : <>
                 <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">

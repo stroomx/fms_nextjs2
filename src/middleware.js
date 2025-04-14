@@ -31,6 +31,11 @@ const publicRoutes = [
         regex: /^\/(?:[a-z]{2}\/)?profile\/\d+$/, // Matches /profile/12345 or /[locale]/profile/12345
         isRegex: true,
     },
+    {
+        path: '/profile/[franchise]/teacher',
+        regex: /^\/(?:[a-z]{2}\/)?profile\/\d+$/, // Matches /profile/12345/teacher or /[locale]/profile/12345/teacher
+        isRegex: true,
+    },
 ];
 
 // Middleware function to handle route authentication and internationalization

@@ -67,23 +67,12 @@ const StripePaymentForm = ({ paymentData, mode = 'paymentintent', cancelAction =
     );
 };
 
-const PaymentForm = ({ mode, students, return_url_params = [], cancelAction = () => { } }) => {
+const PaymentForm = ({ mode, students, returnURL = '', cancelAction = () => { } }) => {
     const stripe = useStripe();
     const elements = useElements();
     const [isProcessing, setIsProcessing] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
 
-
-    const getReturnUrl = () => {
-        let url = `${window.location.origin}/${return_url_params[0]['base'] ?? 'parent'}?`;
-
-        return_url_params.forEach(ele => {
-            url += `${ele['key']}=${ele['value']}&`;
-        });
-
-
-        return url;
-    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -104,7 +93,8 @@ const PaymentForm = ({ mode, students, return_url_params = [], cancelAction = ()
                 result = await stripe.confirmPayment({
                     elements,
                     confirmParams: {
-                        return_url: return_url_params.length > 0 ? getReturnUrl() : `${window.location.origin}/parent?id=${students.join(',')}`,
+                        //TODO Revise the default redirect URL.
+                        return_url: returnURL ? returnURL : `${window.location.origin}/parent?id=${students.join(',')}`,
                     },
                 });
             }

@@ -19,6 +19,11 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
     const { replace } = useRouter();
     const searchParams = useSearchParams();
     let studentIds = searchParams.get('id')?.split(',') ?? [];
+    let status = searchParams.get('redirect_status');
+
+    replace(pathname); // Removes the params from the URL
+
+    const appURL = process.env.NEXT_PUBLIC_APP_URL;
 
     const [formData, setFormData] = useState({
         schedule: schedule_id, // Schedule ID
@@ -29,12 +34,8 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
         students: [], // Array of students
         marketingagreed: false, // Marketing Checkbox
         minimumDeposit: false, // Minimum Payment Checkbox
-        returnURL: [
-            // { "base": `parent` },
-            // { "key": "", "value": "" },
-            // { "key": "", "value": "" },
-            // { "key": "", "value": "" },
-        ]
+        returnURL: `${appURL}/profile/${franchise_id}/${schedule_id}/payment`,
+        cancelURL: `${appURL}/profile/${franchise_id}/${schedule_id}/checkout`
     });
 
     const [paymentCardSettings, setPaymentCardSettings] = useState({
@@ -220,12 +221,15 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                 const btn = document.getElementById('selectStudents')
                 btn.click();
             }
-
         } catch (err) {
             const { response } = err;
             router.push(`/profile/${franchise_id}`);
         } finally {
             setLoading(false);
+
+            if (status == 'failed') {
+                alert({ type: "error", message: t(`Payment Failed, please try again.`) });
+            }
         }
     };
 

@@ -56,7 +56,6 @@ export default function LoginModal({ franchise_id, schedule_id }) {
                     <div className="modal-content">
                         <div className="modal-header border-0 d-flex justify-content-between align-items-center pb-0">
                             <h3 className="text-blue font-bold" id="modalLabel">{signupToggle ? t('Create an account') : t('Sign in')}</h3>
-                            {/* <a id={`closeModal-${schedule_id}`} className="mdi mdi-close" data-bs-dismiss="modal" aria-label="Close"></a> */}
                             <img id={`closeModal-${schedule_id}`} src="/assets/img/cancel-btn.svg" data-bs-dismiss="modal" aria-label="Close" />
                         </div>
                         <div className="modal-body pt-0">
@@ -80,23 +79,24 @@ export default function LoginModal({ franchise_id, schedule_id }) {
                 </div>
             </div>
 
-            {policies?.map((policy, index) => <div key={index} className="modal fade" id={`policy-content-${schedule_id}-${index}`} aria-hidden="true" >
-                <div className="modal-dialog modal-dialog-centered modal-lg">
-                    <div className="modal-content ">
-                        <div className="modal-header border-0 d-flex justify-content-between align-items-center ">
-                            <p className="font-bold text-blue fs-5" id="modalLabel">{policy?.policytitle}</p>
-                            <i className="mdi mdi-close" data-bs-dismiss="modal" aria-label="Close"></i>
-                        </div>
-                        <div className="modal-body pt-0" dangerouslySetInnerHTML={{ __html: policy?.policy }}>
-                        </div>
-                        <div className="modal-footer">
-                            <button className="btn-style1 mt-3 d-inline w-100" type="button" data-bs-toggle="modal" data-bs-target={`selectSchedule${schedule_id}`}>
-                                {t('Enroll Now')}
-                            </button>
+            {policies?.map((policy, index) => <>
+                <div key={index} className="modal fade" id={`policy-content-${schedule_id}-${index}`} aria-hidden="true" >
+                    <div className="modal-dialog modal-dialog-centered modal-lg">
+                        <div className="modal-content ">
+                            <div className="modal-header border-0 d-flex justify-content-between align-items-center ">
+                                <p className="font-bold text-blue fs-5" id="modalLabel">{policy?.policytitle}</p>
+                            </div>
+                            <div className="modal-body pt-0" dangerouslySetInnerHTML={{ __html: policy?.policy }}>
+                            </div>
+                            <div className="modal-footer">
+                                <button className="btn btn-primary rounded-0 w-100" type="button" data-bs-toggle="modal" data-bs-target={`#selectSchedule${schedule_id}`}>
+                                    {t('Back to Signup')}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>)}
+            </>)}
         </>
     );
 };

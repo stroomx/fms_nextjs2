@@ -208,7 +208,7 @@ export default function EmbeddedSignUp({ loginAction = () => { }, cancelAction =
                                             className="text-blue cursor-pointer"
                                             id={`policy-content-toggle`}
                                             data-bs-toggle="modal"
-                                            data-bs-target={`policy-content-${schedule_id}-${index}`}
+                                            data-bs-target={`#policy-content-${schedule_id}-${index}`}
                                         >{policy?.policytitle}</span>
                                     </label>
                                 </div>

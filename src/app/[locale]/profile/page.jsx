@@ -1,12 +1,38 @@
+'use client';
+
+import LocationMap from "@/app/components/Map";
+import axiosInstance from "@/axios";
+import { useEffect, useState } from "react";
+
 export default function Profile() {
+
+    const [loading, setLoading] = useState(true);
+    const [locations, setLocations] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const { data } = await axiosInstance.get('api/maplocations.php');
+                console.log(data);
+                setLocations(data);
+                setLoading(false);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        fetchData();
+    }, []);
+
     return (
         <>
-            {false && <div className="loading-overlay">
+            {loading && <div className="loading-overlay">
                 <div className="spinner"></div>
             </div>}
 
-            <div className="height-vw-100">
-                <h1 className="mt-3">Generic Profile Page</h1>
+            <div className="container pt-5 mt-5" style={{ height: "100svh" }}>
+
+                <LocationMap locations={locations}></LocationMap>
             </div>
         </>
     );

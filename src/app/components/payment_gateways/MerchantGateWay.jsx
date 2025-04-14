@@ -4,6 +4,7 @@ import StripePaymentForm from "./StripePaymentForm";
 import AuthorizePaymentForm from "./AuthorizePaymentForm";
 
 import { useTranslation } from 'react-i18next';
+import AuthorizePaymentFormHosted from "./AuthorizePaymentFormHosted";
 
 
 export default function MerchantGateWay({ merchant_id, paymentData, cancelAction = () => { }, submitAction = () => { } }) {
@@ -32,7 +33,9 @@ export default function MerchantGateWay({ merchant_id, paymentData, cancelAction
             case 'paypal':
                 return <>{t('Paypal!')}</>;
             case 'authorizenet':
-                return <AuthorizePaymentForm paymentData={paymentData} authData={{ apiLoginID: gateway?.apiKey, clientKey: gateway?.publicKey }} saveNonce={submitAction} />;
+                // return <AuthorizePaymentForm paymentData={paymentData} authData={{ apiLoginID: gateway?.apiKey, clientKey: gateway?.publicKey }} saveNonce={submitAction} />;
+                console.log(paymentData, 'pdata');
+                return <AuthorizePaymentFormHosted paymentData={paymentData} authData={{ apiLoginID: gateway?.apiKey, clientKey: gateway?.publicKey }} />;
             default:
                 console.log(gateway?.merchant)
                 return <>{t('Merchant not setup, please contact your system admin.')}</>;
