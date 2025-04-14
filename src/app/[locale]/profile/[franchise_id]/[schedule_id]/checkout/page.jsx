@@ -21,7 +21,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
     let studentIds = searchParams.get('id')?.split(',') ?? [];
     let status = searchParams.get('redirect_status');
 
-    replace(pathname); // Removes the params from the URL
+    // replace(pathname); // Removes the params from the URL
 
     const appURL = process.env.NEXT_PUBLIC_APP_URL;
 
