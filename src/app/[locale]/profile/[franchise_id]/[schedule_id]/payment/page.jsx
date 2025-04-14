@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import money from "@/app/localization/currency";
 import date from "@/app/localization/date";
 import time from "@/app/localization/time";
@@ -12,10 +12,14 @@ import { useTranslation } from 'react-i18next';
 const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
 
     const router = useRouter();
+    const pathname = usePathname();
+    const { replace } = useRouter();
     const searchParams = useSearchParams();
     let status = searchParams.get('redirect_status');
     let paidAmount = searchParams.get('amount');
     let enrollmentId = searchParams.get('eid') ?? searchParams.get('payment_intent') ?? false;
+
+    replace(pathname); // Removes the params from the URL
 
     const [data, setData] = useState({});
 
