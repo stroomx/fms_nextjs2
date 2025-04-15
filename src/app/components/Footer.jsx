@@ -7,35 +7,38 @@ export default async function Footer({ locale }) {
     const { t } = await initTranslations(locale);
 
     return (
-        <footer>
+        <footer className="py-3 mt-auto">
             <div className="container">
-                <div className="d-flex align-items-center justify-content-between">
-                    <div className="text">
-                        <p className="font-semibold">
+                <div className="row align-items-center text-center text-md-start">
+                    <div className="col-md-4 mb-2 mb-md-0">
+                        <p className="mb-0 fw-semibold">
                             {t('All Rights Reserved © Copyright 2025')}
                         </p>
                     </div>
 
-                    <div className="text">
-                    <p className="font-semibold">
+                    <div className="col-md-4 mb-2 mb-md-0">
+                        <p className="mb-0 fw-semibold">
                             {t('Powered By © Technowland')}
                         </p>
                     </div>
 
-                    <div className="links">
-                        <Link
-                            className="text-blue font-semibold"
+                    <div className="col-md-4 d-flex flex-column flex-md-row justify-content-md-end gap-2">
+                        <a
+                            className="text-primary fw-semibold text-decoration-none"
                             href="https://www.bricks4kidz.com/about/contact-us/"
-                        />
-                        {t('Contact Us')}
-                        <Link
-                            className="text-blue font-semibold"
-                            href=""
-                        />
-                        {t('Privacy Policy')}
+                        >
+                            {t('Contact Us')}
+                        </a>
+                        <a
+                            className="text-primary fw-semibold text-decoration-none"
+                            href="https://bricks4kidz.us/privacy-policy/"
+                        >
+                            {t('Privacy Policy')}
+                        </a>
                     </div>
                 </div>
             </div>
         </footer>
+
     );
 }

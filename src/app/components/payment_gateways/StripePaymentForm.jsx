@@ -61,7 +61,7 @@ const StripePaymentForm = ({ paymentData, mode = 'paymentintent', cancelAction =
         <div id="popup-stripe-form">
             {clientSecret && <Elements stripe={loadStripe(stripePublicKey)} options={{ clientSecret }}>
 
-                <PaymentForm mode={mode} students={paymentData['students']} return_url_params={paymentData['returnURL']} cancelAction={cancelAction} />
+                <PaymentForm mode={mode} students={paymentData['students']} returnURL={paymentData['returnURL']} cancelAction={cancelAction} />
             </Elements>}
         </div>
     );
@@ -72,7 +72,6 @@ const PaymentForm = ({ mode, students, returnURL = '', cancelAction = () => { } 
     const elements = useElements();
     const [isProcessing, setIsProcessing] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
-
 
     const handleSubmit = async (event) => {
         event.preventDefault();

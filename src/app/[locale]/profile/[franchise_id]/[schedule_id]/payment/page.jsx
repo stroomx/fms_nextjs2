@@ -50,7 +50,7 @@ const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
 
     useEffect(() => {
         if (!status)
-            router.push(`/profile/${franchise_id}`);
+            router.push(`/profile/${franchise_id}/${schedule_id}/checkout?redirect_status=failed`);
 
         fetchData();
     }, []);
@@ -85,7 +85,7 @@ const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
                                     </p>)
                                 ))}
                         </div>
-                        <p className="mb-2">{t('Total paid')} : <span>{money(data?.paidAmount)}</span></p>
+                        {data?.paidAmount && <p className="mb-2">{t('Total paid')} : <span>{money(data?.paidAmount)}</span></p>}
                         {data?.enrollmentid ? <p className="dotted mt-1">{t('Reference ID')} : <span> #{data?.enrollmentid}</span> </p> :
                             <p className="dotted mt-1">{t('Payment under proccessing, once payment clears you\'ll recieve confirmation email.')}</p>}
                         <div className="d-flex justify-content-center align-items-center gap-2 mt-5 mb-3">

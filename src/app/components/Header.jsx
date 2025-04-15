@@ -51,7 +51,7 @@ export default function Header({ locale }) {
                     </div>
                     <div className="col-lg-6 col-md-6 col-6">
                         <div className="d-flex gap-3 justify-content-end align-items-center">
-                            <LanguageChanger />
+                            {/* <LanguageChanger /> */}
                             {isAuthenticated ? (
                                 <div className="profile">
                                     <div className="btn-group">
@@ -61,8 +61,9 @@ export default function Header({ locale }) {
                                             data-bs-toggle="dropdown"
                                             type="button"
                                         >
-                                            <i className="mdi mdi-account fs-5"></i>
-                                            <p className="font-semibold">
+                                            <i className="mdi mdi-account fs-5 d-none d-md-block"></i>
+                                            <i className="mdi mdi-menu fs-5 d-md-none"></i>
+                                            <p className="font-semibold d-none d-md-block">
                                                 {AuthService.getUser()['name']}
                                             </p>
                                         </button>

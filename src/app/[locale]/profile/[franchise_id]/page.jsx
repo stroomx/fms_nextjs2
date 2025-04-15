@@ -450,29 +450,41 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                 <div className="col-md-4 col-12">
                                     <div className="text-primary fw-bold mb-2">{t('Date')}</div>
                                     <div className="title2">
-                                        <div className="dates row g-2">
-                                            <div className="col-12 d-flex align-items-center gap-3">
-                                                <label className="text-grey-200">{t('Start')}</label>
-                                                <input
-                                                    type="date"
-                                                    name="start"
-                                                    className="rounded-0 p-1 w-100"
-                                                    value={filterData['date']['start'] ?? ''}
-                                                    onChange={(e) => handleFilterChange('date', { name: 'start', value: e.target.value })}
-                                                />
-                                            </div>
-                                            <div className="col-12 d-flex align-items-center gap-3">
-                                                <label className="text-grey-200">{t('End')}</label>
-                                                <input
-                                                    type="date"
-                                                    name="end"
-                                                    value={filterData['date']['end'] ?? ''}
-                                                    className="rounded-0 p-1 w-100"
-                                                    onChange={(e) => handleFilterChange('date', { name: 'end', value: e.target.value })}
-                                                />
+                                        <div className="container-fluid">
+                                            <div className="row g-2">
+                                                <div className="col-12 col-md-2 d-flex justify-content-md-end align-items-center">
+                                                    <label className="text-grey-200 mb-0">{t('Start')}</label>
+                                                </div>
+                                                <div className="col-12 col-md-10">
+                                                    <input
+                                                        type="date"
+                                                        name="start"
+                                                        className="form-control rounded-0 p-1"
+                                                        value={filterData['date']['start'] ?? ''}
+                                                        onChange={(e) =>
+                                                            handleFilterChange('date', { name: 'start', value: e.target.value })
+                                                        }
+                                                    />
+                                                </div>
+
+                                                <div className="col-12 col-md-2 d-flex justify-content-md-end align-items-center">
+                                                    <label className="text-grey-200 mb-0">{t('End')}</label>
+                                                </div>
+                                                <div className="col-12 col-md-10">
+                                                    <input
+                                                        type="date"
+                                                        name="end"
+                                                        className="form-control rounded-0 p-1"
+                                                        value={filterData['date']['end'] ?? ''}
+                                                        onChange={(e) =>
+                                                            handleFilterChange('date', { name: 'end', value: e.target.value })
+                                                        }
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
 
                                 {/* <hr className="my-3 m-auto w-75 text-center" /> */}
