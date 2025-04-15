@@ -89,11 +89,11 @@ const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
                         {data?.enrollmentid ? <p className="dotted mt-1">{t('Reference ID')} : <span> #{data?.enrollmentid}</span> </p> :
                             <p className="dotted mt-1">{t('Payment under proccessing, once payment clears you\'ll recieve confirmation email.')}</p>}
                         <div className="d-flex justify-content-center align-items-center gap-2 mt-5 mb-3">
-                            <button className="btn btn-outline-primary rounded-0 flex-fill">
+                            <button className="btn btn-outline-primary rounded-0 flex-fill disabled">
                                 <span className="mdi mdi-calendar"></span>
                                 &nbsp;{t('Add to Calendar')}
                             </button>
-                            <button className="btn btn-outline-primary rounded-0 flex-fill">
+                            <button className="btn btn-outline-primary rounded-0 flex-fill" onClick={() => { router.push(`/profile/${franchise_id}`) }}>
                                 <span className="mdi mdi-grid"></span>
                                 &nbsp;{t('Enroll in another Class')}
                             </button>
