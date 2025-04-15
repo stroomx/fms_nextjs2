@@ -107,9 +107,9 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                 coupon: coupon?.couponcode
             };
             const { data } = await axiosInstance.post(`api/checkout.php`, obj);
-            console.log(data);
-            alert({ type: "success", message: data?.message });
-            router.push(`/profile/${franchise_id}`);
+            // console.log(data);
+            // alert({ type: "success", message: data?.message });
+            router.push(`/profile/${franchise_id}/${schedule_id}/payment?amount=${data?.amount}&redirect_status=success`);
         } catch (err) {
             alert({ type: "error", message: err?.response?.message });
         }

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Script from 'next/script';
 import { HostedForm } from 'react-acceptjs';
+import { useTranslation } from 'react-i18next';
 
 
 export default function AuthorizePaymentForm({ authData, environment = 'SANDBOX', paymentData = {}, saveNonce = () => { } }) {
