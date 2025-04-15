@@ -11,20 +11,31 @@ export default function AuthorizePaymentFormHosted({ authData, environment = 'SA
     const { t } = useTranslation();
 
     const [formToken, setFormToken] = useState();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const {data} = await axiosInstance.post('/api/_authorizeForm.php', { "auth": authData, "payment": paymentData, "enviroment": environment, "franchise": 6209 });
+                const { data } = await axiosInstance.post('/api/_authorizeForm.php', { "auth": authData, "payment": paymentData, "enviroment": environment, "franchise": 6209 });
                 setFormToken(data?.token);
                 console.log(data);
             } catch (err) {
                 console.log(err);
+            } finally {
+                setLoading(false);
             }
         }
 
         fetchData();
     }, []);
+
+    if (loading) {
+        return <div className="d-flex justify-content-center">
+            <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>
+        </div>;
+    }
 
     return formToken ? (
         <AcceptHosted formToken={formToken} integration="redirect">
