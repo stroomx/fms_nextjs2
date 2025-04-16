@@ -179,11 +179,51 @@ button.AcceptUI {
   max-width: 100%;
 }
 
-.po-nopadding > .popover-body {
+.po-nopadding>.popover-body {
   padding: 0;
 }
 
-[type="checkbox"], [type="radio"] {
+[type="checkbox"],
+[type="radio"] {
   /* border-radius: 0 !important; */
   border: 1px solid var(--primary-grey-200) !important;
+}
+
+
+/* Calendar Component */
+.calendar-component {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.calendar-grid {
+  gap: 0px;
+}
+
+.calendar-day {
+  width: calc(100% / 7);
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.calendar-cell {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  line-height: 2rem;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 768px) {
+  .calendar-cell {
+    width: 70%;
+    aspect-ratio: auto;
+  }
+}
+
+@media (min-width: 1200px) {
+  .calendar-cell {
+    width: 60%;
+  }
 }

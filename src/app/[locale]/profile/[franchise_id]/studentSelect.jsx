@@ -231,10 +231,10 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                         <button className="accordion-button collapsed" type="button" id={`student-button-${index}`} data-bs-toggle="collapse" data-bs-target={`#collapse${index}`} aria-expanded="false" aria-controls={`collapse${index}`}>
                             <div className="ms-4 w-100 d-flex gap-2">
                                 <p className="fs-6 font-semibold">{student?.studentname}</p>
-                                {student.studentbirthdate && <><span className="text-grey">|</span>
-                                    <p className="text-grey">{student?.studentbirthdate}</p></>}
-                                {student.studentgrade && <><span className="text-grey">|</span>
-                                    <p className="text-grey">{`${t('Grade')} ${student?.studentgrade}`}</p></>}
+                                {student.studentbirthdate && <><span className="text-grey d-none d-md-block">|</span>
+                                    <p className="text-grey d-none d-md-block">{student?.studentbirthdate}</p></>}
+                                {student.studentgrade && <><span className="text-grey d-none d-md-block">|</span>
+                                    <p className="text-grey d-none d-md-block">{`${t('Grade')} ${student?.studentgrade}`}</p></>}
                                 {student.enrolled && <><span className="text-grey">|</span> <p className="text-danger">{t('Already Enrolled')}</p> </>}
                                 {student.studentid == 0 && <><span className="text-grey">|</span> <p className="text-danger">{t('Save Student To Select.')}</p> </>}
                                 {outDatedDetails(student.studentupdateddate) && (<div className="ms-auto me-3"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>{t('Student Details Are Outdated')}</title><path d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg></div>)}
@@ -303,9 +303,9 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                                 </div>
 
                                 <div className="row">
-                                    <div className="col-6">
+                                    <div className="col-lg-6 col-12">
                                         <div className="row">
-                                            <div className="col-6">
+                                            <div className="col-12 col-lg-6">
                                                 <label className="mt-3" htmlFor="studentschool">{t('School They Attend')}</label>
                                                 <input
                                                     type="text"
@@ -317,7 +317,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                                                     value={formData[index]?.studentschool}
                                                 />
                                             </div>
-                                            <div className="col-6">
+                                            <div className="col-lg-6 col-12">
                                                 <label className="mt-3" htmlFor="studentgrade">{t('Grade')}</label>
                                                 <input
                                                     type="text"
@@ -331,7 +331,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-6">
+                                    <div className="col-lg-6 col-12">
                                         <label className="mt-3" htmlFor="studentteacher">{t('Teacher')}</label>
                                         <input
                                             type="text"
@@ -346,7 +346,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                                 </div>
 
                                 <div className="row">
-                                    <div className="col-6">
+                                    <div className="col-12 col-lg-6">
                                         <label className="mt-3 required" htmlFor="studentparentpickup">{t('Student Pickup')}</label>
                                         <select
                                             name="studentparentpickup"
@@ -363,7 +363,7 @@ export default function StudentSelection({ studentDetails = [], passedStudents =
                                             <option value="School Bus">{t('School Bus')}</option>
                                         </select>
                                     </div>
-                                    <div className="col-6">
+                                    <div className="col-lg-6 col-12">
                                         <label className="mt-3 required" htmlFor="studentpickupauth">{t('Person Authorized to Pick Up')}</label>
                                         <input
                                             type="text"

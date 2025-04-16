@@ -3,15 +3,22 @@ import { useTranslation } from 'react-i18next';
 import TextWithToggle from '@/app/components/TextWithToggle';
 import AuthService from '@/auth.service';
 import LoginModal from '../../auth/login/modal';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Calendar from '@/app/components/calendar/Calendar';
+import useClickOutside from '@/app/hooks/useClickOutside';
 
 export default function ScheduleCard({ franchise_id, schedule, modal = false, buttonAction = () => { }, }) {
     const { t } = useTranslation();
     const searchParams = useSearchParams();
 
+    const [showDate, setShowDate] = useState(false);
+
     const isLoggedIn = AuthService.isAuthenticated();
     const isWaitlist = (schedule.availablespots <= 0 && schedule.waitlist);
+
+    const calendarRef = useRef();
+    useClickOutside(calendarRef, () => setShowDate(false));
 
     const scheduleSelection = () => {
         const selected_schedule = searchParams.get('selected_schedule');
@@ -25,6 +32,10 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
             const enrollButton = document.getElementById(`enroll-button-${schedule.id}`);
             enrollButton.click();
         }
+    }
+
+    const toggleDate = () => {
+        setShowDate(!showDate);
     }
 
     useEffect(() => {
@@ -63,29 +74,51 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                             {schedule.name || 'N/A'}
                         </p>
                         <span className='text-danger pb-1 d-none d-md-block'>{schedule.program}</span>
-                        <div className="d-flex flex-wrap justify-content-lg-start align-items-lg-center gap-1 flex-column flex-lg-row justify-content-center align-items-start">
-                            <div className="d-flex gap-1 align-items-center font-semibold me-lg-2">
+                        <div className="d-flex flex-wrap justify-content-lg-start align-items-lg-center gap-1 flex-column flex-lg-row justify-content-center align-items-start position-relative">
+                            {/* Date Toggle Button */}
+                            <div
+                                className="d-flex gap-1 align-items-center font-semibold me-lg-2 cursor-pointer"
+                                onClick={toggleDate}
+                                style={{ userSelect: 'none' }}
+                            >
                                 <i className="mdi mdi-calendar-today fs-5"></i> {schedule.daterange || 'N/A'}
                             </div>
+
+                            {/* Floating Calendar */}
+                            {showDate && (
+                                <div
+                                    ref={calendarRef}
+                                    className="position-absolute bg-white border rounded shadow-sm p-2 mt-1"
+                                    style={{
+                                        zIndex: 1050,
+                                        top: '100%',
+                                        left: 0,
+                                        minWidth: '250px',
+                                        maxWidth: '90vw',
+                                        width: 'fit-content',
+                                    }}
+                                >
+                                    <Calendar highlightedDates={schedule.dates} />
+                                </div>
+                            )}
+
+                            {/* Weekdays Display */}
                             <div className="d-flex align-items-center gap-1">
-                                <i className='mdi mdi-calendar-week fs-5'></i>
+                                <i className="mdi mdi-calendar-week fs-5"></i>
                                 <div className="days flexed">
                                     {schedule.days?.length === 7
                                         ? t('All Week')
-                                        : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
-                                            schedule.days?.includes(day) ? (<span
-                                                key={day}
-                                            >
-                                                {day.slice(0, 2).toUpperCase()}
-                                            </span>) : (<p
-                                                key={day}
-                                            >
-                                                {day.slice(0, 2).toUpperCase()}
-                                            </p>)
-                                        ))}
+                                        : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) =>
+                                            schedule.days?.includes(day) ? (
+                                                <span key={day}>{day.slice(0, 2).toUpperCase()}</span>
+                                            ) : (
+                                                <p key={day}>{day.slice(0, 2).toUpperCase()}</p>
+                                            )
+                                        )}
                                 </div>
                             </div>
                         </div>
+
                         <div className="d-flex justify-content-between flex-wrap">
                             <div className="d-flex align-items-center gap-1">
                                 <i className='mdi mdi-face-man fs-5'></i>

@@ -578,7 +578,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                     </div>
                                 </div>
                             </div>
-                            {!showPaymentGateway() && <p className="text-danger text-center">{t('Please select a payment option and accept our policies to proceed.')}</p>}
+                            {!showPaymentGateway() && (!paymentCardSettings?.totalPayable == 0 && formData['paymentoption']) && <p className="text-danger text-center">{t('Please select a payment option and accept our policies to proceed.')}</p>}
 
                             <div className="d-flex gap-2 flex-column">
                                 {showPaymentGateway() && <MerchantGateWay key={formData['paymentoption']} merchant_id={franchise_id} paymentData={{ ...formData, students: studentIds, coupon: coupon?.couponcode }} cancelAction={() => setFormData({ ...formData, paymentoption: '' })} submitAction={(token) => { tokenEnroll(token) }} />}

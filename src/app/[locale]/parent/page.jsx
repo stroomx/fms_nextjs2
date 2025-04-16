@@ -5,12 +5,14 @@ import alert from '@/app/components/SweetAlerts';
 import money from '@/app/localization/currency';
 import date from '@/app/localization/date';
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import Skeleton from 'react-loading-skeleton';
 import TextWithToggle from "@/app/components/TextWithToggle";
 import MerchantGateWay from "@/app/components/payment_gateways/MerchantGateWay";
 import PrintContent from "@/app/components/PrintContent";
+import Calendar from '@/app/components/calendar/Calendar';
+import useClickOutside from '@/app/hooks/useClickOutside';
 
 import { useTranslation } from 'react-i18next';
 
@@ -250,6 +252,10 @@ export default function ParentProfile() {
 const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } }) => {
     const { t } = useTranslation();
     const [internalSchedule, setInternalSchedule] = useState({ ...schedule });
+    const [showDate, setShowDate] = useState(false);
+
+    const calendarRef = useRef();
+    useClickOutside(calendarRef, () => setShowDate(false));
 
     const toggle = (status = 'open') => {
         setInternalSchedule({
@@ -258,18 +264,11 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
         });
     }
 
-    const calendarToggle = (status = true) => {
-        setInternalSchedule({
-            ...internalSchedule,
-            showCalendar: status
-        })
+    const toggleDate = () => {
+        setShowDate(!showDate);
     }
 
-    const highlightDates = [
-        new Date(2025, 0, 2),  // Jan 2, 2025
-        new Date(2025, 0, 5),  // Jan 5, 2025
-        new Date(2025, 0, 7),  // Jan 7, 2025
-    ];
+    console.log(schedule)
 
     return (
 
@@ -295,26 +294,47 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                     </div>
 
                     <span className='text-danger pb-1 d-none d-md-block'>{schedule.program}</span>
-                    {loading ? <Skeleton className="mb-2" /> : <div className="d-flex flex-wrap justify-content-lg-start align-items-lg-center gap-1 flex-column flex-lg-row justify-content-center align-items-start">
-                        <div className="d-flex gap-1 align-items-center font-semibold me-lg-2">
+                    {loading ? <Skeleton className="mb-2" /> : <div className="d-flex flex-wrap justify-content-lg-start align-items-lg-center gap-1 flex-column flex-lg-row justify-content-center align-items-start position-relative">
+                        {/* Date Toggle Button */}
+                        <div
+                            className="d-flex gap-1 align-items-center font-semibold me-lg-2 cursor-pointer"
+                            onClick={toggleDate}
+                            style={{ userSelect: 'none' }}
+                        >
                             <i className="mdi mdi-calendar-today fs-5"></i> {date(schedule?.firstDate, false) + ' - ' + date(schedule?.lastDate, false)}
                         </div>
+
+                        {/* Floating Calendar */}
+                        {showDate && (
+                            <div
+                                ref={calendarRef}
+                                className="position-absolute bg-white border rounded shadow-sm p-2 mt-1"
+                                style={{
+                                    zIndex: 1050,
+                                    top: '100%',
+                                    left: 0,
+                                    minWidth: '250px',
+                                    maxWidth: '90vw',
+                                    width: 'fit-content',
+                                }}
+                            >
+                                <Calendar highlightedDates={schedule.scheduleDates} />
+                            </div>
+                        )}
+
+                        {/* Weekdays Display */}
                         <div className="d-flex align-items-center gap-1">
-                            <i className='mdi mdi-calendar-week fs-5'></i>
+                            <i className="mdi mdi-calendar-week fs-5"></i>
                             <div className="days flexed">
                                 {schedule.days?.length === 7
                                     ? t('All Week')
-                                    : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
-                                        schedule.days?.includes(day) ? (<span
-                                            key={day}
-                                        >
-                                            {day.slice(0, 2).toUpperCase()}
-                                        </span>) : (<p
-                                            key={day}
-                                        >
-                                            {day.slice(0, 2).toUpperCase()}
-                                        </p>)
-                                    ))}
+                                    : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) =>
+                                        schedule.days?.includes(day) ? (
+                                            <span key={day}>{day.slice(0, 2).toUpperCase()}</span>
+                                        ) : (
+                                            <p key={day}>{day.slice(0, 2).toUpperCase()}</p>
+                                        )
+                                    )}
                             </div>
                         </div>
                     </div>}
