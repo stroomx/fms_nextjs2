@@ -39,7 +39,8 @@ const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
                 paidAmount: paidAmount,
                 franchiseName: schedule?.franchise_name,
                 scheduleName: schedule?.name,
-                enrollmentid: enrollmentId
+                enrollmentid: enrollmentId,
+                dates: schedule?.dates
             });
         } catch (err) {
             console.error(err)
@@ -47,6 +48,50 @@ const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
             setLoading(false);
         }
     }
+
+    const convertDate = (date) => {
+        const iso = new Date(date).toISOString().split("T")[0];
+        return iso.split("-").join("");
+    }
+
+    const makeIcsFile = ({ startDate, endDate, summary, description }) => {
+        const content =
+            `BEGIN:VCALENDAR\n` +
+            `CALSCALE:GREGORIAN\n` +
+            `METHOD:PUBLISH\n` +
+            `PRODID:-//Bricks 4 Kidz//EN\n` +
+            `VERSION:2.0\n` +
+            `BEGIN:VEVENT\n` +
+            `UID:${new Date().getTime()}@bricks4kidz.com\n` +
+            `DTSTART;VALUE=DATE:${convertDate(startDate)}\n` +
+            `DTEND;VALUE=DATE:${convertDate(endDate)}\n` +
+            `SUMMARY:${summary}\n` +
+            `DESCRIPTION:${description}\n` +
+            `END:VEVENT\n` +
+            `END:VCALENDAR`;
+
+        return new Blob([content], { type: "text/calendar;charset=utf-8" });
+    }
+
+    const handleDownloadCalendar = () => {
+        if (!data?.scheduleDateFrom || !data?.scheduleDateTo) return;
+
+        const blob = makeIcsFile({
+            startDate: data.scheduleDateFrom,
+            endDate: data.scheduleDateTo,
+            summary: data.scheduleName || "Class Schedule",
+            description: `The classes will be held on the following dates:\n ${data.dates.map(ele => date(ele, false)).join(', ')} `,
+        });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${data.scheduleName || 'event'}.ics`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
 
     useEffect(() => {
         if (!status)
@@ -89,7 +134,7 @@ const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
                         {data?.enrollmentid ? <p className="dotted mt-1">{t('Reference ID')} : <span> #{data?.enrollmentid}</span> </p> :
                             <p className="dotted mt-1">{t('Payment under proccessing, once payment clears you\'ll recieve confirmation email.')}</p>}
                         <div className="d-flex justify-content-center align-items-center gap-2 mt-5 mb-3">
-                            <button className="btn btn-outline-primary rounded-0 flex-fill disabled">
+                            <button className="btn btn-outline-primary rounded-0 flex-fill" onClick={handleDownloadCalendar}>
                                 <span className="mdi mdi-calendar"></span>
                                 &nbsp;{t('Add to Calendar')}
                             </button>

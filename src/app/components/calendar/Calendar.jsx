@@ -31,6 +31,7 @@ const Calendar = ({ highlightedDates = [] }) => {
     const days = getDaysInMonth(year, month);
 
     const isHighlighted = (date) => date && highlightedDates.includes(formatDate(date));
+    const isToday = (date) => date && formatDate(date) === formatDate(today);
 
     const handlePrevMonth = () => {
         setCurrentDate(new Date(year, month - 1, 1));
