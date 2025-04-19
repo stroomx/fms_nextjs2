@@ -97,7 +97,7 @@ const MapComponent = ({ locations, redirectUrl = '/profile', containerStyle = { 
                 const markerPosition = new window.google.maps.LatLng(marker.addresslat, marker.addresslong);
 
                 // If a marker is within t5he current bounds, stop further zoom changes
-                if (bounds.contains(markerPosition)) {
+                if (bounds?.contains(markerPosition)) {
                     console.log('Found a marker within bounds, stopping zoom adjustment.');
                     console.log(markerPosition, 'position')
                     breakNow = true;
