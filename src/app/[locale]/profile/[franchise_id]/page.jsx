@@ -240,7 +240,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                             <div className="container">
                                 <div className="row">
                                     <div className="col-md col-sm-12 align-items-md-start align-items-center ps-md-0">
-                                        <div className="text-md-start text-center font-bold fs-3 pb-1">{`Bricks 4 Kidz - ${franchise?.displayname ?? franchise?.name}`}</div>
+                                        <div className="text-md-start text-center font-bold fs-3 pb-1">{`Bricks 4 Kidz - ${franchise?.displayname ?? franchise?.name ?? ''}`}</div>
                                         <div className="text-md-start text-center font-semibold fs-5 pb-1">{franchise?.name}</div>
                                         <div className="text-md-start text-center fs-5">{franchise?.phone}</div>
                                     </div>

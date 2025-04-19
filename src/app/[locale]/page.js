@@ -1,14 +1,21 @@
-import LanguageChanger from '@/app/components/LanguageChanger';
-import initTranslations from '../i18n';
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 
 export default async function Home({ params: { locale } }) {
-  const { t } = await initTranslations(locale);
+
+
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/parent');
+  })
 
   return (
-    <main >
-      <h1>{t('header')}</h1>
-      <LanguageChanger></LanguageChanger>
-    </main>
+    <div className="loading-overlay">
+      <div className="spinner"></div>
+    </div>
   );
 }
