@@ -11,6 +11,8 @@ const MapComponent = ({ locations, redirectUrl = '/profile', containerStyle = { 
     const [userLocation, setUserLocation] = useState(null);
     const [mapCenter, setMapCenter] = useState(null);
 
+    const mapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -47,13 +49,14 @@ const MapComponent = ({ locations, redirectUrl = '/profile', containerStyle = { 
         }
 
         try {
-            const { data } = await axios.get(`https://nominatim.openstreetmap.org/search?postalcode=${zip}&format=json`);
-            setMapCenter({ lat: +data[0]?.lat, lng: +data[0]?.lon });
-            console.group('API');
-            console.log(data[0]?.lat);
-            console.log(data[0]?.lon);
-            console.groupEnd();
-            profileZoomToIncludeMarkers(12);
+            const { data } = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${zip}&key=${mapsKey}`);
+            console.log(data);
+            // setMapCenter({ lat: +data[0]?.lat, lng: +data[0]?.lon });
+            // console.group('API');
+            // console.log(data[0]?.lat);
+            // console.log(data[0]?.lon);
+            // console.groupEnd();
+            // profileZoomToIncludeMarkers(12);
 
         } catch (err) {
             console.error(err);
@@ -120,7 +123,7 @@ const MapComponent = ({ locations, redirectUrl = '/profile', containerStyle = { 
     }, [locations]);
 
     return (
-        <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
+        <LoadScript googleMapsApiKey={mapsKey}>
             <form onSubmit={searchZip} className='d-flex align-items-center mb-3 gap-2'>
                 <input type="text" id="zipcode" maxLength={16} className="form-control rounded-0" placeholder="Have Zip code ? Enter here" />
                 <button className='btn btn-outline-primary rounded-0'>Submit</button>
