@@ -13,12 +13,19 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
     const searchParams = useSearchParams();
 
     const [showDate, setShowDate] = useState(false);
+    const [showLocation, setShowLocation] = useState(false);
+
+    console.log(schedule);
+    // const locationQuery = `${schedule.street},${schedule.city},${schedule.postal},${schedule.state},${schedule.country}`;
 
     const isLoggedIn = AuthService.isAuthenticated();
     const isWaitlist = (schedule.availablespots <= 0 && schedule.waitlist);
 
     const calendarRef = useRef();
     useClickOutside(calendarRef, () => setShowDate(false));
+
+    const locationRef = useRef();
+    useClickOutside(locationRef, () => setShowLocation(false));
 
     const scheduleSelection = () => {
         const selected_schedule = searchParams.get('selected_schedule');
@@ -36,6 +43,10 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
 
     const toggleDate = () => {
         setShowDate(!showDate);
+    }
+
+    const toggleLocation = () => {
+        setShowLocation(!showLocation);
     }
 
     useEffect(() => {
@@ -75,7 +86,6 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                         </p>
                         <span className='text-danger pb-1 d-none d-md-block'>{schedule.program}</span>
                         <div className="d-flex flex-wrap justify-content-lg-start align-items-lg-center gap-1 flex-column flex-lg-row justify-content-center align-items-start position-relative">
-                            {/* Date Toggle Button */}
                             <div
                                 className="d-flex gap-1 align-items-center font-semibold me-lg-2 cursor-pointer"
                                 onClick={toggleDate}
@@ -84,7 +94,6 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                                 <i className="mdi mdi-calendar-today fs-5"></i> {schedule.daterange || 'N/A'}
                             </div>
 
-                            {/* Floating Calendar */}
                             {showDate && (
                                 <div
                                     ref={calendarRef}
@@ -102,7 +111,6 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                                 </div>
                             )}
 
-                            {/* Weekdays Display */}
                             <div className="d-flex align-items-center gap-1">
                                 <i className="mdi mdi-calendar-week fs-5"></i>
                                 <div className="days flexed">
@@ -119,19 +127,35 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                             </div>
                         </div>
 
-                        <div className="d-flex justify-content-between flex-wrap">
+                        <div className="d-flex justify-content-between position-relative flex-wrap">
                             <div className="d-flex align-items-center gap-1">
                                 <i className='mdi mdi-face-man fs-5'></i>
                                 <p className="font-semibold text-danger">
                                     {`${schedule.minage || 0} - ${schedule.maxage || 'N/A'} years`}
                                 </p>
                             </div>
-                            <div className="d-flex align-items-center gap-1">
+                            <div className="d-flex align-items-center gap-1" onClick={toggleLocation}>
                                 <i className='mdi mdi-map-marker fs-5'></i>
                                 <p className="font-semibold ">
                                     {schedule.location || 'Location not specified'}
                                 </p>
                             </div>
+                            {showLocation && (
+                                <div
+                                    ref={locationRef}
+                                    className="position-absolute bg-white border rounded shadow-sm p-2 mt-1 w-100"
+                                    style={{
+                                        zIndex: 1050,
+                                        top: '100%',
+                                        left: 0,
+                                        minWidth: '250px',
+                                        maxWidth: '90vw',
+                                        width: 'fit-content',
+                                    }}
+                                >
+                                    <iframe src={`https://maps.google.com/maps?output=embed&z=12&q=${schedule.locationAddress}`} width="100%" height="100%" className='border-0' allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                </div>
+                            )}
                             <div className="d-flex align-items-center gap-1">
                                 <i className='mdi mdi-human-male-board fs-5'></i>
                                 <p className="font-semibold ">
