@@ -103,41 +103,41 @@ const MapComponent = ({ locations, redirectUrl = '/profile', containerStyle = { 
     };
 
     // Function to zoom map to include markers
-    const profileZoomToIncludeMarkers = (minZoom) => {
-        if (!mapRef.current) return;
+    const profileZoomToIncludeMarkers = (startZoom) => {
+        if (!mapRef.current || !window.google) return;
 
-        const map = mapRef.current; // The map instance returned from onLoad
+        const map = mapRef.current;
+        let zoomLevel = startZoom;
 
-        map.setZoom(minZoom);
-
-        let zoomCheck = minZoom;
-
-        for (zoomCheck; zoomCheck > 4; zoomCheck--) {
-            let breakNow = false;
+        const checkMarkersInBounds = () => {
             const bounds = map.getBounds();
+            if (!bounds) return false;
 
-            // Loop through each marker and check if it's within the bounds
-            for (let i = 0; i < locations.length; i++) {
-                const marker = locations[i];
-                const markerPosition = new window.google.maps.LatLng(marker.addresslat, marker.addresslong);
+            return locations.some((marker) => {
+                const markerPosition = new window.google.maps.LatLng(
+                    parseFloat(marker.addresslat),
+                    parseFloat(marker.addresslong)
+                );
+                return bounds.contains(markerPosition);
+            });
+        };
 
-                // If a marker is within t5he current bounds, stop further zoom changes
-                if (bounds?.contains(markerPosition)) {
-                    console.log('Found a marker within bounds, stopping zoom adjustment.');
-                    console.log(markerPosition, 'position')
-                    breakNow = true;
-                    break; // Break out of the marker checking loop
-                }
+        const smoothZoomOut = () => {
+            if (checkMarkersInBounds() || zoomLevel <= 4) {
+                console.log(`Stopped zooming at level: ${zoomLevel}`);
+                return;
             }
 
-            map.setZoom(zoomCheck); // Apply the current zoom level
+            zoomLevel -= 1;
+            map.setZoom(zoomLevel);
 
-            if (breakNow) {
-                break;
-            }
-            console.log(zoomCheck)
-        }
+            setTimeout(smoothZoomOut, 300); // Delay for smooth animation
+        };
+
+        map.setZoom(zoomLevel);
+        setTimeout(smoothZoomOut, 300);
     };
+
 
     useEffect(() => {
         // Initially zoom to include markers when component mounts
