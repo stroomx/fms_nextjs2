@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import axiosInstance from '@/axios';
 
 const MapComponent = ({ locations, redirectUrl = '/profile', containerStyle = { width: '100%', height: '500px' } }) => {
     // Reference to GoogleMap
@@ -37,31 +38,50 @@ const MapComponent = ({ locations, redirectUrl = '/profile', containerStyle = { 
 
         const zip = document.getElementById('zipcode').value;
 
-        for (var i = 0; i < locations?.length; i++) {
-            if (locations[i]?.territoryzip == zip || locations[i]?.territoryextrazip?.split(',')?.includes(zip)) {
-                setMapCenter({ lat: +locations[i]?.addresslat, lng: +locations[i]?.addresslong });
+        // Check against existing database locations
+        for (let i = 0; i < locations?.length; i++) {
+            if (
+                locations[i]?.territoryzip === zip ||
+                locations[i]?.territoryextrazip?.split(',')?.includes(zip)
+            ) {
+                setMapCenter({
+                    lat: +locations[i]?.addresslat,
+                    lng: +locations[i]?.addresslong,
+                });
 
                 console.group('DATABASE');
                 console.log(locations[i]?.addresslat);
                 console.log(locations[i]?.addresslong);
                 console.groupEnd();
-                // router.push(`${redirectUrl}/${locations[i]?.objectid}`)
-                break;
+                return; // Exit early if match found in your data
             }
         }
 
-        try {
-            const { data } = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${zip}&key=${mapsKey}`);
-            console.log(data);
-            // setMapCenter({ lat: +data[0]?.lat, lng: +data[0]?.lon });
-            // console.group('API');
-            // console.log(data[0]?.lat);
-            // console.log(data[0]?.lon);
-            // console.groupEnd();
-            // profileZoomToIncludeMarkers(12);
+        // Use Google Maps Geocoder API via browser JS API
+        if (window.google) {
+            const geocoder = new window.google.maps.Geocoder();
 
-        } catch (err) {
-            console.error(err);
+            geocoder.geocode({ address: zip }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    const location = results[0].geometry.location;
+                    const newCenter = {
+                        lat: location.lat(),
+                        lng: location.lng(),
+                    };
+                    setMapCenter(newCenter);
+
+                    console.group('GEOCODER');
+                    console.log('lat', newCenter.lat);
+                    console.log('lng', newCenter.lng);
+                    console.groupEnd();
+
+                    profileZoomToIncludeMarkers(12);
+                } else {
+                    console.error('Geocoding failed:', status);
+                }
+            });
+        } else {
+            console.error('Google Maps JS API not loaded');
         }
     };
 
