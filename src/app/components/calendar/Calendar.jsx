@@ -20,11 +20,33 @@ const getDaysInMonth = (year, month) => {
     return days;
 };
 
+const getFirstUpcomingDate = (dates) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to start of day
+
+    for (let dateStr of dates) {
+        const date = new Date(dateStr);
+        if (date >= today) {
+            return date;
+        }
+    }
+
+    return null; // If all dates have passed
+}
+
 const formatDate = (date) => date.toISOString().split('T')[0];
 
 const Calendar = ({ highlightedDates = [] }) => {
+
     const today = new Date();
-    const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
+    const firstDate = getFirstUpcomingDate(highlightedDates);
+
+    if (!firstDate)
+        return <>
+            {t('All dates have passed')}
+        </>
+
+    const [currentDate, setCurrentDate] = useState(new Date(firstDate.getFullYear(), firstDate.getMonth(), 1));
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
