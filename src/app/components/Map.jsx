@@ -3,8 +3,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
-import axiosInstance from '@/axios';
 
 const MapComponent = ({ locations, redirectUrl = '/profile', containerStyle = { width: '100%', height: '500px' } }) => {
     // Reference to GoogleMap
@@ -17,17 +15,21 @@ const MapComponent = ({ locations, redirectUrl = '/profile', containerStyle = { 
     const mapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
     useEffect(() => {
+        const location = {};
+
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
-                    setUserLocation({ lat: latitude, lng: longitude });
+                    location['lat'] = latitude;
+                    location['lng'] = longitude;
+                    setUserLocation(location);
                 }
             );
         }
 
         // If user location is available, use it to center the map
-        setMapCenter(userLocation || {
+        setMapCenter(location || {
             lat: 39.8283,
             lng: -98.5795
         });
