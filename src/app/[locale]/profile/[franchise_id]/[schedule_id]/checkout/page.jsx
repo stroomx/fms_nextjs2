@@ -211,7 +211,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
             setStudents(data?.students);
             if (data?.schedule?.availablespots <= 0) {
                 alert({ type: "error", message: t(`Schedule (${data?.schedule?.name}) has no available spots.`) });
-                const redirectRoute = true ? `/profile/${franchise_id}` : `/profile/${franchise_id}/${schedule_id}/waitlist`;
+                const redirectRoute = false ? `/profile/${franchise_id}` : `/profile/${franchise_id}/${schedule_id}/waitlist`;
                 router.push(redirectRoute);
                 return;
             }

@@ -9,7 +9,7 @@ import axiosInstance from "@/axios";
 import { useTranslation } from 'react-i18next';
 
 
-export default function LoginModal({ franchise_id, schedule_id }) {
+export default function LoginModal({ franchise_id, schedule_id, checkout = true }) {
     const router = useRouter();
 
     const { t } = useTranslation();
@@ -19,7 +19,7 @@ export default function LoginModal({ franchise_id, schedule_id }) {
 
     const onLogin = () => {
         closeModal();
-        router.push(`/profile/${franchise_id}/${schedule_id}/checkout`);
+        router.push(`/profile/${franchise_id}/${schedule_id}/${checkout ? 'checkout' : 'waitlist'}`);
     }
 
     useEffect(() => {

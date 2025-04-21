@@ -15,7 +15,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
     const [showDate, setShowDate] = useState(false);
     const [showLocation, setShowLocation] = useState(false);
 
-    console.log(schedule);
+    // console.log(schedule);
     // const locationQuery = `${schedule.street},${schedule.city},${schedule.postal},${schedule.state},${schedule.country}`;
 
     const isLoggedIn = AuthService.isAuthenticated();
@@ -235,7 +235,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                         </div>}
                 </div>
             </div>
-            {isLoggedIn ? '' : <LoginModal schedule_id={schedule.id} franchise_id={franchise_id} isWaitlist={isWaitlist} />}
+            {isLoggedIn ? '' : <LoginModal schedule_id={schedule.id} franchise_id={franchise_id} isWaitlist={isWaitlist} checkout={!isWaitlist} />}
         </>
 
     );
