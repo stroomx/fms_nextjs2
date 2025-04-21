@@ -10,10 +10,11 @@ import ScheduleCard from "./scheduleCard";
 import SocialIcons from '@/app/components/SocialIcons';
 import AuthService from "@/auth.service";
 import MultiRangeSlider from "@/app/components/DualSlider";
+import { useDebugTranslation } from "@/app/hooks/useDebugTranslation";
 
 export default function FranchiseProfile({ params: { franchise_id } }) {
 
-    const { t } = useTranslation();
+    const { t } = useDebugTranslation();
 
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -578,12 +579,19 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                     <div className="col-12 col-lg-9 pe-0 overflow-y-auto">
                                         {filteredSchedules?.map((schedule) => <ScheduleCard franchise_id={franchise_id} schedule={schedule} buttonAction={enroll} key={schedule.id} />)}
                                         {!filteredSchedules.length > 0 &&
-                                            <div className="fs-3 d-flex justify-content-center fw-bold">{t('No Available Schedules')}</div>
+                                            <div className="card rounded-0 d-flex justify-content-center gap-3 align-items-center flex-column">
+                                                <img src="/assets/img/Kid.png" alt="" />
+                                                <span className="fs-3">{t('No Schedules Match The Filter')}</span>
+                                            </div>
+
                                         }
                                     </div>
                                 </div>
                                 :
-                                <div className="fs-3 d-flex justify-content-center fw-bold">{t('No Available Schedules')}</div>
+                                <div className="d-flex justify-content-center gap-5 align-items-center">
+                                    <span className="fs-3">{t('No Available Schedules')}</span>
+                                    <img src="/assets/img/Kid.png" alt="" />
+                                </div>
                             }
                         </div>
                     </div>
