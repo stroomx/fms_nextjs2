@@ -135,12 +135,12 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                         </div>
 
                         <div className="d-flex justify-content-between position-relative flex-wrap">
-                            <div className="d-flex align-items-center gap-1">
+                            {schedule.minage && schedule.maxage && <div className="d-flex align-items-center gap-1">
                                 <i className='mdi mdi-face-man fs-5'></i>
                                 <p className="font-semibold text-danger">
                                     {`${schedule.minage || 0} - ${schedule.maxage || 'N/A'} years`}
                                 </p>
-                            </div>
+                            </div>}
                             <div className="d-flex align-items-center gap-1 cursor-pointer" onClick={toggleLocation}>
                                 <i className='mdi mdi-map-marker fs-5'></i>
                                 <p className="font-semibold ">
