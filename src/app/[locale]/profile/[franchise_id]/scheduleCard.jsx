@@ -15,8 +15,9 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
     const [showDate, setShowDate] = useState(false);
     const [showLocation, setShowLocation] = useState(false);
 
-    // console.log(schedule);
-    // const locationQuery = `${schedule.street},${schedule.city},${schedule.postal},${schedule.state},${schedule.country}`;
+    console.log(schedule);
+    const locationQuery = `${schedule.locationStreet},${schedule.locationCity},${schedule.locationZip},${schedule.locationState}`;
+    console.log(locationQuery);
 
     const isLoggedIn = AuthService.isAuthenticated();
     const isWaitlist = (schedule.availablespots <= 0 && schedule.waitlist);
@@ -134,7 +135,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                                     {`${schedule.minage || 0} - ${schedule.maxage || 'N/A'} years`}
                                 </p>
                             </div>
-                            <div className="d-flex align-items-center gap-1" onClick={toggleLocation}>
+                            <div className="d-flex align-items-center gap-1 cursor-pointer" onClick={toggleLocation}>
                                 <i className='mdi mdi-map-marker fs-5'></i>
                                 <p className="font-semibold ">
                                     {schedule.location || 'Location not specified'}
@@ -153,7 +154,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                                         width: 'fit-content',
                                     }}
                                 >
-                                    <iframe src={`https://maps.google.com/maps?output=embed&z=12&q=${schedule.locationAddress}`} width="100%" height="100%" className='border-0' allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                    <iframe src={`https://maps.google.com/maps?output=embed&z=15&q=${locationQuery}`} width="100%" height="100%" className='border-0' allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
                                 </div>
                             )}
                             <div className="d-flex align-items-center gap-1">
