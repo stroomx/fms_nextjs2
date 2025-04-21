@@ -553,14 +553,16 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                             </div>
                                         </div>
 
-                                        <hr className="my-3 m-auto w-75 text-center" />
-                                        <div className="text-primary fw-bold mb-2">{t('Age')} <span className="fw-normal text-black ms-1">{`(${filterData?.age?.min} - ${filterData?.age?.max})`}</span></div>
+                                        {(ageRange['min'] && ageRange['max']) && <>
+                                            <hr className="my-3 m-auto w-75 text-center" />
+                                            <div className="text-primary fw-bold mb-2">{t('Age')} <span className="fw-normal text-black ms-1">{`(${filterData?.age?.min} - ${filterData?.age?.max})`}</span></div>
 
-                                        {(ageRange['min'] && !clear) && <MultiRangeSlider
-                                            min={ageRange['min']}
-                                            max={ageRange['max']}
-                                            changeFunction={silderChange}
-                                        />}
+                                            {(ageRange['min'] && !clear) && <MultiRangeSlider
+                                                min={ageRange['min']}
+                                                max={ageRange['max']}
+                                                changeFunction={silderChange}
+                                            />}
+                                        </>}
 
                                         <hr className="my-3" />
                                         <div className="d-flex gap-2">
