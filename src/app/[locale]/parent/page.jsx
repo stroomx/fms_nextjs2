@@ -825,7 +825,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                     </div>
                     {recurringPayments?.length > 0 && <div className="tab-pane small-scroll-region fade" id={`pills-recurring-payments-${index}`} role="tabpanel" aria-labelledby="pills-recurring-payments-tab">
                         <div className="container">
-                            <h6 className="font-bold text-grey my-3">{t('Active Recurring Payment')}</h6>
+                            {recurringPayments?.filter((ele) => !ele.paymentrecurterminateddate)?.length > 0 && <h6 className="font-bold text-grey my-3">{t('Active Recurring Payment')}</h6>}
                             {recurringPayments?.map(((recurringpayment, index) => (
                                 !recurringpayment?.paymentrecurterminateddate && <div className="row shadow-sm" key={index}>
                                     <div className="col-md-6 py-4 px-3">
@@ -865,50 +865,52 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                             )))}
 
                         </div>
-                        <h6 className="font-bold text-grey my-3">{t('Terminated Recurring Payments')}</h6>
-                        <div className="table-responsive">
-                            <table className="table table-hover table-bordered mb-0">
-                                <thead>
-                                    <tr>
-                                        <td className="text-center">
-                                            #
-                                        </td>
-                                        <td className="text-center">
-                                            {t('Start Date')}
-                                        </td>
-                                        <td className="text-center">
-                                            {t('Frequency')}
-                                        </td>
-                                        <td className="text-center">
-                                            {t('Total Cost')}
-                                        </td>
-                                        <td className="text-center">
-                                            {t('Paid')}
-                                        </td>
-                                        <td className="text-center">
-                                            {t('Remaining')}
-                                        </td>
-                                        <td>
-                                            {t('Termination Date')}
-                                        </td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {recurringPayments?.map((recurringpayment, index) => (
-                                        recurringpayment.paymentrecurterminateddate && <tr key={index}>
-                                            <td className="text-center">{index + 1}</td>
-                                            <td className="text-nowrap text-center">{date(recurringpayment?.paymentrecurstartdate, false)}</td>
-                                            <td className="text-center">{recurringpayment?.paymentrecurfrequency.toUpperCase()}</td>
-                                            <td className="text-center">{money(recurringpayment?.paymentrecurtotal)}</td>
-                                            <td className="text-center">{money(recurringpayment.paymentrecurtotal - recurringpayment.paymentrecurbalance)}</td>
-                                            <td className="text-center">{money(recurringpayment.paymentrecurbalance)}</td>
-                                            <td className="text-center">{date(recurringpayment.paymentrecurterminateddate, false)}</td>
-                                            {/* <td>{payment?.paymentstatus}</td> */}
+                        {recurringPayments?.filter((ele) => ele.paymentrecurterminateddate)?.length > 0 && <>
+                            <h6 className="font-bold text-grey my-3">{t('Terminated Recurring Payments')}</h6>
+                            <div className="table-responsive">
+                                <table className="table table-hover table-bordered mb-0">
+                                    <thead>
+                                        <tr>
+                                            <td className="text-center">
+                                                #
+                                            </td>
+                                            <td className="text-center">
+                                                {t('Start Date')}
+                                            </td>
+                                            <td className="text-center">
+                                                {t('Frequency')}
+                                            </td>
+                                            <td className="text-center">
+                                                {t('Total Cost')}
+                                            </td>
+                                            <td className="text-center">
+                                                {t('Paid')}
+                                            </td>
+                                            <td className="text-center">
+                                                {t('Remaining')}
+                                            </td>
+                                            <td>
+                                                {t('Termination Date')}
+                                            </td>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        {recurringPayments?.map((recurringpayment, index) => (
+                                            recurringpayment.paymentrecurterminateddate && <tr key={index}>
+                                                <td className="text-center">{index + 1}</td>
+                                                <td className="text-nowrap text-center">{date(recurringpayment?.paymentrecurstartdate, false)}</td>
+                                                <td className="text-center">{recurringpayment?.paymentrecurfrequency.toUpperCase()}</td>
+                                                <td className="text-center">{money(recurringpayment?.paymentrecurtotal)}</td>
+                                                <td className="text-center">{money(recurringpayment.paymentrecurtotal - recurringpayment.paymentrecurbalance)}</td>
+                                                <td className="text-center">{money(recurringpayment.paymentrecurbalance)}</td>
+                                                <td className="text-center">{date(recurringpayment.paymentrecurterminateddate, false)}</td>
+                                                {/* <td>{payment?.paymentstatus}</td> */}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </>}
                     </div>}
                 </div>
             </>
