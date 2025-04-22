@@ -15,7 +15,6 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
     const [showDate, setShowDate] = useState(false);
     const [showLocation, setShowLocation] = useState(false);
 
-    console.log(schedule);
     const locationQuery = `${schedule.locationStreet},${schedule.locationCity},${schedule.locationZip},${schedule.locationState}`;
 
     const isLoggedIn = AuthService.isAuthenticated();
