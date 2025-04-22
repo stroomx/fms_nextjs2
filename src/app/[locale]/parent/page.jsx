@@ -97,7 +97,7 @@ export default function ParentProfile() {
                 }
             });
 
-            // console.log(franchises);
+
             return [...Object.values(franchises)];
         }
 
@@ -112,7 +112,7 @@ export default function ParentProfile() {
                         ele['isActive'] = false;
                         return ele;
                     })
-                    // console.log(unactive)
+
                     setSchedules(unactive);
                     filterSchedules(unactive[0]?.franchiseId, unactive);
                     // setFranchises(getFranchises(unactive));
@@ -122,7 +122,7 @@ export default function ParentProfile() {
                     }, 1000);
                 }
             } catch (err) {
-                console.log(err);
+                console.error(err);
             } finally {
                 setLoading(false);
             }
@@ -156,19 +156,17 @@ export default function ParentProfile() {
             // Open the modal for the schedule
             // Set the active state for the schedule
             // Show success or failure message
-
-            console.log(enrollmentId, 'EID');
             const schedule = schedules.filter((ele) => ele.scheduleenrollid == enrollmentId)[0];
-            console.log(schedule);
             setSelectedFranchise(schedule['franchiseId']);
 
             // while (loading) {
             //     setTimeout(() => { }, 5000)
             // }
 
-            const button = document.getElementById(`modal-button-${schedule?.scheduleenrollid}`);
-            console.log(button);
-            button.click();
+            setTimeout(() => {
+                const button = document.getElementById(`modal-button-${schedule?.scheduleenrollid}`);
+                button.click();
+            }, 500)
 
             // This can be handled as a switch that takes the status as a variable and then redirects to the checkout page again if the payment has failed.
             // Create a .php file to take the payment intent id along with the franchise id and send back the metadata for the population of the checkout page.
@@ -268,7 +266,6 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
         setShowDate(!showDate);
     }
 
-    console.log(schedule)
 
     return (
 
@@ -470,7 +467,6 @@ const ParentScheduleCardGrid = ({ schedule, index, loading, hoverAction = () => 
             ...internalSchedule,
             isClosed: status == 'open' ? true : false
         });
-        console.log(internalSchedule['isClosed'], status);
     }
 
     const handleImageLoad = () => {
@@ -575,7 +571,6 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
     };
 
     const handleSubmit = async () => {
-        console.log(formData);
         try {
             const obj = {
                 ...formData,
@@ -588,13 +583,12 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
             fetchData(); // Used to refetch the data from the backend and show the new payment on screen.
         } catch (err) {
             const { response } = err;
-            console.log(err);
+            console.error(err);
             alert({ type: "error", message: response?.data?.message });
         }
     }
 
     const tokenEnroll = (token) => {
-        console.log(token);
         setFormData({ ...formData, token: token });
     }
 
@@ -617,7 +611,6 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
     }
 
     const activatePayment = (e) => {
-        console.log('hit')
         //TODO Setup the form validation checks to work here.
         // e.preventDefault();
 
@@ -629,7 +622,6 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
         try {
             setLoading(true);
             const { data } = await axiosInstance.get(`/api/paymentdetails.php?scheduleenrollid=${schedule.scheduleenrollid}`);
-            console.log(data);
             setNotes(data?.notes?.reverse());
             setPayments(data?.payments);
             setRecurringPayments(data?.recurringpayments);
@@ -637,10 +629,9 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
 
             // setDetails();
         } catch (err) {
-            console.log(err);
+            console.error(err);
         } finally {
             setLoading(false);
-            console.log('done');
         }
     };
 
@@ -937,7 +928,7 @@ const Invoice = ({ enrollment }) => {
                 const { data } = await axiosInstance.get(`/api/invoice.php?eid=${enrollment?.scheduleenrollid}&fid=${enrollment?.franchiseId}&stid=${enrollment?.studentId}&sid=${enrollment?.id}`);
                 setInvoice(data);
             } catch (err) {
-                console.log(err);
+                console.err(err);
             }
         }
 
