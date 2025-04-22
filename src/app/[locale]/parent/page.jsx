@@ -719,7 +719,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                     value={formData['amount'] ?? 0}
                                     onChange={handleChange}
                                     min={0.5}
-                                    step={0.1}
+                                    step={0.01}
                                     max={schedule?.cost - schedule?.paidAmount}
                                 />
                                 <button className="btn btn-success rounded-0 text-nowrap">{t('Pay Now')}</button>
@@ -733,8 +733,8 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
             {showPayment() ? <>
                 <div className="fs-4 mb-2 mt-0 align-items-start">{t('Amount To Be Paid is')} {money(formData?.amount)}</div>
                 <MerchantGateWay merchant_id={schedule?.franchiseId} paymentData={{
-                    ...formData, students: [schedule.studentId], returnURL: `${appURL}/profile?eid=${schedule.scheduleenrollid}&amount=${formData?.amount}`,
-                    cancelURL: `${appURL}/profile?eid=${schedule.scheduleenrollid}&amount=${formData?.amount}`
+                    ...formData, students: [schedule.studentId], returnURL: `${appURL}/parent?eid=${schedule.scheduleenrollid}&amount=${formData?.amount}`,
+                    cancelURL: `${appURL}/parent?eid=${schedule.scheduleenrollid}&amount=${formData?.amount}`
                 }} cancelAction={cancelPayment} submitAction={(token) => { tokenEnroll(token) }} />
             </> : <>
                 <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
