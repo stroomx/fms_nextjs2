@@ -166,7 +166,7 @@ export default function ParentProfile() {
             setTimeout(() => {
                 const button = document.getElementById(`modal-button-${schedule?.scheduleenrollid}`);
                 button.click();
-            }, 500)
+            }, 1000)
 
             // This can be handled as a switch that takes the status as a variable and then redirects to the checkout page again if the payment has failed.
             // Create a .php file to take the payment intent id along with the franchise id and send back the metadata for the population of the checkout page.
