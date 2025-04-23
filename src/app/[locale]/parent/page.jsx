@@ -15,6 +15,7 @@ import Calendar from '@/app/components/calendar/Calendar';
 import useClickOutside from '@/app/hooks/useClickOutside';
 
 import { useTranslation } from 'react-i18next';
+import { useDebugTranslation } from "@/app/hooks/useDebugTranslation";
 
 
 export default function ParentProfile() {
@@ -30,6 +31,8 @@ export default function ParentProfile() {
     const [filteredSchedules, setFilteredSchedules] = useState([]);
     const [selectedFranchise, setSelectedFranchise] = useState('');
     const [timelineToggle, setTimelineToggle] = useState('current');
+
+    const { t } = useDebugTranslation();
 
     const enrollIntoClass = () => {
         const url = selectedFranchise ? `/profile/${selectedFranchise}` : '/profile';
@@ -56,11 +59,17 @@ export default function ParentProfile() {
         setFilteredSchedules(editedSchedules);
     }
 
-    const t = (string) => string;
-
-    const filterSchedules = (franchise, data) => {
+    const filterSchedules = (franchise, data, searchValue = '') => {
         const result = data
-            .filter((ele) => ele.franchiseId == franchise && schedulesTimeline(new Date(ele.lastDate + "Z"))) // Filter by franchiseId
+            .filter((ele) => {
+                const searchMatch = !searchValue
+                    || (ele.studentName?.toLowerCase().includes(searchValue.toLowerCase()))
+                    || (ele.name?.toLowerCase().includes(searchValue.toLowerCase()));
+                const franchiseMatch = ele.franchiseId == franchise;
+                const timelineMatch = schedulesTimeline(new Date(ele.lastDate + "Z"));
+
+                return searchMatch && franchiseMatch && timelineMatch;
+            })
             .sort((a, b) => {
                 // First compare by the student name
                 const studentName = a['studentName'].localeCompare(b['studentName']);
@@ -87,26 +96,17 @@ export default function ParentProfile() {
         }
     }
 
+    const searchEnrollments = (searchValue) => {
+        filterSchedules(selectedFranchise, schedules, searchValue);
+    }
+
     useEffect(() => {
-        const getFranchises = (schedules = []) => {
-            const franchises = {};
-
-            schedules.forEach(obj => {
-                if (obj.hasOwnProperty('franchiseId')) {
-                    franchises[obj?.franchise] = { id: obj?.franchiseId, name: obj?.franchise, locationName: obj?.locationName };
-                }
-            });
-
-
-            return [...Object.values(franchises)];
-        }
-
-
         const fetchData = async () => {
             try {
                 const { data } = await axiosInstance.get('/api/enrollments.php');
                 setSelectedFranchise(data?.franchises[0]?.id);
                 setFranchises(data?.franchises);
+
                 if (data?.schedules?.length > 0) {
                     const unactive = data?.schedules.map(ele => {
                         ele['isActive'] = false;
@@ -114,8 +114,6 @@ export default function ParentProfile() {
                     })
 
                     setSchedules(unactive);
-                    // filterSchedules(unactive[0]?.franchiseId, unactive);
-                    // setFranchises(getFranchises(unactive));
                     setLoading(false);
                     setTimeout(() => {
                         handleEnrollment(unactive);
@@ -129,25 +127,14 @@ export default function ParentProfile() {
         }
 
         const handleEnrollment = (schedules) => {
-            const studentIds = searchParams.get('id')?.split(',');
             const status = searchParams.get('redirect_status');
-            const paymentType = searchParams.get('enrollment');
 
             replace(pathname); // Removes the params from the URL
 
-            switch (paymentType) {
-                case 'enrollment':
-                    if (status == 'failed')
-                        alert({ message: t(`${studentIds?.length} student(s) enrollment failed.`) })
-                    else
-                        alert({ type: "success", message: t(`${studentIds?.length} student(s) successfully enrolled.`) })
-                    break;
-                default:
-                    const enrollmentId = searchParams.get('eid');
-                    const amount = searchParams.get('amount');
-                    if (amount && enrollmentId)
-                        handlePayment(enrollmentId, amount, status, schedules);
-            }
+            const enrollmentId = searchParams.get('eid');
+            const amount = searchParams.get('amount');
+            if (amount && enrollmentId)
+                handlePayment(enrollmentId, amount, status, schedules);
         }
 
         const handlePayment = (enrollmentId, amount, status, schedules = []) => {
@@ -159,18 +146,11 @@ export default function ParentProfile() {
             const schedule = schedules.filter((ele) => ele.scheduleenrollid == enrollmentId)[0];
             setSelectedFranchise(schedule['franchiseId']);
 
-            // while (loading) {
-            //     setTimeout(() => { }, 5000)
-            // }
-
             setTimeout(() => {
                 const button = document.getElementById(`modal-button-${schedule?.scheduleenrollid}`);
                 button.click();
             }, 1000)
 
-            // This can be handled as a switch that takes the status as a variable and then redirects to the checkout page again if the payment has failed.
-            // Create a .php file to take the payment intent id along with the franchise id and send back the metadata for the population of the checkout page.
-            // This can also be redirected to a middle man page, which takes the call back and determines where to redirect and what status to trigger.
             alert({ type: status == 'failed' ? "error" : "success", message: t(`Payment of ${amount} ${status == 'failed' ? "has failed." : "successfully made."}.`) });
         }
 
@@ -191,7 +171,6 @@ export default function ParentProfile() {
                     {(loading || (franchises?.length == 0 && !selectedFranchise)) ? '' :
                         <div className="d-flex gap-2">
                             <div className="d-inline-flex gap-3 align-items-center">
-                                {/* <p className="text-grey fs-6 font-bold">{t('Locations')}</p> */}
                                 <select className="form-select rounded-0 max-content" id="franchise-selector" defaultValue={selectedFranchise} onChange={selectFranchise}>
                                     {franchises.map((franchise) =>
                                         <option value={franchise['id']} key={franchise['id']}>{franchise['locationName'] ?? franchise['name']}</option>
@@ -200,15 +179,23 @@ export default function ParentProfile() {
                             </div>
 
                             <div className="d-inline-flex gap-3 align-items-center">
-                                {/* <p className="text-grey fs-6 font-bold">{t('Locations')}</p> */}
                                 <select className="form-select rounded-0 max-content" id="franchise-selector" defaultValue={timelineToggle} onChange={(e) => { setTimelineToggle(e.target.value) }}>
                                     <option value="current">{t('Active Schedules')}</option>
                                     <option value="past">{t('Past Schedules')}</option>
                                 </select>
                             </div>
+                            {/* //TODO Enable this after fixing requests issue. It was disabled because all requests are resubmitted for all search values. */}
+                            {false && <div className="input-wrap">
+                                <i className="mdi mdi-magnify text-grey-200 fs-4 cursor-pointer" title={t('Search By: student or schedule name')} />
+                                <input
+                                    type="Search"
+                                    className="form-control rounded-0 ps-5"
+                                    placeholder="Search Programs"
+                                    onChange={(e) => { searchEnrollments(e.target.value) }}
+                                />
+                            </div>}
                         </div>
                     }
-                    {/* <p className="text-grey fs-6 font-bold">{t('Student Enrollments')}</p> */}
                 </div>
             </div>
             <div className="col-lg-6">
@@ -219,14 +206,6 @@ export default function ParentProfile() {
                         <i className="mdi mdi-plus"></i>
                         {t('Enroll In New Class')}
                     </button>
-                    {/* <div className="input-wrap">
-                        <i className="fa-solid fa-magnifying-glass text-grey-200" />
-                        <input
-                            type="Search"
-                            className="input-style1"
-                            placeholder="Search Programs"
-                        />
-                    </div> */}
                 </div>
             </div>
         </div>
