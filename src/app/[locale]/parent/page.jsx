@@ -114,7 +114,7 @@ export default function ParentProfile() {
                     })
 
                     setSchedules(unactive);
-                    filterSchedules(unactive[0]?.franchiseId, unactive);
+                    // filterSchedules(unactive[0]?.franchiseId, unactive);
                     // setFranchises(getFranchises(unactive));
                     setLoading(false);
                     setTimeout(() => {
