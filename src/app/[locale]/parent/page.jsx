@@ -909,7 +909,7 @@ const Invoice = ({ enrollment }) => {
                 const { data } = await axiosInstance.get(`/api/invoice.php?eid=${enrollment?.scheduleenrollid}&fid=${enrollment?.franchiseId}&stid=${enrollment?.studentId}&sid=${enrollment?.id}`);
                 setInvoice(data);
             } catch (err) {
-                console.err(err);
+                console.error(err);
             }
         }
 
