@@ -282,7 +282,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                 </div>
                                 <div className="mt-4 w-75" style={{ borderTop: "1px solid rgb(0,0,0, 0.1)", margin: "auto" }}></div>
                                 {/* <div className="row mt-4 franchise-description"> */}
-                                <div className="row mt-4" dangerouslySetInnerHTML={franchise?.description}>
+                                <div className="row mt-4" dangerouslySetInnerHTML={{ __html: franchise?.description }}>
                                 </div>
                             </div>
                         </div>
