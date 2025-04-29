@@ -143,7 +143,11 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                             <div className="d-flex align-items-center gap-1 cursor-pointer" onClick={toggleLocation}>
                                 <i className='mdi mdi-map-marker fs-5'></i>
                                 <p className="font-semibold ">
-                                    {schedule.location || 'Location not specified'}
+                                    <TextWithToggle
+                                        description={schedule.location || 'Location not specified'}
+                                        maxLength={30}
+                                    >
+                                    </TextWithToggle>
                                 </p>
                             </div>
                             {showLocation && (
@@ -165,7 +169,11 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                             <div className="d-flex align-items-center gap-1">
                                 <i className='mdi mdi-human-male-board fs-5'></i>
                                 <p className="font-semibold ">
-                                    {(schedule.teachers?.length > 0 ? schedule.teachers.join(', ') : 'No teachers assigned')}
+                                    <TextWithToggle
+                                        description={(schedule.teachers?.length > 0 ? schedule.teachers.join(', ') : 'No teachers assigned')}
+                                        maxLength={30}
+                                    >
+                                    </TextWithToggle>
                                 </p>
                             </div>
                         </div>
