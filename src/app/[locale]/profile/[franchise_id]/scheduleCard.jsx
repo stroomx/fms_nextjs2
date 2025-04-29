@@ -145,7 +145,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                                 <p className="font-semibold ">
                                     <TextWithToggle
                                         description={schedule.location || 'Location not specified'}
-                                        maxLength={30}
+                                        maxLength={15}
                                     >
                                     </TextWithToggle>
                                 </p>
@@ -171,7 +171,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                                 <p className="font-semibold ">
                                     <TextWithToggle
                                         description={(schedule.teachers?.length > 0 ? schedule.teachers.join(', ') : 'No teachers assigned')}
-                                        maxLength={30}
+                                        maxLength={15}
                                     >
                                     </TextWithToggle>
                                 </p>
