@@ -34,8 +34,8 @@ import { map, currencyLocaleOverrides } from "./contry-currency";
  * @param {string} code - The country code to look up
  * @returns {string}
  */
-export default function formatCurrencyByCountry(value, code = "PL") {
-    if (code == null) code = "PL";
+export default function formatCurrencyByCountry(value, code = "US") {
+    if (code == null) code = "US";
 
     const currency = map[code];
 
