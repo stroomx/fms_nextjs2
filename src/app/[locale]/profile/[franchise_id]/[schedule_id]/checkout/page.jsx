@@ -357,7 +357,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                         <p className="font-semibold text-13 mb-2">{schedule.daterange || 'N/A'}</p>
                                     </div>
                                     <div className="col-md-4 col-12 cost mt-md-0 mt-2">
-                                        <p className=" text-grey-200 font-semibold mb-2">{t('Schedule Cost')} : <span className="font-bolder text-black">{money(schedule.cost?.totalcost) || 0}</span></p>
+                                        <p className=" text-grey-200 font-semibold mb-2">{t('Schedule Cost')} : <span className="font-bolder text-black">{money(schedule.cost?.totalcost, schedule?.countryCode) || money(0, schedule?.countryCode)}</span></p>
                                         <p className="font-semibold text-13 text-orange">{(schedule.availablespots || 0) + ' ' + t('Available Spots')}
                                         </p>
                                     </div>
@@ -371,12 +371,13 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                         <img src="/assets/img/teacher-icon.svg" alt="..." />
                                         <p className="font-semibold text-13">{(schedule.teachers?.length > 0 ? schedule.teachers.join(', ') : 'No teachers assigned')}</p>
                                     </div>
-                                    <div className="items">
-                                        <img alt="" src="/assets/img/pin-icon.svg" />
-                                        <p className="font-semibold text-13 text-orange">
-                                            {`${schedule.minage || 1} - ${schedule.maxage || 'N/A'} years`}
-                                        </p>
-                                    </div>
+                                    {schedule?.minage && schedule?.maxage &&
+                                        <div className="items">
+                                            <i className='mdi mdi-face-man fs-5'></i>
+                                            <p className="font-semibold text-13 text-orange">
+                                                {`${schedule.minage || 1} - ${schedule.maxage || 'N/A'} years`}
+                                            </p>
+                                        </div>}
                                     <div className="items">
                                         <img src="/assets/img/clock-icon.svg" alt="..." />
                                         <div className="days flexed">
@@ -443,7 +444,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                             checked={formData?.paymentoption == "minimumDeposit"}
                                             onChange={handleChange}
                                         />
-                                        <label className="form-check-label" htmlFor="minimumDeposit">{`${t('Pay')} ${money(schedule.scheduleminimumdeposit * studentIds.length)} Deposit`}</label>
+                                        <label className="form-check-label" htmlFor="minimumDeposit">{`${t('Pay')} ${money(schedule.scheduleminimumdeposit * studentIds.length, schedule?.countryCode)} Deposit`}</label>
                                     </div> : ''}
 
                                     {false ? <div className="form-check form-check-inline">
@@ -469,7 +470,7 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                             checked={formData?.paymentoption == "recurringPayments"}
                                             onChange={handleChange}
                                         />
-                                        <label className="form-check-label" htmlFor="recurringPayments"> {`${schedule.schedulerecurringpaymentsnum} ${t(schedule.schedulerecurringpaymentsfrequency)} ${t('Payments')} @ ${money(schedule.schedulerecurringpaymentsamount * studentIds.length)}`}</label>
+                                        <label className="form-check-label" htmlFor="recurringPayments"> {`${schedule.schedulerecurringpaymentsnum} ${t(schedule.schedulerecurringpaymentsfrequency)} ${t('Payments')} @ ${money(schedule.schedulerecurringpaymentsamount * studentIds.length, schedule?.countryCode)}`}</label>
                                     </div> : ''}
                                 </div>
 
@@ -514,10 +515,10 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                             <p className="text-grey-200  font-semibold">{t('Schedule Cost')}</p>
                                         </div>
                                         <div className="col text-center">
-                                            <p className="text-black font-semibold">{`${money(schedule.cost?.basecost)} x ${studentIds.length}`}</p>
+                                            <p className="text-black font-semibold">{`${money(schedule.cost?.basecost, schedule?.countryCode)} x ${studentIds.length}`}</p>
                                         </div>
                                         <div className="col text-end">
-                                            <p className="text-grey-200  font-semibold"> <span className=" text-black font-bold">{money(schedule.cost?.basecost * studentIds.length) || money(0)}</span></p>
+                                            <p className="text-grey-200  font-semibold"> <span className=" text-black font-bold">{money(schedule.cost?.basecost * studentIds.length, schedule?.countryCode) || money(0, schedule?.countryCode)}</span></p>
                                         </div>
                                     </div>
                                 </div>
@@ -528,10 +529,10 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                                 <p className="text-grey-200  font-semibold">{`${addon.programaddonname || 'Addon Name'} ${addon.scheduleprogramaddonqty > 1 ? `X ${addon.scheduleprogramaddonqty}` : ''}`}</p>
                                             </div>
                                             <div className="col text-center">
-                                                <p className="text-black font-semibold">{`${money(addon.programaddonamount * addon.scheduleprogramaddonqty)} x ${studentIds.length}`}</p>
+                                                <p className="text-black font-semibold">{`${money(addon.programaddonamount * addon.scheduleprogramaddonqty, schedule?.countryCode)} x ${studentIds.length}`}</p>
                                             </div>
                                             <div className="col text-end">
-                                                <p className="text-grey-200  font-semibold"> <span className=" text-black font-bold">{money(addon.programaddonamount * addon.scheduleprogramaddonqty * studentIds.length)}</span></p>
+                                                <p className="text-grey-200  font-semibold"> <span className=" text-black font-bold">{money(addon.programaddonamount * addon.scheduleprogramaddonqty * studentIds.length, schedule?.countryCode)}</span></p>
                                             </div>
                                         </div>
                                     </div>);
@@ -546,20 +547,20 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                             </div>
                                         </div>
                                         <div>
-                                            <p className="text-grey-200  font-semibold"> <span className=" text-green font-bold">- {money(paymentCardSettings.couponDiscount)}</span></p>
+                                            <p className="text-grey-200  font-semibold"> <span className=" text-green font-bold">- {money(paymentCardSettings.couponDiscount, schedule?.countryCode)}</span></p>
                                         </div>
                                     </div>
                                 </div>}
                                 <div className="bottom-section mt-3 pt-3 pb-3 bg-primary text-white">
                                     <div className="d-flex justify-content-between align-items-center px-4">
                                         <p className="fs-5 font-semibold">{t('Total Amount')} </p>
-                                        <p className="fs-5 font-semibold"> <span className="font-bold">{money(paymentCardSettings?.enrollmentCost)}</span></p>
+                                        <p className="fs-5 font-semibold"> <span className="font-bold">{money(paymentCardSettings?.enrollmentCost, schedule?.countryCode)}</span></p>
                                     </div>
 
                                     {paymentCardSettings?.useCredit && <div className="pt-1 pb-3">
                                         <div className="d-flex justify-content-between align-items-center px-4">
                                             <p className="font-semibold">{t('Credit Applied')}</p>
-                                            <p className="font-semibold"> <span className="font-bold">- {money(paymentCardSettings?.creditToUse)}
+                                            <p className="font-semibold"> <span className="font-bold">- {money(paymentCardSettings?.creditToUse, schedule?.countryCode)}
                                             </span></p>
                                         </div>
                                     </div>}
@@ -567,14 +568,14 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                                     {paymentCardSettings?.useMinimum && <div className="pb-1">
                                         <div className="d-flex justify-content-between align-items-center px-4">
                                             <p className="fs-5 font-semibold">{t('Minimum Deposit')}</p>
-                                            <p className="fs-5 font-semibold"> <span className="font-bold">{money(paymentCardSettings?.minimumAmount)}
+                                            <p className="fs-5 font-semibold"> <span className="font-bold">{money(paymentCardSettings?.minimumAmount, schedule?.countryCode)}
                                             </span></p>
                                         </div>
                                     </div>}
 
                                     <div className="d-flex justify-content-between align-items-center px-4">
                                         <p className="fs-5 font-semibold">{t('Due Now')} </p>
-                                        <p className="fs-5 font-semibold"> <span className="font-bold">{money(paymentCardSettings?.totalPayable)}</span></p>
+                                        <p className="fs-5 font-semibold"> <span className="font-bold">{money(paymentCardSettings?.totalPayable, schedule?.countryCode)}</span></p>
                                     </div>
                                 </div>
                             </div>

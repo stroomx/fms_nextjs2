@@ -186,8 +186,8 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
         const fetchData = async () => {
             try {
                 const response = await axiosInstance.get(`api/profile.php?id=${franchise_id}`);
-                setPrograms(response.data?.programs || []);
-                setLocations(response.data?.locations || []);
+                setPrograms(response.data?.programs?.sort((a, b) => a['name'].localeCompare(b['name'])) || []);
+                setLocations(response.data?.locations?.sort((a, b) => a['name'].localeCompare(b['name'])) || []);
                 setAgeRange(response.data?.ageRange || { min: 1, max: 16 });
                 setFilterData({ ...filterData, age: response.data?.ageRange });
                 setSchedules(response.data?.schedules || []);
@@ -264,7 +264,11 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                                 <i className="mdi mdi-human-male-board"></i>
                                                 {t('Teacher Application')}
                                             </button>
-                                            <a href={franchise?.website ? `https://${franchise['website']}` : "#"} target="_blank" className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1'>
+                                            <a
+                                                href={franchise?.website ? (franchise.website.startsWith('http') ? franchise.website : `https://${franchise.website}`) : "#"}
+                                                target="_blank"
+                                                className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1'
+                                            >
                                                 <i className="mdi mdi-web"></i>
                                                 {t('Visit Our Website')}
                                             </a>
@@ -386,7 +390,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
 
 
                                 {/* <hr className="my-3 m-auto w-75 text-center" /> */}
-                                <div className="col-md-4 col-6">
+                                {locations.length > 0 && <div className="col-md-4 col-6">
                                     <div className="text-primary fw-bold mb-2">{t('Locations')}</div>
                                     <div className="checkbox-group">
                                         {
@@ -407,7 +411,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                             ))
                                         }
                                     </div>
-                                </div>
+                                </div>}
 
                                 {/* <hr className="my-3 m-auto w-75 text-center" /> */}
                                 <div className="col-md-4 col-12">
@@ -504,27 +508,29 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                             }
                                         </div>
 
-                                        <hr className="my-3 m-auto w-75 text-center" />
-                                        <div className="text-primary fw-bold mb-2">{t('Locations')}</div>
-                                        <div className="checkbox-group">
-                                            {
-                                                locations?.map((ele, index) => (
-                                                    <div className="form-check" key={index}>
-                                                        <input
-                                                            className="form-check-input"
-                                                            type="checkbox"
-                                                            value={ele.id}
-                                                            id={`locationCheck-${index}`}
-                                                            checked={filterData['locations'].includes(ele.id)}
-                                                            onChange={(e) => handleFilterChange('locations', e.target.value, e.target.checked)}
-                                                        />
-                                                        <label className="form-check-label" htmlFor={`locationCheck-${index}`}>
-                                                            {ele.name}
-                                                        </label>
-                                                    </div>
-                                                ))
-                                            }
-                                        </div>
+                                        {locations.length > 0 && <>
+                                            <hr className="my-3 m-auto w-75 text-center" />
+                                            <div className="text-primary fw-bold mb-2">{t('Locations')}</div>
+                                            <div className="checkbox-group">
+                                                {
+                                                    locations?.map((ele, index) => (
+                                                        <div className="form-check" key={index}>
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="checkbox"
+                                                                value={ele.id}
+                                                                id={`locationCheck-${index}`}
+                                                                checked={filterData['locations'].includes(ele.id)}
+                                                                onChange={(e) => handleFilterChange('locations', e.target.value, e.target.checked)}
+                                                            />
+                                                            <label className="form-check-label" htmlFor={`locationCheck-${index}`}>
+                                                                {ele.name}
+                                                            </label>
+                                                        </div>
+                                                    ))
+                                                }
+                                            </div>
+                                        </>}
 
                                         <hr className="my-3 m-auto w-75 text-center" />
                                         <div className="text-primary fw-bold mb-2">{t('Date')}</div>

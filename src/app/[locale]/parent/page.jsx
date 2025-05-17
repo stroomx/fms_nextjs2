@@ -364,7 +364,7 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                             <div className="d-flex justify-content-between">
                                 <p className="font-bold fs-6">{t('Cost')}</p>
                                 <p className="font-bolder fs-6">
-                                    {loading ? <Skeleton width={80} /> : `${money(schedule.cost)}`}
+                                    {loading ? <Skeleton width={80} /> : `${money(schedule.cost, schedule.countryCode)}`}
                                 </p>
                             </div>
                             {schedule.addons?.map((addon, index) => (
@@ -373,7 +373,7 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                                         {loading ? <Skeleton width={100} /> : `${addon.name}`}
                                     </p>
                                     <p className="font-bold text-12">
-                                        {loading ? <Skeleton width={40} /> : `${money(addon.price)}`}
+                                        {loading ? <Skeleton width={40} /> : `${money(addon.price, schedule.countryCode)}`}
                                     </p>
                                 </div>
                             ))}
@@ -381,7 +381,7 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                         <div className="d-flex justify-content-between">
                             <p className="font-bold fs-6">{t('Paid')}</p>
                             <p className="font-bolder fs-6">
-                                {loading ? <Skeleton width={80} /> : `${money(schedule.paidAmount)}`}
+                                {loading ? <Skeleton width={80} /> : `${money(schedule.paidAmount, schedule.countryCode)}`}
                             </p>
                         </div>
                         {(schedule.cost - schedule.paidAmount) > 0 && (
@@ -389,7 +389,7 @@ const ParentScheduleCard = ({ schedule, index, loading, hoverAction = () => { } 
                                 <div className="d-flex justify-content-between">
                                     <p className="font-bold fs-6">{t('Balance')}</p>
                                     <p className="font-bolder fs-6">
-                                        {loading ? <Skeleton width={80} /> : `${money(schedule.cost - schedule.paidAmount)}`}
+                                        {loading ? <Skeleton width={80} /> : `${money(schedule.cost - schedule.paidAmount, schedule.countryCode)}`}
                                     </p>
                                 </div>
                                 <p className="font-bold text-12 text-green-dark">
@@ -659,20 +659,20 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                     <hr className="my-4" />
                     <div className="d-flex justify-content-between align-items-center mb-2">
                         <p className="fs-5">{t('Base Cost')}</p>
-                        <p>{money(schedule.cost)}</p>
+                        <p>{money(schedule.cost, schedule.countryCode)}</p>
                     </div>
                     {/* Addons should come here */}
                     <div className="d-flex justify-content-between align-items-center mb-2">
                         <p className="fs-5">{t('Total Cost')}</p>
-                        <p>{money(schedule.cost)}</p>
+                        <p>{money(schedule.cost, schedule.countryCode)}</p>
                     </div>
                     <div className="d-flex justify-content-between align-items-center mb-2">
                         <p className="fs-5">{t('Paid Amount')}</p>
-                        <p>{money(schedule.paidAmount)}</p>
+                        <p>{money(schedule.paidAmount, schedule.countryCode)}</p>
                     </div>
                     <div className="d-flex justify-content-between align-items-center mb-2">
                         <p className="fs-5">{t('Remaining Amount')}</p>
-                        <p>{money(schedule.cost - schedule.paidAmount)}</p>
+                        <p>{money(schedule.cost - schedule.paidAmount, schedule.countryCode)}</p>
                     </div>
                     {(schedule.cost - schedule.paidAmount > 0) && (true /** Schedule should have online paymend option available otherwise no payment should show */) && !showPayment() && <>
                         <hr className="my-4" />
@@ -701,7 +701,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
         </div>
         <div className="col-lg-8">
             {showPayment() ? <>
-                <div className="fs-4 mb-2 mt-0 align-items-start">{t('Amount To Be Paid is')} {money(formData?.amount)}</div>
+                <div className="fs-4 mb-2 mt-0 align-items-start">{t('Amount To Be Paid is')} {money(formData?.amount, schedule.countryCode)}</div>
                 <MerchantGateWay merchant_id={schedule?.franchiseId} paymentData={{
                     ...formData, students: [schedule.studentId], returnURL: `${appURL}/parent?eid=${schedule.scheduleenrollid}&amount=${formData?.amount}`,
                     cancelURL: `${appURL}/parent?eid=${schedule.scheduleenrollid}&amount=${formData?.amount}`
@@ -760,7 +760,7 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                             <td className="text-center">{index + 1}</td>
                                             <td className="text-nowrap text-center">{date(payment?.paymentapplycreateddate)}</td>
                                             <td className="text-center">{payment?.paymenttype ?? t('Credit')}</td>
-                                            <td className="text-center">{money(payment?.paymentapplyamount)}</td>
+                                            <td className="text-center">{money(payment?.paymentapplyamount, schedule.countryCode)}</td>
                                             <td className="text-center"><TextWithToggle description={payment?.paymentapplydescription} maxLength={15} showtext={false} /></td>
                                             {/* <td className="text-center"><TextWithToggle description={payment?.paymenttransactionno} maxLength={10} showtext={false} /></td> */}
                                             {/* <td>{payment?.paymentstatus}</td> */}
@@ -818,17 +818,17 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                         </div>
                                         <div className="d-flex align-items-center justify-content-between gap-3">
                                             <span className="font-bold ">{t('Total Cost')}</span>
-                                            <span className="fs-5 ">{money(recurringpayment?.paymentrecurtotal)}</span>
+                                            <span className="fs-5 ">{money(recurringpayment?.paymentrecurtotal, schedule.countryCode)}</span>
                                         </div>
                                     </div>
                                     <div className="col-md-6 py-4 px-3">
                                         <div className="d-flex align-items-center justify-content-between gap-3">
                                             <span className="font-bold ">{t('Paid')}</span>
-                                            <span className="fs-5 ">{money(recurringpayment?.paymentrecurtotal - recurringpayment?.paymentrecurbalance)}</span>
+                                            <span className="fs-5 ">{money(recurringpayment?.paymentrecurtotal - recurringpayment?.paymentrecurbalance, schedule.countryCode)}</span>
                                         </div>
                                         <div className="d-flex align-items-center justify-content-between gap-3">
                                             <span className="font-bold ">{t('Remaining')}</span>
-                                            <span className="fs-5 ">{money(recurringpayment?.paymentrecurbalance)}</span>
+                                            <span className="fs-5 ">{money(recurringpayment?.paymentrecurbalance, schedule.countryCode)}</span>
                                         </div>
                                         <div className="d-flex align-items-center justify-content-between gap-3">
                                             <span className="font-bold ">{t('Next Payment')}</span>
@@ -879,10 +879,10 @@ const PaymentDetails = ({ schedule, index, active = false }) => {
                                                 <td className="text-center">{index + 1}</td>
                                                 <td className="text-nowrap text-center">{date(recurringpayment?.paymentrecurstartdate, false)}</td>
                                                 <td className="text-center">{recurringpayment?.paymentrecurfrequency.toUpperCase()}</td>
-                                                <td className="text-center">{money(recurringpayment?.paymentrecurtotal)}</td>
-                                                <td className="text-center">{money(recurringpayment.paymentrecurtotal - recurringpayment.paymentrecurbalance)}</td>
-                                                <td className="text-center">{money(recurringpayment.paymentrecurbalance)}</td>
-                                                <td className="text-center">{date(recurringpayment.paymentrecurterminateddate, false)}</td>
+                                                <td className="text-center">{money(recurringpayment?.paymentrecurtotal, schedule.countryCode)}</td>
+                                                <td className="text-center">{money(recurringpayment.paymentrecurtotal - recurringpayment.paymentrecurbalance, schedule.countryCode)}</td>
+                                                <td className="text-center">{money(recurringpayment.paymentrecurbalance, schedule.countryCode)}</td>
+                                                <td className="text-center">{date(recurringpayment.paymentrecurterminateddate, false, schedule.countryCode)}</td>
                                                 {/* <td>{payment?.paymentstatus}</td> */}
                                             </tr>
                                         ))}
@@ -966,29 +966,29 @@ const Invoice = ({ enrollment }) => {
                         <tr>
                             <td className="text-center text-nowrap">{date('2024-12-22', false)}</td>
                             <td>{`Enrolled ${invoice?.studentName} into ${enrollment?.name}`}</td>
-                            <td className="text-center">{money(invoice?.costdata?.proratedcost > 0 ? invoice?.costdata?.proratedcost : invoice?.costdata?.totalcost)}</td>
+                            <td className="text-center">{money(invoice?.costdata?.proratedcost > 0 ? invoice?.costdata?.proratedcost : invoice?.costdata?.totalcost, enrollment.countryCode)}</td>
                         </tr>
                         <tr>
                             <td colSpan={2} className="text-end" ><b>{t('Base Cost')}:</b></td>
-                            <td className="text-center">{money(invoice?.costdata?.basecost)}</td>
+                            <td className="text-center">{money(invoice?.costdata?.basecost, enrollment.countryCode)}</td>
                         </tr>
                         {invoice?.addons?.map((addon, index) => (
                             < tr key={index} >
                                 <td colSpan={2} className="text-end"><b>{addon?.name}</b></td>
-                                <td className="text-center">{money(addon?.cost)}</td>
+                                <td className="text-center">{money(addon?.cost, enrollment.countryCode)}</td>
                             </tr>
                         ))}
                         {invoice?.tax && <tr>
                             <td colSpan={2} className="text-end" ><b>{t(invoice?.taxlable)}:</b></td>
-                            <td className="text-center">{money(invoice?.costdata?.taxfee)}</td>
+                            <td className="text-center">{money(invoice?.costdata?.taxfee, enrollment.countryCode)}</td>
                         </tr>}
                         <tr>
                             <td colSpan={2} className="text-end"><b>{t('Total Cost')}:</b></td>
-                            <td className="text-center">{money(invoice?.costdata?.totalcostadjusted)}</td>
+                            <td className="text-center">{money(invoice?.costdata?.totalcostadjusted, enrollment.countryCode)}</td>
                         </tr>
                         {invoice?.costdata?.totalcostadjusted - invoice?.paidAmount > 0 && <tr>
                             <td colSpan={2} className="text-end"><b>{t('Balance')}:</b></td>
-                            <td className="text-center">{money(invoice?.costdata?.totalcostadjusted - invoice?.paidAmount)}</td>
+                            <td className="text-center">{money(invoice?.costdata?.totalcostadjusted - invoice?.paidAmount, enrollment.countryCode)}</td>
                         </tr>}
                     </tbody>
                 </table>

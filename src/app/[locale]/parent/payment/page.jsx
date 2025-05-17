@@ -81,7 +81,8 @@ export default function ParentPayment() {
         setHistory({
             credit: data?.credit,
             balance: data?.balance,
-            franchise: franchiseId
+            franchise: franchiseId,
+            countryCode: data?.countryCode
         });
     }
 
@@ -104,14 +105,15 @@ export default function ParentPayment() {
                             franchises?.map((franchise, index) => <option key={index} value={franchise.id}>{franchise.name}</option>)
                         }
                     </select>
-                    <div className="d-flex gap-3">
+
+                    {history?.franchise && <div className="d-flex gap-3">
                         <p className="text-grey-200 font-semibold text-14">
-                            {t('Balance')}: <span className="text-red font-bold">{money(history?.balance)}</span>
+                            {t('Balance')}: <span className="text-red font-bold">{money(history?.balance, history?.countryCode)}</span>
                         </p>
                         <p className="text-grey-200 font-semibold text-14">
-                            {t('Credit')}: <span className="text-green font-bold">{money(history?.credit)}</span>
+                            {t('Credit')}: <span className="text-green font-bold">{money(history?.credit, history?.countryCode)}</span>
                         </p>
-                    </div>
+                    </div>}
                     {/* <div className="title2 d-flex justify-content-end align-items-center gap-3 ">
                         <div className="dates">
                             <div className='d-flex justify-content-start gap-2 align-items-center'>
@@ -151,7 +153,7 @@ export default function ParentPayment() {
                                         <td className='text-start'>{transaction.student || "N/A"}</td>
                                         <td className='text-center'>{transaction.schedule || "N/A"}</td>
                                         <td className={`${transaction.amount.startsWith('-') ? 'debit' : 'credit'} text-center`}>
-                                            {money(transaction.amount)}
+                                            {money(transaction.amount, transaction.countryCode)}
                                         </td>
                                         <td className='text-center'>{datef(transaction.paymentdate)}</td>
                                         <td className='text-center'>{transaction.locationName ?? transaction.franchiseName}</td>
@@ -227,7 +229,7 @@ const PaymentReciept = ({ payment }) => {
                         <tr>
                             <td className="text-center text-nowrap">{datef(payment?.paymentdate, false)}</td>
                             <td>{payment?.description}</td>
-                            <td className="text-center">{money(payment?.amount)}</td>
+                            <td className="text-center">{money(payment?.amount, payment?.countryCode)}</td>
                         </tr>
                     </tbody>
                 </table>

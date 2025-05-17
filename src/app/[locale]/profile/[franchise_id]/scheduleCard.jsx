@@ -7,6 +7,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Calendar from '@/app/components/calendar/Calendar';
 import useClickOutside from '@/app/hooks/useClickOutside';
+import money from "@/app/localization/currency";
+
 
 export default function ScheduleCard({ franchise_id, schedule, modal = false, buttonAction = () => { }, }) {
     const { t } = useTranslation();
@@ -46,6 +48,8 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
     }
 
     const toggleLocation = () => {
+        if (!schedule.location)
+            return;
         setShowLocation(!showLocation);
     }
 
@@ -81,7 +85,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                             </div>
                             {!isExternal && <div className="col-md-3 col-4">
                                 <p className="text-blue font-bold text-end fs-2">
-                                    {schedule.cost || 0}
+                                    {money(schedule.cost, schedule.countryCode)}
                                 </p>
                             </div>}
                         </div>
@@ -187,7 +191,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                                 {t('Schedule Cost')}
                             </span>
                             <p className="text-blue font-bold text-end fs-2">
-                                {schedule.cost || 0}
+                                {money(schedule.cost, schedule.countryCode)}
                             </p>
                             <p className="font-semibold text-danger">
                                 {

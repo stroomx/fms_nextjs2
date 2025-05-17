@@ -19,8 +19,6 @@ const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
     let paidAmount = searchParams.get('amount');
     let enrollmentId = searchParams.get('eid') ?? searchParams.get('payment_intent') ?? false;
 
-    replace(pathname); // Removes the params from the URL
-
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
 
@@ -40,7 +38,8 @@ const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
                 franchiseName: schedule?.franchise_name,
                 scheduleName: schedule?.name,
                 enrollmentid: enrollmentId,
-                dates: schedule?.dates
+                dates: schedule?.dates,
+                countryCode: schedule?.countryCode
             });
         } catch (err) {
             console.error(err)
@@ -94,9 +93,10 @@ const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
     };
 
     useEffect(() => {
-        if (!status)
-            router.push(`/profile/${franchise_id}/${schedule_id}/checkout?redirect_status=failed`);
+        // if (!status)
+        //     router.push(`/profile/${franchise_id}/${schedule_id}/checkout?redirect_status=failed`);
 
+        replace(pathname); // Removes the params from the URL
         fetchData();
     }, []);
 
@@ -130,7 +130,7 @@ const PaymentConfirmationPage = ({ params: { franchise_id, schedule_id } }) => {
                                     </p>)
                                 ))}
                         </div>
-                        {data?.paidAmount && <p className="mb-2">{t('Total paid')} : <span>{money(data?.paidAmount)}</span></p>}
+                        {data?.paidAmount && <p className="mb-2">{t('Total paid')} : <span>{money(data?.paidAmount, data?.countryCode)}</span></p>}
                         {data?.enrollmentid ? <p className="dotted mt-1">{t('Reference ID')} : <span> #{data?.enrollmentid}</span> </p> :
                             <p className="dotted mt-1">{t('Payment under proccessing, once payment clears you\'ll recieve confirmation email.')}</p>}
                         <div className="d-flex justify-content-center align-items-center gap-2 mt-5 mb-3">
