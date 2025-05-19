@@ -48,7 +48,7 @@ export default function BirthdayPartyRequest({ params: { franchise_id } }) {
         setLoading(true);
 
         try {
-            const { data } = await axiosInstance.post('/api/birthday-request.php', formData, {
+            const { data } = await axiosInstance.post('/api/birthdayRequest.php', formData, {
                 headers: { 'Content-Type': 'application/json' },
             });
 
