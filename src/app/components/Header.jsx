@@ -42,10 +42,11 @@ export default function Header({ locale }) {
             <div className="container">
                 <div className="row align-items-center">
                     <div className="col-lg-6 col-md-6 col-6">
-                        <div className="logo">
+                        <div className="logo cursor-pointer">
                             <img
                                 alt="Bricks 4 Kidz Logo"
                                 src="/assets/img/B4Klogo.png"
+                                onClick={() => { router.push('/parent') }}
                             />
                         </div>
                     </div>

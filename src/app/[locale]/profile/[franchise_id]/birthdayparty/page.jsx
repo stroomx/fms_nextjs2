@@ -1,123 +1,191 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import axiosInstance from '@/axios';
+import { useRouter } from 'next/navigation';
+import alert from '@/app/components/SweetAlerts';
 
-export default function BirthdayPartyRequest({ franchise = { name: 'Testing Franchise' } }) {
+export default function BirthdayPartyRequest({ params: { franchise_id } }) {
     const { t } = useTranslation();
-    return <>
+    const router = useRouter();
+
+    const [franchise, setFranchise] = useState('');
+
+    const [formData, setFormData] = useState({
+        guardianname: '',
+        phonenumber: '',
+        objectemail: '',
+        addresszip: '',
+        schedulerequestdate: '',
+        schedulerequesttime: '',
+        schedulerequestcomment: '',
+        franchiseid: franchise_id,
+    });
+
+    const [loading, setLoading] = useState(false);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const { data } = await axiosInstance.get(`/api/franchise.php?id=${franchise_id}`);
+                setFranchise(data);
+            } catch (err) {
+                const { response } = err;
+                alert({ type: "error", message: response?.data });
+            }
+        };
+        fetchData();
+    }, [franchise_id]);
+
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const { data } = await axiosInstance.post('/api/birthday-request.php', formData, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            alert({ type: 'success', message: data?.message || t('Request submitted successfully!') });
+            setFormData({
+                guardianname: '',
+                phonenumber: '',
+                objectemail: '',
+                addresszip: '',
+                schedulerequestdate: '',
+                schedulerequesttime: '',
+                schedulerequestcomment: '',
+                franchiseid: franchise.id,
+            });
+        } catch (err) {
+            const msg = err?.response?.data?.message || t('Something went wrong.');
+            alert({ type: 'error', message: msg });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
         <div className="wrapper2">
             <div className="container">
                 <div className="main">
-                    <a href="parent-signed.html">
-                        <img src="assets/img/cancel-button.svg" alt="" className="cancel-btn" />
-                    </a>
                     <div className="form-card rounded-0">
                         <div className="row">
                             <div className="col-4">
-                                <div>
-                                    <h4 className="font-bold  mb-2">{t('Birthday Party Request')}</h4>
-                                    <p className="font-bold">{'Bricks 4 Kidz ' + franchise?.name}</p>
-                                </div>
+                                <h4 className="font-bold mb-2">{t('Birthday Party Request')}</h4>
+                                <p className="font-bold">{'Bricks 4 Kidz ' + franchise?.franchiselocationdisplay}</p>
                                 <div className="img-party">
-                                    <img src="assets/img/gift(1).svg" alt="" className="m-auto" />
                                 </div>
                             </div>
                             <div className="col-8">
-                                <form action="" className="">
+                                <form onSubmit={onSubmit}>
                                     <div>
-                                        <label htmlFor="" className="mt-3 required">
-                                            {t('Parent Name')}
-                                        </label>
+                                        <label className="mt-3 required">{t('Parent Name')}</label>
                                         <input
                                             type="text"
-                                            name=""
-                                            id=""
+                                            name="guardianname"
+                                            value={formData.guardianname}
+                                            onChange={handleChange}
                                             className="input-style1 rounded-0"
                                             placeholder={t('Parent Name')}
+                                            required
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="" className="mt-3 required">
-                                            {t('Mobile Number')}
-                                        </label>
+                                        <label className="mt-3 required">{t('Mobile Number')}</label>
                                         <input
                                             type="text"
-                                            name=""
-                                            id=""
+                                            name="phonenumber"
+                                            value={formData.phonenumber}
+                                            onChange={handleChange}
                                             className="input-style1 rounded-0"
                                             placeholder={t('Mobile Number')}
+                                            required
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="" className="mt-3 required">
-                                            {t('Email Address')}
-                                        </label>
+                                        <label className="mt-3 required">{t('Email Address')}</label>
                                         <input
                                             type="email"
-                                            name=""
-                                            id=""
+                                            name="objectemail"
+                                            value={formData.objectemail}
+                                            onChange={handleChange}
                                             className="input-style1 rounded-0"
                                             placeholder={t('Email Address')}
+                                            required
                                         />
                                     </div>
                                     <div className="input-flex">
                                         <div>
-                                            <label htmlFor="" className="mt-3 required">
-                                                {t('Zip Code')}
-                                            </label>
-                                            <select
-                                                className="input-style1 rounded-0 wide"
-                                                aria-label="Default select example"
-                                            >
-                                                <option selected="">Open this select menu</option>
-                                                <option value={1}>One</option>
-                                                <option value={2}>Two</option>
-                                                <option value={3}>Three</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label htmlFor="" className="mt-3 required">
-                                            {t('Requested Date')}
-                                        </label>
-                                        <input
-                                            type="date"
-                                            name=""
-                                            id=""
-                                            className="input-style1 rounded-0"
-                                            placeholder={t('Requested Date')}
-                                        />
-                                    </div>
-                                    <div className="input-flex">
-                                        <div>
-                                            <label htmlFor="" className="mt-3 required">
-                                                {t('Time')}
-                                            </label>
+                                            <label className="mt-3 required">{t('Zip Code')}</label>
                                             <input
-                                                type="time"
-                                                name="schedulerequesttime"
-                                                id="schedulerequesttime"
+                                                type="text"
+                                                name="addresszip"
+                                                value={formData.addresszip}
+                                                onChange={handleChange}
                                                 className="input-style1 rounded-0"
+                                                placeholder={t('Zip Code')}
+                                                required
                                             />
                                         </div>
                                     </div>
                                     <div>
-                                        <label htmlFor="" className="mt-3 required">
-                                            {t('Comment')}
-                                        </label>
+                                        <label className="mt-3 required">{t('Requested Date')}</label>
+                                        <input
+                                            type="date"
+                                            name="schedulerequestdate"
+                                            value={formData.schedulerequestdate}
+                                            onChange={handleChange}
+                                            className="input-style1 rounded-0"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="input-flex">
+                                        <div>
+                                            <label className="mt-3 required">{t('Time')}</label>
+                                            <input
+                                                type="time"
+                                                name="schedulerequesttime"
+                                                value={formData.schedulerequesttime}
+                                                onChange={handleChange}
+                                                className="input-style1 rounded-0"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="mt-3 required">{t('Comment')}</label>
                                         <textarea
-                                            name=""
-                                            id=""
-                                            cols={30}
+                                            name="schedulerequestcomment"
+                                            value={formData.schedulerequestcomment}
+                                            onChange={handleChange}
                                             rows={5}
                                             placeholder={t('Write your comments..')}
-                                            defaultValue={""}
-                                            className="rounded-0"
+                                            className="input-style1 rounded-0"
+                                            required
                                         />
                                     </div>
                                     <div className="d-flex gap-2 justify-content-end mt-3">
-                                        <button className="btn btn-primary flex-grow-1 rounded-0">{t('Submit')}</button>
-                                        <button className="btn btn-danger rounded-0">{t('Cancel')}</button>
+                                        <button
+                                            type="submit"
+                                            className="btn btn-primary flex-grow-1 rounded-0"
+                                            disabled={loading}
+                                        >
+                                            {loading ? t('Submitting...') : t('Submit')}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => router.back()}
+                                            className="btn btn-danger rounded-0"
+                                        >
+                                            {t('Cancel')}
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -126,17 +194,5 @@ export default function BirthdayPartyRequest({ franchise = { name: 'Testing Fran
                 </div>
             </div>
         </div>
-    </>;
+    );
 }
-
-// guardianname: Ahmed
-// phonenumber: Adi
-// objectemail: ahmed@b4k.com
-// addresszip: 11111
-// schedulerequestdate: 03/19/2025
-// schedulerequesttime: 23:12:00
-// schedulerequestcomment: qewrds
-// franchiseid: 6209
-// container: 1
-// submit: save
-// save: Submit

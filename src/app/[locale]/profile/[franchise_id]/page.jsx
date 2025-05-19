@@ -12,6 +12,8 @@ import AuthService from "@/auth.service";
 import MultiRangeSlider from "@/app/components/DualSlider";
 import { useDebugTranslation } from "@/app/hooks/useDebugTranslation";
 
+import alert from "@/app/components/SweetAlerts";
+
 export default function FranchiseProfile({ params: { franchise_id } }) {
 
     const { t } = useDebugTranslation();
@@ -29,9 +31,6 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
     const [schedules, setSchedules] = useState([]);
     const [franchise, setFranchise] = useState(null);
     const [filteredSchedules, setFilteredSchedules] = useState([]);
-    const [emailFormData, setEmailFormData] = useState({
-        franchise: franchise_id
-    });
 
     const [filterData, setFilterData] = useState({
         locations: searchParams.get('locations') ? searchParams.get('locations').split(',') : [],
@@ -157,20 +156,36 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
 
     const sendEmail = async (e) => {
         e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        const name = formData.get('name');
+        const from = formData.get('from');
+        const subject = formData.get('subject');
+        const body = formData.get('body');
+
         try {
             const obj = {
                 franchise: 6209,
-                email: 'ahmed@stroomx.com',
-                body: 'HI THIS IS AN EMAIL FROM AHMED',
-                subject: 'test email from UI',
-                name: 'AHMED ABDELSALAM'
+                email: from,
+                body: body,
+                subject: subject,
+                name: name,
             };
+
             const { data } = await axiosInstance.post('api/sendmail.php', obj);
-            console.log(data);
+            alert({ message: data?.message, type: 'success' })
+            form.reset();
         } catch (err) {
             console.error(err);
+            alert({ message: data?.message })
+        } finally {
+            const close = document.getElementById('email-us-close');
+            close.click();
         }
-    }
+    };
+
 
     const enroll = (scheduleid, isWaitlist = false) => {
         if (AuthService.isAuthenticated()) {
@@ -195,6 +210,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                 setFilteredSchedules(response.data?.schedules || []);
             } catch (err) {
                 console.log(err);
+                //TODO Setup a retrial here and if it fails 3 times then we redirect to /profile
             } finally {
                 setLoading(false);
             }
@@ -208,7 +224,6 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
 
         window.addEventListener('scroll', handleScroll);
 
-        // Cleanup event listener when component unmounts
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
@@ -242,7 +257,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                 <div className="row">
                                     <div className="col-md col-sm-12 align-items-md-start align-items-center ps-md-0">
                                         <div className="text-md-start text-center font-bold fs-3 pb-1">{`Bricks 4 Kidz - ${franchise?.displayname ?? franchise?.name ?? ''}`}</div>
-                                        <div className="text-md-start text-center font-semibold fs-5 pb-1">{franchise?.name}</div>
+                                        {/* <div className="text-md-start text-center font-semibold fs-5 pb-1">{franchise?.name}</div> */}
                                         <div className="text-md-start text-center fs-5">{franchise?.phone}</div>
                                     </div>
                                     <div className="col-md col-sm-12 d-flex justify-content-center flex-column align-items-md-end align-items-center">
@@ -252,18 +267,6 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                                 {t('Contact Us')}
                                             </button>
                                             <></>
-                                            <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1'>
-                                                <i className="mdi mdi-cake"></i>
-                                                {t('Birthday Party Request')}
-                                            </button>
-                                        </div>
-                                        <div className="d-flex gap-1 details pb-4">
-                                            <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1' onClick={() => {
-                                                router.push(`/profile/${franchise_id}/teacher`);
-                                            }}>
-                                                <i className="mdi mdi-human-male-board"></i>
-                                                {t('Teacher Application')}
-                                            </button>
                                             <a
                                                 href={franchise?.website ? (franchise.website.startsWith('http') ? franchise.website : `https://${franchise.website}`) : "#"}
                                                 target="_blank"
@@ -272,6 +275,17 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                                 <i className="mdi mdi-web"></i>
                                                 {t('Visit Our Website')}
                                             </a>
+                                            {!franchise?.disableBirthdayParty && <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1' onClick={() => { router.push(`/profile/${franchise_id}/birthdayparty`) }}>
+                                                <i className="mdi mdi-cake"></i>
+                                                {t('Birthday Party Request')}
+                                            </button>}
+
+                                            <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1' onClick={() => {
+                                                router.push(`/profile/${franchise_id}/teacher`);
+                                            }}>
+                                                <i className="mdi mdi-human-male-board"></i>
+                                                {t('Teacher Application')}
+                                            </button>
                                         </div>
 
                                         <div className="row d-block social-icons">
@@ -302,7 +316,6 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                             <div className="modal-body pt-0">
                                 <form onSubmit={sendEmail}>
                                     <div className="row">
-
                                         <div className='col-12 col-md-6'>
                                             <label className="required" htmlFor="name">
                                                 {t('Name')}
