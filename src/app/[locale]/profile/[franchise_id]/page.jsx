@@ -261,7 +261,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                         <div className="text-md-start text-center fs-5">{franchise?.phone}</div>
                                     </div>
                                     <div className="col-md col-sm-12 d-flex justify-content-center flex-column align-items-md-end align-items-center">
-                                        <div className="d-flex gap-1 details pt-4 pb-1">
+                                        <div className="d-flex gap-1 details pt-4 pb-1 flex-wrap">
                                             <button className='btn rounded-0 text-nowrap btn-outline-primary d-flex align-items-center gap-1' data-bs-toggle="modal" data-bs-target={`#email-us`}>
                                                 <i className="mdi mdi-email-outline"></i>
                                                 {t('Contact Us')}
@@ -606,7 +606,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                                     </div>
                                 </div>
                                 :
-                                <div className="d-flex justify-content-center gap-5 align-items-center">
+                                <div className="d-flex justify-content-center gap-5 align-items-center flex-column flex-md-row">
                                     <span className="fs-3">{t('No Available Schedules')}</span>
                                     <img src="/assets/img/Kid.png" alt="" />
                                 </div>
