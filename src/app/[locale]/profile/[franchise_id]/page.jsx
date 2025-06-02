@@ -167,7 +167,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
 
         try {
             const obj = {
-                franchise: 6209,
+                franchise: franchise_id,
                 email: from,
                 body: body,
                 subject: subject,
