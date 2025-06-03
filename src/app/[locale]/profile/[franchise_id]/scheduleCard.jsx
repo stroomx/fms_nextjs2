@@ -22,6 +22,7 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
     const isLoggedIn = AuthService.isAuthenticated();
     const isWaitlist = (schedule.availablespots <= 0 && schedule.waitlist);
     const isExternal = schedule.registrationType === 'External';
+    const isFull = (schedule.availablespots <= 0 && (!schedule.waitlist || schedule.waitlist == 0));
 
     const calendarRef = useRef();
     useClickOutside(calendarRef, () => setShowDate(false));
@@ -203,11 +204,13 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                         </>}
                         {
                             (!modal &&
-                                !isExternal ? (isLoggedIn ? <button className={`${isWaitlist ? 'btn btn-warning rounded-0' : 'btn-style1'} mt-1 d-inline`} type="button" onClick={() => buttonAction(schedule.id, isWaitlist)}>
+                                !isFull ? ((!isExternal ? (isLoggedIn ? <button className={`${isWaitlist ? 'btn btn-warning rounded-0' : 'btn-style1'} mt-1 d-inline`} type="button" onClick={() => buttonAction(schedule.id, isWaitlist)}>
                                     {!isWaitlist ? t('Enroll Now') : t('Join Waitlist')}
                                 </button> : <button className={`${isWaitlist ? 'btn btn-warning rounded-0' : 'btn-style1'} mt-1 d-inline`} id={`enroll-button-${schedule.id}`} type="button" data-bs-toggle="modal" data-bs-target={`#selectSchedule${schedule.id}`}>
                                     {!isWaitlist ? t('Enroll Now') : t('Join Waitlist')}
-                                </button>) : <button className={`btn btn-warning rounded-0 mt-1 d-inline`} onClick={externalEnroll}>{t('External Enrollment')}</button>)
+                                </button>) : <button className={`btn btn-warning rounded-0 mt-1 d-inline`} onClick={externalEnroll}>{t('External Enrollment')}</button>)) :
+                                <button className={`btn btn-secondary rounded-0 mt-1 d-inline`} type='button' disabled>{t('Schedule Full')}</button>
+                            )
                         }
 
                     </div>
@@ -237,11 +240,12 @@ export default function ScheduleCard({ franchise_id, schedule, modal = false, bu
                                                     : t('No Available Spots')
                                             }
                                         </p>
-                                        {isLoggedIn ? <button className={`${isWaitlist ? 'btn btn-warning rounded-0' : 'btn-style1'} mt-1 d-inline w-100`} type="button" onClick={() => buttonAction(schedule.id, isWaitlist)}>
+                                        {!isFull ? (isLoggedIn ? <button className={`${isWaitlist ? 'btn btn-warning rounded-0' : 'btn-style1'} mt-1 d-inline w-100`} type="button" onClick={() => buttonAction(schedule.id, isWaitlist)}>
                                             {!isWaitlist ? t('Enroll Now') : t('Join Waitlist')}
                                         </button> : <button className={`${isWaitlist ? 'btn btn-warning rounded-0' : 'btn-style1'} mt-1 d-inline w-100`} type="button" data-bs-toggle="modal" data-bs-target={`#selectSchedule${schedule.id}`}>
                                             {!isWaitlist ? t('Enroll Now') : t('Join Waitlist')}
-                                        </button>}
+                                        </button>) : <button className={`btn btn-secondary rounded-0 mt-1 d-inline`} type='button' disabled>{t('Schedule Full')}</button>
+                                        }
                                     </> : <button className={`btn btn-warning rounded-0 mt-1 d-inline w-100`} onClick={externalEnroll}>{t('External Enrollment')}</button>}
                                 </>
                             )}
