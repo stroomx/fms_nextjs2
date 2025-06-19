@@ -4,8 +4,6 @@ import axiosInstance from "@/axios";
 import alert from '@/app/components/SweetAlerts';
 
 import { useState, useEffect, useRef } from "react";
-import AuthService from '@/auth.service';
-import { useCart } from '@/app/hooks/useCart';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import StudentSelection from "../../studentSelect";
@@ -19,8 +17,6 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
     const router = useRouter();
     const pathname = usePathname();
     const { replace } = useRouter();
-    const { addItem } = useCart();
-    const isLoggedIn = AuthService.isAuthenticated();
     const searchParams = useSearchParams();
     let studentIds = searchParams.get('id')?.split(',') ?? [];
     let status = searchParams.get('redirect_status');
@@ -56,8 +52,6 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
     const [couponCode, setCouponCode] = useState('');
     const [studentDetails, setStudentDetails] = useState([]);
     const [selectingStudents, setSelectingStudents] = useState(true);
-
-    const isWaitlist = schedule?.availablespots <= 0 && schedule?.waitlist;
 
     const validateCoupon = async () => {
         try {
@@ -590,7 +584,6 @@ export default function ScheduleCheckout({ params: { franchise_id, schedule_id }
                             <div className="d-flex gap-2 flex-column">
                                 {showPaymentGateway() && <MerchantGateWay key={formData['paymentoption']} merchant_id={franchise_id} paymentData={{ ...formData, students: studentIds, coupon: coupon?.couponcode }} cancelAction={() => setFormData({ ...formData, paymentoption: '' })} submitAction={(token) => { tokenEnroll(token) }} />}
                                 {((formData['paymentoption'] == 'cash' || paymentCardSettings?.totalPayable == 0) && showPaymentGateway(false)) && <button className="btn btn-success btn-lg w-100 rounded-0" onClick={enroll}>{t('Enroll Now')}</button>}
-                                {isLoggedIn && !isWaitlist && <button className="btn btn-outline-primary btn-lg w-100 rounded-0" onClick={() => addItem({ schedule_id, franchise_id, name: schedule?.name, cost: schedule?.cost, countryCode: schedule?.countryCode })}>{t('Add to Cart')}</button>}
                             </div>
                         </div>
                     </div>
