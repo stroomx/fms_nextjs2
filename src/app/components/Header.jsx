@@ -6,12 +6,14 @@ import initTranslations from '@/app/i18n';
 import AuthService from '@/auth.service';
 import alert from '@/app/components/SweetAlerts';
 import { useRouter } from 'next/navigation';
+import { useCart } from '@/app/hooks/useCart';
 
 export default function Header({ locale }) {
     const [t, setT] = useState(() => (key) => key);  // Default fallback translation (identity function)
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const router = useRouter();
+    const { items } = useCart();
 
     const logout = () => {
         AuthService.logout();
@@ -53,6 +55,14 @@ export default function Header({ locale }) {
                     <div className="col-lg-6 col-md-6 col-6">
                         <div className="d-flex gap-3 justify-content-end align-items-center">
                             {/* <LanguageChanger /> */}
+                            <div className="position-relative cursor-pointer" onClick={() => { router.push('/parent/cart'); }}>
+                                <i className="mdi mdi-cart fs-4 text-blue"></i>
+                                {items.length > 0 && (
+                                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        {items.length}
+                                    </span>
+                                )}
+                            </div>
                             {isAuthenticated ? (
                                 <div className="profile">
                                     <div className="btn-group">
