@@ -23,4 +23,3 @@ jobs:
           eval "$(ssh-agent -s)"
           echo "$SSH_KEY" | tr -d '\r' | ssh-add -
           cd /var/www/fms_nextjs/
-          sudo git pull
