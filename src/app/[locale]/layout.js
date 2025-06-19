@@ -3,7 +3,6 @@ import TranslationsProvider from "@/app/components/TranslationsProvider";
 import localFont from "next/font/local";
 import "./globals.css";
 import BootstrapClient from "@/app/components/BootstripClient";
-import { CartProvider } from "@/app/hooks/useCart";
 
 
 const geistSans = localFont({
@@ -33,9 +32,7 @@ export default async function RootLayout({ params: { locale }, children }) {
           locale={locale}
           resources={resources}
         >
-          <CartProvider>
-            {children}
-          </CartProvider>
+          {children}
         </TranslationsProvider>
         <BootstrapClient />
       </body>
