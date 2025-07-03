@@ -27,6 +27,7 @@ export default function LoginModal({ franchise_id, schedule_id, checkout = true 
             try {
                 const { data } = await axiosInstance.get('/api/parentregistration.php');
                 setPolicies(data);
+                console.log(data);
             } catch (err) {
                 console.log(err);
             }
