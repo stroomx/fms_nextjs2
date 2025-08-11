@@ -11,6 +11,9 @@ class AuthService {
   static USER_KEY = 'user_details';
   static TOKEN_KEY = 'auth_token';
 
+  static IMPERSONATE_USER_KEY = 'impersonate_user_details';
+  static IMPERSONATE_TOKEN_KEY = 'impersonate_auth_token';
+
   // Check if the user is authenticated by verifying the token in cookies
   static isAuthenticated() {
     return !!Cookies.get(AuthService.TOKEN_KEY);
@@ -47,6 +50,21 @@ class AuthService {
       AuthService.logout();
       alert('Session expired, please log in again.');
     }, expiryTimeInMs);
+  }
+
+  static impersonate(user, authToken, expiresIn = 1) {
+    Cookies.set(AuthService.IMPERSONATE_USER_KEY, Cookies.get(AuthService.USER_KEY), { expires: expiresIn });
+    Cookies.set(AuthService.IMPERSONATE_TOKEN_KEY, Cookies.get(AuthService.TOKEN_KEY), { expires: expiresIn });
+
+    AuthService.login(user, authToken);
+  }
+
+  static endImpersonate(showAlert = false) {
+    AuthService.login(AuthService.getUser(), AuthService.getAuthToken())
+
+    Cookies.remove(AuthService.IMPERSONATE_USER_KEY);
+    Cookies.remove(AuthService.IMPERSONATE_TOKEN_KEY);
+    if (showAlert) alert("Impersonation Ended Successfully");
   }
 }
 

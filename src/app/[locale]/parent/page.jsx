@@ -86,10 +86,14 @@ export default function ParentProfile() {
     }
 
     const schedulesTimeline = (date) => {
+        //TODO Account for the schedule time here. Only show the schedule as past if the schedule time has already passed.
         switch (timelineToggle) {
             case 'current':
+                console.log(date);
                 return date >= new Date();
             case 'past':
+                console.log(date); 
+                console.log(new Date());
                 return date < new Date();
             default:
                 return true;
@@ -964,7 +968,7 @@ const Invoice = ({ enrollment }) => {
                     </thead>
                     <tbody>
                         <tr>
-                            <td className="text-center text-nowrap">{date('2024-12-22', false)}</td>
+                            <td className="text-center text-nowrap">{date(enrollment?.enrollmentDate, false)}</td>
                             <td>{`Enrolled ${invoice?.studentName} into ${enrollment?.name}`}</td>
                             <td className="text-center">{money(invoice?.costdata?.proratedcost > 0 ? invoice?.costdata?.proratedcost : invoice?.costdata?.totalcost, enrollment.countryCode)}</td>
                         </tr>
@@ -978,7 +982,7 @@ const Invoice = ({ enrollment }) => {
                                 <td className="text-center">{money(addon?.cost, enrollment.countryCode)}</td>
                             </tr>
                         ))}
-                        {invoice?.tax && <tr>
+                        {invoice?.taxlable && <tr>
                             <td colSpan={2} className="text-end" ><b>{t(invoice?.taxlable)}:</b></td>
                             <td className="text-center">{money(invoice?.costdata?.taxfee, enrollment.countryCode)}</td>
                         </tr>}

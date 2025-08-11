@@ -211,7 +211,7 @@ const PaymentReciept = ({ payment }) => {
                     {payment?.familyUrl && <p className="mb-0">{payment?.familyUrl}</p>}
                     <div className="mb-0">
                         {payment?.familyStreet && <p className="mb-0">{payment?.familyStreet}</p>}
-                        {payment?.familyCity && invoice.familyState && <p className="mb-0">{`${payment?.familyCity}, ${payment?.familyState}, ${payment?.familyZip}`}</p>}
+                        {payment?.familyCity && payment.familyState && <p className="mb-0">{`${payment?.familyCity}, ${payment?.familyState}, ${payment?.familyZip}`}</p>}
                         {payment?.familyCountry && <p className="mb-0">{payment?.familyCountry}</p>}
                     </div>
                 </div>
