@@ -933,7 +933,7 @@ const Invoice = ({ enrollment }) => {
                     <p className="mb-0">{invoice?.franchiseEmail}</p>
                     <p className="mb-0">{invoice?.franchisePhone}</p>
                     <p className="mb-0">{invoice?.franchiseStreet}</p>
-                    <p className="mb-0">{`${invoice?.franchiseCity}, ${invoice?.franchiseState}, ${invoice?.franchiseZip}`}</p>
+                    <p className="mb-0">{`${invoice?.franchiseCity ?? ''}, ${invoice?.franchiseState ?? ''}, ${invoice?.franchiseZip ?? ''}`}</p>
                     <p className="mb-0">{invoice?.franchiseCountry}</p>
                 </div>
             </div>
