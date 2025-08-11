@@ -28,9 +28,10 @@ export default function Admin() {
                 break;
             case 'endimpersonate':
                 AuthService.endImpersonate();
+                break;
         }
 
-        // router.push('/');
+        router.push('/');
     }
 
     const impersonate = async (id) => {
@@ -51,7 +52,5 @@ export default function Admin() {
         }
     }
 
-    return <>
-        <h1>This is the admin dashboard</h1>
-    </>;
+    return <></>;
 }

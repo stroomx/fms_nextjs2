@@ -92,7 +92,7 @@ export default function ParentProfile() {
                 console.log(date);
                 return date >= new Date();
             case 'past':
-                console.log(date); 
+                console.log(date);
                 console.log(new Date());
                 return date < new Date();
             default:
@@ -929,7 +929,7 @@ const Invoice = ({ enrollment }) => {
                 </div>
                 <div className="d-flex flex-column gap-1">
                     <b>{t('Invoice By')}:</b>
-                    <p className="mb-0">{invoice?.franchise}</p>
+                    <p className="mb-0">{'Bricks 4 Kidz - ' + (enrollment?.locationName ?? invoice?.franchise)}</p>
                     <p className="mb-0">{invoice?.franchiseEmail}</p>
                     <p className="mb-0">{invoice?.franchisePhone}</p>
                     <p className="mb-0">{invoice?.franchiseStreet}</p>
