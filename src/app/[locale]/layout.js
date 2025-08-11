@@ -1,6 +1,6 @@
 import initTranslations from '../i18n';
 import TranslationsProvider from "@/app/components/TranslationsProvider";
-import "./globals.css";
+// import "./globals.css";
 import BootstrapClient from "@/app/components/BootstrapClient";
 
 
