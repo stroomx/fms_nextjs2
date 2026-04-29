@@ -233,7 +233,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
         applyFilters()
     }, [schedules]);
 
-
+    const banner = (franchise_id == 2928312) ? 'summer-camp' : 'banner';
     return (
         <div className="program-cards p-0">
             {loading && <div className="loading-overlay">
@@ -244,7 +244,7 @@ export default function FranchiseProfile({ params: { franchise_id } }) {
                 <div
                     className="banner"
                     style={{
-                        backgroundImage: 'url(/assets/img/banner.png)'
+                        backgroundImage: 'url(/assets/img/' + banner + '.png)'
                     }}
                 >
                 </div>
